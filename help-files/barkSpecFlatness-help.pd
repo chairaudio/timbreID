@@ -1,0 +1,108 @@
+#N canvas 216 33 937 607 10;
+#X obj 58 74 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 79 74 Bang to analyze the entire array.;
+#X obj 58 502 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
+-262144 -1 -1 0 256;
+#X obj 148 214 hsl 400 15 0 128000 0 0 empty empty Scrub -2 -8 0 12
+-191407 -1 -1 0 1;
+#X obj 3 4 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
+0;
+#X obj 3 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
+0;
+#N canvas 486 88 730 601 other-settings 0;
+#X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
+-1 0;
+#X msg 54 106 window_function \$1;
+#X msg 100 148 set another-sample-array;
+#X msg 139 204 samplerate 48000;
+#X text 288 147 Read from a different array;
+#X msg 165 257 power_spectrum \$1;
+#X obj 165 239 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 54 545 outlet;
+#X text 273 203 Specify your sample's sampling rate. (default: 44100)
+;
+#X text 306 257 Use power spectrum. (default: magnitude);
+#X msg 352 475 print;
+#X obj 270 355 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X msg 270 375 spec_band_avg \$1;
+#X obj 300 415 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X msg 300 435 filter_avg \$1;
+#X text 402 477 Print current settings in the post window;
+#X text 52 49 Change windowing function. Rectangular (0) \, Blackman
+(1) \, Cosine (2) \, Hamming (3) \, or Hann (4). (default: Blackman)
+;
+#X text 326 403 If using the triangular Bark spaced filters \, you
+can either sum or average the energy in each filter (default: sum)
+;
+#X text 296 323 Rather than sum energy in the triangular Bark spaced
+filters to get the amount of energy in each Bark band \, you can average
+energy in the unfiltered bins (default: OFF);
+#X text 319 291 Construct a new filterbank with a specific spacing.
+;
+#X msg 219 291 filterbank 1;
+#X connect 0 0 1 0;
+#X connect 1 0 7 0;
+#X connect 2 0 7 0;
+#X connect 3 0 7 0;
+#X connect 5 0 7 0;
+#X connect 6 0 5 0;
+#X connect 10 0 7 0;
+#X connect 11 0 12 0;
+#X connect 12 0 7 0;
+#X connect 13 0 14 0;
+#X connect 14 0 7 0;
+#X connect 20 0 7 0;
+#X restore 206 323 pd other-settings;
+#N canvas 0 22 450 300 (subpatch) 0;
+#X array \$0-waveform 1024 float 0;
+#X coords 0 1 1023 -1 200 140 1 0 0;
+#X restore 652 247 graph;
+#N canvas 666 270 458 210 soundfile 0;
+#X obj 50 103 soundfiler;
+#X obj 185 120 table \$0-sample 130000;
+#X msg 50 78 read -skip 120000 ./audio/testing.wav \$1-sample;
+#X obj 50 24 loadbang;
+#X obj 50 46 f \$0;
+#X connect 2 0 0 0;
+#X connect 3 0 4 0;
+#X connect 4 0 2 0;
+#X restore 652 397 pd soundfile;
+#N canvas 722 238 369 330 waveform 0;
+#X obj 46 61 inlet;
+#X obj 46 82 t f f;
+#X obj 46 284 outlet;
+#X obj 131 131 + 1023;
+#X msg 86 200 copy_range 0 \$3-sample \$1 \$2;
+#X obj 86 164 pack f f \$0;
+#X obj 86 241 tabletool \$0-waveform;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X connect 1 0 5 0;
+#X connect 1 1 3 0;
+#X connect 3 0 5 1;
+#X connect 4 0 6 0;
+#X connect 5 0 4 0;
+#X restore 145 234 pd waveform;
+#X obj 703 85 barkSpecFlatness~;
+#X msg 145 257 analyze \$1 1024;
+#X text 288 457 Creation arguments are the name of the sample array
+to read from and filterbank spacing in Barks.;
+#X obj 58 463 barkSpecFlatness \$0-sample 0.5;
+#X msg 97 123 analyze 44100 2000;
+#X text 704 536 Updated for timbreID version 0.7;
+#X text 513 59 See the real-time version for more information on Bark
+spectrum flatness in general.;
+#X text 106 143 Analyze a window starting at sample 44100 that is 2000
+samples long (samples 44100 - 46099).;
+#X text 704 556 July 2017;
+#X connect 0 0 13 0;
+#X connect 3 0 9 0;
+#X connect 6 0 13 0;
+#X connect 9 0 11 0;
+#X connect 11 0 13 0;
+#X connect 13 0 2 0;
+#X connect 14 0 13 0;

@@ -1,0 +1,16 @@
+timbreID version 0.7 requires the FFTW library, available at http://www.fftw.org.
+
+FFTW must be compiled in single precision. To do so on a Macintosh, configure FFTW like this:
+
+./configure CFLAGS=“-arch i386 -arch x86_64” --enable-float
+
+and like this on Linux:
+
+./configure CFLAGS=“-fPIC” --enable-float
+
+
+By default, the FFTW library (i.e., libfftw3f.a) should be installed to /usr/local/lib. Once it is properly built and installed, you can make timbreID from within the src directory by running:
+
+make tIDLib.o all
+
+You must specify the location of your Pure Data source code directory in the Makefile.
