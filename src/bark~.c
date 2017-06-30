@@ -262,11 +262,8 @@ static void bark_tilde_filter_range(t_bark_tilde *x, t_floatarg lo, t_floatarg h
 	}
 	else
 	{
-		x->x_hiBin = hi;
-		x->x_loBin = lo;
-
-		x->x_loBin = (x->x_loBin<0) ? 0 : x->x_loBin;
-		x->x_hiBin = (x->x_hiBin>=x->x_numFilters) ? x->x_numFilters-1 : x->x_hiBin;
+		x->x_loBin = (lo<0)?0:lo;
+		x->x_hiBin = (hi>=x->x_numFilters)?x->x_numFilters-1:hi;
 	}
 }
 
