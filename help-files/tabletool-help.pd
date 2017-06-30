@@ -1,5 +1,5 @@
-#N canvas 364 156 778 471 10;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 361 160 810 471 10;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-table-1 32 float 1;
 #A 0 -0.900007 -0.207146 -0.0857167 -0.00476378 0.0761891 -0.4 -0.385714
 0.371429 0.442858 0.514287 0.685717 0.757146 0.828575 0.428572 0.085713
@@ -8,7 +8,7 @@
 0.514287 0.642859;
 #X coords 0 1 31 -1 200 140 1 0 0;
 #X restore 55 57 graph;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-table-2 32 float 1;
 #A 0 0.757143 0.764286 0.771429 0.771429 0.771429 0.771429 0.771429
 0.771429 0.771429 0.771429 0.75 0.728572 0.628571 0.0285673 -0.600008
@@ -17,7 +17,7 @@
 -0.700009 -0.72858 -0.885724;
 #X coords 0 1 31 -1 200 140 1 0 0;
 #X restore 265 57 graph;
-#N canvas 724 127 950 662 request-info 0;
+#N canvas 435 107 989 662 request-info 0;
 #X msg 253 40 dump;
 #X msg 449 456 restore;
 #X msg 439 431 store;
@@ -42,7 +42,7 @@ again to update memory after setting to the new table.;
 #X msg 293 117 size;
 #X text 454 259 Take the geometric mean. You will get NANs on negative
 data.;
-#X text 397 74 Dump values in a certain range to a list at the right
+#X text 407 74 Dump values in a certain range to a list at the right
 outlet.;
 #X msg 274 80 dump_range 17 29;
 #X msg 343 188 range;
@@ -78,21 +78,21 @@ the chosen value is reported at the right outlet.;
 #X connect 29 0 30 0;
 #X connect 30 0 31 0;
 #X restore 55 383 pd request-info;
-#N canvas 258 323 843 631 multi-table-math 0;
+#N canvas 255 327 843 631 multi-table-math 0;
 #X text 22 65 Dot product;
 #X text 22 85 Euclidean distance;
 #X text 22 105 Taxicab distance;
 #X text 22 125 Pearson correlation;
 #X text 66 354 Add value pairs by index., f 16;
 #X text 90 426 Subtract value pairs by index., f 15;
-#X text 368 405 Multiply value pairs by index.;
-#X text 386 475 Divide value pairs by index.;
+#X text 378 405 Multiply value pairs by index.;
+#X text 396 475 Divide value pairs by index.;
 #X text 23 17 These four functions operate between the active table
 and the table passed with the message.;
 #X text 58 278 These functions perform arithmetic on the active table
 and a table passed with the message. Results are sent out the right
 outlet as a list.;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-multi-math 32 float 0;
 #X coords 0 1 31 -1 200 140 1 0 0;
 #X restore 605 399 graph;
@@ -100,21 +100,21 @@ outlet as a list.;
 #X obj 366 573 s \$0-multi-math;
 #X obj 231 517 tabletool \$0-table-1;
 #X msg 535 88 taxi \$1-table-2;
-#X msg 595 148 corr \$1-table-2;
+#X msg 595 158 corr \$1-table-2;
 #X obj 535 48 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X obj 535 68 f \$0;
-#X obj 595 108 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+#X obj 595 118 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#X obj 595 128 f \$0;
+#X obj 595 138 f \$0;
 #X obj 265 48 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X obj 265 68 f \$0;
-#X obj 325 108 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+#X obj 325 118 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#X obj 325 128 f \$0;
+#X obj 325 138 f \$0;
 #X msg 265 88 dot \$1-table-2;
-#X msg 325 148 euclid \$1-table-2;
+#X msg 325 158 euclid \$1-table-2;
 #X obj 265 199 tabletool \$0-table-1;
 #X obj 535 199 tabletool \$0-table-1;
 #X floatatom 535 221 5 0 0 0 - - -, f 5;
@@ -169,7 +169,7 @@ outlet as a list.;
 #X connect 43 0 44 0;
 #X connect 44 0 33 0;
 #X restore 332 343 pd multi-table-math;
-#N canvas 126 79 1200 558 manipulations-1 0;
+#N canvas 123 83 1243 558 manipulations-1 0;
 #X msg 18 37 offset 1;
 #X msg 112 177 shift -5;
 #X msg 98 157 shift 5;
@@ -181,7 +181,7 @@ wraps around to the beginning or end appropriately.;
 #X msg 71 117 scale 2;
 #X text 136 97 Multiply all values by a scalar;
 #X text 136 339 Copy another table to the currently set table.;
-#X text 139 440 Copy part of another table to the currently set table.
+#X text 159 440 Copy part of another table to the currently set table.
 First argument is the starting index for writing to the target table.
 The remaining arguments are the table to copy from \, and the start
 and end indices of the desired range.;
@@ -203,7 +203,7 @@ a zero to the end.;
 #X text 791 166 Starting at a certain index \, insert a value. Remaining
 values are shifted right \, and the last value is shifted off of the
 table and sent out the left outlet.;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-table-3 64 float 1;
 #A 0 -0.485715 -0.457144 -0.400001 -0.400001 -0.400001 -0.428572 -0.542859
 -0.57143 -0.57143 -0.600002 -0.600002 -0.600002 -0.342857 -0.285714
@@ -216,10 +216,10 @@ table and sent out the left outlet.;
 0.628577 0.628577 0.628577 0.628577 0.514291;
 #X coords 0 1 63 -1 100 70 1 0 0;
 #X restore 400 72 graph;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-copy 32 float 0;
 #X coords 0 1 31 -1 100 70 1 0 0;
-#X restore 460 342 graph;
+#X restore 490 342 graph;
 #X obj 18 262 tabletool \$0-table-3;
 #X obj 18 458 tabletool \$0-copy;
 #X msg 18 340 copy \$1-table-2;
@@ -251,17 +251,17 @@ table and sent out the left outlet.;
 #X connect 31 0 32 0;
 #X connect 32 0 26 0;
 #X restore 55 323 pd manipulations-1;
-#N canvas 111 65 1049 640 manipulations-2 0;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 108 81 1119 640 manipulations-2 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-tables-1-2 64 float 0;
 #X coords 0 1 63 -1 100 70 1 0 0;
 #X restore 394 171 graph;
 #X obj 182 183 list prepend 0;
-#X text 254 124 Or concatenate the active table with another table.
+#X text 264 124 Or concatenate the active table with another table.
 ;
 #X text 167 48 Lace the active table with another table \, sending
 the results out the right outlet as a list.;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-manip 64 float 1;
 #A 0 -0.414301 0.414289 0.457147 -0.12858 -0.0952462 -0.495255 -0.614306
 -5.90086e-06 0.114282 -5.90086e-06 -0.142866 0.457147 -0.185724 0.0285662
@@ -292,7 +292,7 @@ is useful when you have a table full of inter onset values and want
 the total duration at any given point.;
 #X text 661 298 This creates a list of N values where term_i = tablevalue_i
 - tablevalue_i-1.;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-int-diff 32 float 0;
 #X coords 0 1 31 -1 100 70 1 0 0;
 #X restore 662 198 graph;
@@ -348,8 +348,8 @@ second, f 31;
 #X connect 39 1 20 0;
 #X connect 42 1 19 0;
 #X restore 55 343 pd manipulations-2;
-#N canvas 165 22 913 727 filling 0;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 162 81 913 727 filling 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-fill 1024 float 0;
 #X coords 0 1 1023 0 200 140 1 0 0;
 #X restore 609 90 graph;
@@ -363,11 +363,11 @@ if you want a certain resolution.;
 #X msg 57 222 randFill -0.75 0.7;
 #X text 208 223 Fill an array with random numbers in a certain range.
 ;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-series 64 float 0;
 #X coords 0 1 63 -1 200 140 1 0 0;
 #X restore 609 340 graph;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-walk 64 float 0;
 #X coords 0 1 63 -1 200 140 1 0 0;
 #X restore 609 540 graph;
@@ -400,12 +400,12 @@ straight line.;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X text 550 409 Updated for timbreID version 0.7;
-#N canvas 311 122 790 349 manipulations-3 0;
+#N canvas 308 126 790 349 manipulations-3 0;
 #X msg 119 127 ceil;
 #X msg 150 169 floor;
 #X msg 35 43 clip -2 3;
 #X msg 185 209 reciprocal;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-table-4 64 float 1;
 #A 0 -0.714283 1.57142 4.2857 5.42855 6.14283 6.42855 6.5714 6.5714
 6.5714 6.71426 6.71426 6.71426 6.64283 6.5714 5.42855 4.14284 2.99999
@@ -416,12 +416,12 @@ straight line.;
 6.71426 6.71426 6.71426 6.71426 6.71426 6.28569 5.57141 4.71427 4.71427
 4.99998 5.71426 6.99997 8.14283 8.42854;
 #X coords 0 10 63 -10 200 140 1 0 0;
-#X restore 521 120 graph;
+#X restore 552 120 graph;
 #X text 112 42 Clip all values in table to lower and upper limits;
-#X text 135 85 Round all values in table to a given resolution;
+#X text 150 85 Round all values in table to a given resolution;
 #X text 169 126 Set all values to the next highest integer;
 #X text 209 168 Set all values to the next lowest integer;
-#X text 260 209 Take the reciprocal of all values;
+#X text 270 209 Take the reciprocal of all values;
 #X obj 35 285 tabletool \$0-table-4;
 #X msg 69 86 round 0.5;
 #X connect 0 0 10 0;
@@ -430,10 +430,10 @@ straight line.;
 #X connect 3 0 10 0;
 #X connect 11 0 10 0;
 #X restore 55 363 pd manipulations-3;
-#N canvas 311 122 1020 503 conversion 0;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 308 126 1046 503 conversion 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-conversion 64 float 0;
-#X coords 0 106.548 63 23.4686 200 140 1 0 0;
+#X coords 0 107.906 63 22.4181 200 140 1 0 0;
 #X restore 738 57 graph;
 #X msg 43 39 mtof;
 #X text 120 38 Convert all values from MIDI to frequency in Hz;
@@ -461,7 +461,7 @@ window size and sampling rate, f 44;
 of the table since the unit ranges here vary wildly..., f 24;
 #X obj 680 291 loadbang;
 #X obj 680 313 t b b;
-#X text 832 402 << MIDI range of a piano;
+#X text 842 402 << MIDI range of a piano;
 #X connect 1 0 6 0;
 #X connect 3 0 6 0;
 #X connect 4 0 6 0;
@@ -477,12 +477,12 @@ of the table since the unit ranges here vary wildly..., f 24;
 #X connect 23 1 20 0;
 #X restore 202 363 pd conversion;
 #X text 550 429 July 2017;
-#N canvas 842 338 463 407 properties 0;
+#N canvas 836 346 463 407 properties 0;
 #X msg 65 183 fit_bounds;
-#N canvas 0 22 450 278 (subpatch) 0;
+#N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-fitBoundsTest 64 float 0;
-#X coords 0 1 63 -1 200 140 1 0 0;
-#X restore 221 123 graph;
+#X coords 0 1.93901 63 -1.84288 200 140 1 0 0;
+#X restore 231 123 graph;
 #X text 29 15 The fit_bounds method finds the maximum and minimum values
 in a table and changes the table display properties so that the Y range
 fits the data perfectly. Try it below by generating some random numbers
@@ -500,8 +500,8 @@ to fill this table \, and then hit the fit_bounds message;
 #X connect 7 0 5 0;
 #X connect 8 0 3 0;
 #X restore 332 363 pd properties;
-#N canvas 348 309 1144 550 searching-2 0;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 281 295 1223 500 searching-2 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array valleys 64 float 1;
 #A 0 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.714286 -0.05
 -0.05 -0.05 -0.05 -0.185714 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05
@@ -516,17 +516,17 @@ to fill this table \, and then hit the fit_bounds message;
 #X obj 322 439 print;
 #X obj 24 350 tabletool peaks;
 #X msg 322 355 peaks_thresh 0.05 0.05;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array peaks 64 float 1;
 #A 0 0 0 0 0 0.957143 0 0 0 0 0 0 0 0 0 0.607143 0 0 0 0 0 0.0428572
 0 0 0 0 0 0 0 0.0857143 0 0 0 0 0.635714 0 0 0 0 0 0 0.3 0 0 0 0 0
 0 0.842857 0 0 0 0 0 0 0 0 0 0 0 0 0.507143 0 0 0;
 #X coords 0 1 63 0 200 140 1 0 0;
 #X restore 51 46 graph;
-#X obj 754 227 tabletool valleys;
-#X obj 789 177 t b a b;
-#X msg 789 146 valleys \$1;
-#X floatatom 789 115 5 0 100 0 - - -, f 5;
+#X obj 794 227 tabletool valleys;
+#X obj 829 177 t b a b;
+#X msg 829 146 valleys \$1;
+#X floatatom 829 115 5 0 100 0 - - -, f 5;
 #X obj 49 296 t b a b;
 #X msg 49 265 peaks \$1;
 #X floatatom 49 244 5 0 100 0 - - -, f 5;
@@ -551,7 +551,7 @@ to fill this table \, and then hit the fit_bounds message;
 #X connect 6 0 7 0;
 #X connect 7 0 8 0;
 #X connect 9 0 6 0;
-#X restore 843 267 pd send-label;
+#X restore 883 267 pd send-label;
 #N canvas 1228 305 450 300 send-label 0;
 #X obj 77 27 inlet;
 #X obj 197 27 inlet;
@@ -579,7 +579,7 @@ and max thresholds. A peak is reported when values cross the max threshold
 \, then fall below the min threshold. For each peak \, the peak value
 within those boundaries appears at the left outlet \, and its index
 at the right.;
-#X text 844 75 You can search for valleys in a similar fashion based
+#X text 884 75 You can search for valleys in a similar fashion based
 on a percent threshold. All valleys below the threshold percent of
 the minimum valley will be reported., f 42;
 #X text 140 218 Search for peaks based on changes in slope from positive
@@ -611,7 +611,7 @@ in order to label peak indices directly on the table., f 89;
 #X obj 515 281 print t1-left;
 #X obj 515 161 r \$0-tool-1;
 #X obj 515 209 tabletool \$0-table-1;
-#N canvas 350 190 1155 661 searching-1 0;
+#N canvas 347 194 1155 661 searching-1 0;
 #X msg 76 45 equals 0;
 #X msg 117 452 max;
 #X msg 87 421 min;

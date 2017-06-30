@@ -3,7 +3,7 @@ SOURCES = attackTime.c attackTime~.c bark.c bark2freq.c barkSpec.c barkSpecBrigh
 
 # ****SUPPLY THE LOCATION OF PD SOURCE****
 pd_src = /Applications/Pd-0.47-1.app/Contents/Resources
-# pd_src = /home/wbrent/PUREDATA/pd-0.47-1
+# pd_src = /home/yourname/somedirectory/pd-0.47-1
 
 
 CFLAGS = -DPD -I$(pd_src)/src -I/usr/local/include -Wall -W -g

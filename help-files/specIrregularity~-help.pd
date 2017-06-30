@@ -1,4 +1,4 @@
-#N canvas 293 95 925 581 10;
+#N canvas 290 99 982 581 10;
 #X obj 143 197 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X floatatom 56 523 10 0 0 0 - - -, f 10;
@@ -6,7 +6,7 @@
 0;
 #X obj 3 3 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 611 125 681 475 other-settings 0;
+#N canvas 608 129 737 475 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 3;
 #X msg 54 106 window_function \$1;
@@ -46,7 +46,7 @@ for classification \, see the timbreID helpfile:;
 #X obj 214 315 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X msg 214 335 algorithm \$1;
-#X text 243 299 Choose either Jensen (0) or Krimphoff (1) algorithm.
+#X text 229 354 Choose either Jensen (0) or Krimphoff (1) algorithm.
 (default: Jensen), f 38;
 #X text 504 179 Audio buffering and windowing are taken care of by
 the external \, so there is no need for tabreceive~ or block~. You

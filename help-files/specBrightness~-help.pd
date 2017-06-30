@@ -1,4 +1,4 @@
-#N canvas 314 128 863 454 10;
+#N canvas 308 136 907 481 10;
 #X obj 143 127 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X floatatom 107 403 10 0 0 0 - - -, f 10;
@@ -23,7 +23,7 @@ brightness than a sinusoid at 440 Hz.;
 0;
 #X obj 3 3 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 679 226 661 488 other-settings 0;
+#N canvas 673 234 711 488 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 3;
 #X msg 54 106 window_function \$1;
@@ -48,7 +48,7 @@ things to behave properly;
 #X connect 8 0 4 0;
 #X restore 216 299 pd other-settings;
 #X msg 207 234 boundary 9000;
-#X text 615 375 Updated for timbreID version 0.7;
+#X text 645 425 Updated for timbreID version 0.7;
 #X obj 601 304 timbreID;
 #X text 434 239 This feature can be sent to the timbreID external in
 order to identify timbres in real time. For more on using audio features
@@ -59,10 +59,10 @@ can set the window size with a creation argument \, or change it with
 the "window" message. Window size is not required to be a power of
 two.;
 #X msg 180 190 window 2000;
-#X text 284 344 Creation arguments are window size in samples \, and
+#X text 312 344 Creation arguments are window size in samples \, and
 a boundary frequency to determine the ratio of high spectral content.
 , f 47;
-#X text 615 395 July 2017;
+#X text 645 445 July 2017;
 #X connect 0 0 11 0;
 #X connect 3 0 11 0;
 #X connect 4 0 3 1;

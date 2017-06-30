@@ -1,7 +1,7 @@
-#N canvas 336 23 898 589 10;
+#N canvas 333 81 957 589 10;
 #X obj 108 132 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-magSpec-graph 513 float 0;
 #X coords 0 0.25 512 0 200 140 1 0 0;
 #X restore 483 310 graph;
@@ -11,7 +11,7 @@
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 445 57 721 479 other-settings 0;
+#N canvas 439 85 762 479 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 4;
 #X msg 54 106 window_function \$1;
@@ -45,7 +45,7 @@ things to behave properly;
 #X obj 57 72 adc~;
 #X text 32 507 Updated for timbreID version 0.7;
 #X msg 173 243 window 2000;
-#X text 255 243 Change analysis window size;
+#X text 268 236 Change analysis window size, f 17;
 #X obj 648 536 timbreID;
 #X text 161 170 Bang repeatedly to keep refreshing...;
 #X text 481 471 This feature can be sent to the timbreID external in
@@ -56,15 +56,15 @@ for classification \, see the timbreID helpfile:;
 ;
 #X obj 57 387 magSpec~ 1024;
 #X text 105 115 Bang to output magnitude spectrum as a list;
-#N canvas 205 170 463 267 do-plotting 0;
+#N canvas 202 174 463 267 do-plotting 0;
 #X obj 79 37 inlet;
 #X obj 79 173 list prepend 0;
-#X obj 203 116 list length;
-#X obj 203 138 change;
-#X obj 203 160 pack f \$0;
+#X obj 233 116 list length;
+#X obj 233 138 change;
+#X obj 233 160 pack f \$0;
 #X obj 79 59 t l l;
 #X obj 79 194 s \$0-magSpec-graph;
-#X msg 203 181 \; \$2-magSpec-graph resize \$1 \;;
+#X msg 233 181 \; \$2-magSpec-graph resize \$1 \;;
 #X connect 0 0 5 0;
 #X connect 1 0 6 0;
 #X connect 2 0 3 0;

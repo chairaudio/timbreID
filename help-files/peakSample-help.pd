@@ -1,17 +1,17 @@
-#N canvas 216 33 915 635 10;
+#N canvas 213 81 915 635 10;
 #X obj 59 74 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 80 74 Bang to analyze the entire array.;
 #X obj 59 522 nbx 5 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 0.00195312 256;
+-262144 -1 -1 0 256;
 #X msg 155 291 analyze \$1 1024;
 #X obj 158 249 hsl 400 15 0 128000 0 0 empty empty Scrub -2 -8 0 12
--191407 -1 -1 16200 1;
+-191407 -1 -1 0 1;
 #X obj 4 4 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 727 180 641 315 other-settings 0;
+#N canvas 724 184 641 315 other-settings 0;
 #X msg 54 48 set another-sample-array;
 #X msg 93 104 samplerate 48000;
 #X text 242 47 Read from a different array;
@@ -23,7 +23,7 @@
 #X connect 1 0 3 0;
 #X connect 5 0 3 0;
 #X restore 207 343 pd other-settings;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 1024 float 0;
 #X coords 0 1 1023 -1 200 140 1 0 0;
 #X restore 653 247 graph;
@@ -57,11 +57,11 @@
 read from., f 33;
 #X text 107 143 Analyze a window starting at sample 44100 that is 2000
 samples long (samples 44100 - 46099), f 48;
-#X text 652 527 Updated for timbreID version 0.7;
+#X text 650 567 Updated for timbreID version 0.7;
 #X msg 98 123 analyze 44100 2000;
 #X obj 269 522 nbx 5 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 518 256;
-#X text 652 547 July 2017;
+-262144 -1 -1 0 256;
+#X text 650 587 July 2017;
 #X text 644 59 See the real-time version too.;
 #X obj 59 483 peakSample \$0-sample;
 #X text 24 567 Outlet 1: peak sample value;

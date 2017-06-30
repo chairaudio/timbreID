@@ -1,15 +1,14 @@
-#N canvas 237 23 943 739 10;
+#N canvas 234 81 920 684 10;
 #X obj 50 310 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 1024 float 0;
 #X coords 0 1 1023 -1 200 140 1 0 0;
 #X restore 47 47 graph;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-mfcc-graph 38 float 0;
 #X coords 0 1 37 -1 200 140 1 0 0;
 #X restore 313 47 graph;
-#X obj 50 672 list prepend 0;
 #X text 72 307 Bang to analyze the entire array.;
 #N canvas 666 270 482 216 soundfile 0;
 #X obj 50 103 soundfiler;
@@ -42,7 +41,7 @@
 0;
 #X obj 3 3 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 596 82 760 674 other-settings 0;
+#N canvas 593 86 794 674 other-settings 0;
 #X obj 44 56 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 4;
 #X msg 44 76 window_function \$1;
@@ -94,36 +93,42 @@ either sum or average the energy in each filter (default: sum);
 #X connect 19 0 9 0;
 #X connect 21 0 9 0;
 #X restore 152 498 pd other-settings;
-#X obj 50 568 t l l;
-#X obj 174 615 list length;
-#X obj 174 637 change;
-#X text 717 680 Updated for timbreID version 0.7;
-#X obj 174 659 pack f \$0;
+#X text 657 610 Updated for timbreID version 0.7;
 #X msg 94 379 analyze 44100 2000;
 #X obj 107 433 r \$0-scrub-bar;
 #X obj 655 116 r \$0-scrub-bar;
-#X text 209 432 Move through the soundfile with the slider above;
-#X obj 50 693 s \$0-mfcc-graph;
+#X text 249 438 Move through the soundfile with the slider above,
+f 27;
 #X obj 50 546 mfcc \$0-sample 100;
-#X text 223 540 Creation arguments are the name of the sample array
-to read from and spacing of the filterbank in mels.;
+#X text 219 540 Creation arguments are the name of the sample array
+to read from and spacing of the filterbank in mels., f 53;
 #X obj 618 468 mfcc~;
 #X text 616 399 See the real-time version for more information on mel-frequency
 Ceptrum Coefficients (MFCCs) in general., f 33;
-#X msg 174 680 \; \$2-mfcc-graph resize \$1 \;;
 #X text 103 339 Analyze a window starting at sample 44100 that is 2000
 samples long (samples 44100 - 46099).;
-#X text 717 700 July 2017;
-#X connect 0 0 22 0;
-#X connect 3 0 21 0;
-#X connect 6 0 22 0;
-#X connect 11 0 22 0;
-#X connect 12 0 3 0;
-#X connect 12 1 13 0;
-#X connect 13 0 14 0;
-#X connect 14 0 16 0;
-#X connect 16 0 26 0;
-#X connect 17 0 22 0;
-#X connect 18 0 6 0;
-#X connect 19 0 7 0;
-#X connect 22 0 12 0;
+#X text 657 630 July 2017;
+#N canvas 0 81 450 300 plotting 0;
+#X obj 50 202 list prepend 0;
+#X obj 50 98 t l l;
+#X obj 174 145 list length;
+#X obj 174 167 change;
+#X obj 174 189 pack f \$0;
+#X obj 50 223 s \$0-mfcc-graph;
+#X msg 174 210 \; \$2-mfcc-graph resize \$1 \;;
+#X obj 50 48 inlet;
+#X connect 0 0 5 0;
+#X connect 1 0 0 0;
+#X connect 1 1 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
+#X connect 4 0 6 0;
+#X connect 7 0 1 0;
+#X restore 50 598 pd plotting;
+#X connect 0 0 16 0;
+#X connect 5 0 16 0;
+#X connect 10 0 16 0;
+#X connect 12 0 16 0;
+#X connect 13 0 5 0;
+#X connect 14 0 6 0;
+#X connect 16 0 22 0;

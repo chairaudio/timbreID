@@ -305,6 +305,7 @@ static void timbreID_attributeDataResize(t_timbreID *x, t_attributeIdx oldSize, 
 		x->x_attributeData[i].inputData = 0.0;
 		x->x_attributeData[i].order = i;
 		x->x_attributeData[i].weight = 1.0;
+		x->x_attributeData[i].name = gensym("NULL");
 	}
 	
 	x->x_normalize = false;
@@ -1502,6 +1503,47 @@ static void timbreID_weights(t_timbreID *x, t_symbol *s, int argc, t_atom *argv)
 	// if only the first few of a long feature vector are specified, fill in the rest with 1.0
 	for(; i<x->x_maxFeatureLength; i++)
 		x->x_attributeData[i].weight = 1.0;
+}
+
+
+static void timbreID_attributeNames(t_timbreID *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_attributeIdx i, listLength;
+
+	listLength = argc;
+
+	if(listLength > x->x_maxFeatureLength)
+	{
+		pd_error(x, "%s: attribute list longer than current max feature length. ignoring excess attributes", x->x_objSymbol->s_name);
+		listLength = x->x_maxFeatureLength;
+	}
+	
+	for(i=0; i<listLength; i++)
+		x->x_attributeData[i].name = atom_getsymbol(argv+i);
+
+	post("%s: attribute names received.", x->x_objSymbol->s_name);
+}
+
+
+static void timbreID_attributeInfo(t_timbreID *x, t_floatarg idx)
+{
+	t_attributeIdx thisIdx;
+	thisIdx = (idx<0)?0:idx;
+
+	if(thisIdx>=x->x_maxFeatureLength)
+		pd_error(x, "%s: attribute %i does not exist", x->x_objSymbol->s_name, thisIdx);
+	else
+	{
+		t_symbol *selector;
+		t_atom listOut[3];
+		
+		selector = gensym("attribute_info");
+		// name, weight, order
+		SETSYMBOL(&listOut[0], x->x_attributeData[thisIdx].name);
+		SETFLOAT(&listOut[1], x->x_attributeData[thisIdx].weight);
+		SETFLOAT(&listOut[2], x->x_attributeData[thisIdx].order);
+		outlet_anything(x->x_listOut, selector, 3, &listOut[0]);
+	}	
 }
 
 
@@ -2854,6 +2896,22 @@ void timbreID_setup(void)
 		0
 	);
 
+	class_addmethod(
+		timbreID_class, 
+        (t_method)timbreID_attributeNames,
+		gensym("attribute_names"),
+        A_GIMME,
+		0
+	);
+
+	class_addmethod(
+		timbreID_class, 
+        (t_method)timbreID_attributeInfo,
+		gensym("attribute_info"),
+        A_DEFFLOAT,
+		0
+	);
+	
 	class_addmethod(
 		timbreID_class, 
         (t_method)timbreID_attributeOrder,

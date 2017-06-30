@@ -1,4 +1,4 @@
-#N canvas 314 128 904 547 10;
+#N canvas 311 132 939 547 10;
 #X obj 143 128 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X text 178 163 Change window size.;
@@ -14,7 +14,7 @@
 0;
 #X obj 3 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 592 23 765 615 other-settings 0;
+#N canvas 589 81 813 615 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 3;
 #X msg 54 106 window_function \$1;
@@ -67,10 +67,10 @@ energy in the unfiltered bins (default: OFF);
 order to identify timbres in real time. For more on using audio features
 for classification \, see the timbreID helpfile:;
 #X obj 55 408 barkSpecRolloff~ 1024 0.5 0.85;
-#X text 279 400 Creation arguments are window size in samples \, filterbank
+#X text 299 400 Creation arguments are window size in samples \, filterbank
 spacing in Barks \, and concentration threshold;
-#X msg 207 235 concentration 0.7;
-#X text 206 217 Change the concentration threshold;
+#X msg 207 249 concentration 0.7;
+#X text 206 217 Change the concentration threshold, f 23;
 #X msg 180 181 window 2000;
 #X text 464 140 Audio buffering and windowing are taken care of by
 the external \, so there is no need for tabreceive~ or block~. You

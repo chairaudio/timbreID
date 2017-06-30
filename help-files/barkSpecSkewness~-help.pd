@@ -1,4 +1,4 @@
-#N canvas 295 113 847 620 10;
+#N canvas 292 117 907 620 10;
 #X obj 88 243 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 150 274 Bang repeatedly...;
@@ -9,7 +9,7 @@
 0;
 #X obj 3 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 629 66 730 632 other-settings 0;
+#N canvas 626 81 780 632 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 0;
 #X msg 54 106 window_function \$1;
@@ -56,7 +56,7 @@ things to behave properly;
 #X restore 206 404 pd other-settings;
 #X msg 162 347 window 2000;
 #X text 161 329 Change analysis window size;
-#X text 230 497 Creation arguments are window size in samples \, and
+#X text 260 493 Creation arguments are window size in samples \, and
 filterbank spacing in Barks;
 #X text 615 552 Updated for timbreID version 0.7;
 #X text 429 316 This feature can be sent to the timbreID external in

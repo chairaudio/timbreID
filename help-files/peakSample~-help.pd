@@ -1,4 +1,4 @@
-#N canvas 225 100 885 528 10;
+#N canvas 222 104 938 528 10;
 #X obj 108 132 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X obj 137 171 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
@@ -7,7 +7,7 @@
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 887 203 599 301 other-settings 0;
+#N canvas 884 207 599 301 other-settings 0;
 #X obj 54 205 outlet;
 #X msg 108 119 print;
 #X text 158 121 Print current settings in the post window;
@@ -19,9 +19,9 @@ things to behave properly;
 #X connect 3 0 0 0;
 #X restore 217 300 pd other-settings;
 #X obj 57 72 adc~;
-#X text 632 417 Updated for timbreID version 0.7;
+#X text 662 457 Updated for timbreID version 0.7;
 #X msg 173 243 window 2000;
-#X text 255 243 Change analysis window size;
+#X text 275 237 Change analysis window size, f 16;
 #X obj 648 306 timbreID;
 #X text 161 170 Bang repeatedly to keep refreshing...;
 #X text 481 241 This feature can be sent to the timbreID external in
@@ -30,9 +30,9 @@ for classification \, see the timbreID helpfile:;
 #X obj 137 190 metro 100;
 #X text 180 382 Creation argument is window size in samples, f 23
 ;
-#X text 632 437 July 2017;
+#X text 662 477 July 2017;
 #X floatatom 57 449 10 0 0 0 - - -, f 10;
-#X floatatom 157 419 10 0 0 0 - - -, f 10;
+#X floatatom 167 419 10 0 0 0 - - -, f 10;
 #X obj 57 387 peakSample~ 1024;
 #X text 481 141 Audio buffering and windowing are taken care of by
 the external \, so there is no need for tabreceive~ or block~. You

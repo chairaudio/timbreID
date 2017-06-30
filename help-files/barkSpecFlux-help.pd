@@ -1,4 +1,4 @@
-#N canvas 216 33 920 714 10;
+#N canvas 213 81 963 714 10;
 #X obj 58 532 nbx 6 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
 -262144 -1 -1 0 256;
 #X obj 157 259 hsl 400 15 0 128000 0 0 empty empty Scrub -2 -8 0 12
@@ -7,7 +7,7 @@
 0;
 #X obj 3 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 452 22 851 704 other-settings 0;
+#N canvas 449 81 915 704 other-settings 0;
 #X obj 44 66 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 0;
 #X msg 44 86 window_function \$1;
@@ -71,7 +71,7 @@ energy in the unfiltered bins (default: OFF);
 #X connect 23 0 24 0;
 #X connect 24 0 7 0;
 #X restore 206 353 pd other-settings;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 1024 float 0;
 #X coords 0 1 1023 -1 200 140 1 0 0;
 #X restore 652 247 graph;
@@ -101,19 +101,14 @@ energy in the unfiltered bins (default: OFF);
 #X connect 4 0 6 0;
 #X connect 5 0 4 0;
 #X restore 154 279 pd waveform;
-#X obj 272 583 list prepend 0;
-#N canvas 0 22 450 278 (subpatch) 0;
+#N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-band-diffs 50 float 0;
 #X coords 0 0.1 49 -0.1 200 140 1 0 0;
 #X restore 652 447 graph;
-#X obj 272 532 t l l;
-#X obj 374 563 list length;
 #X msg 154 308 analyze \$1 1024;
-#X obj 703 85 barkSpecFlux~;
+#X obj 723 85 barkSpecFlux~;
 #X text 513 59 See the real-time version for more information on Bark
 spectrum flux in general.;
-#X obj 374 585 change;
-#X obj 374 607 pack f \$0;
 #X msg 58 73 analyze 44100 2000;
 #X text 189 430 Creation arguments are the name of the sample array
 to read from \, filterbank spacing in Barks \, and separation in samples
@@ -128,19 +123,28 @@ from the right outlet as a list. Passing a starting sample that isn't
 at least N samples forward from the beginning of the array may produce
 incorrect flux values.;
 #X obj 58 493 barkSpecFlux \$0-sample 0.5 256;
-#X msg 374 629 \; \$2-band-diffs resize \$1 \;;
-#X obj 272 605 s \$0-band-diffs;
 #X text 693 663 July 2017;
+#N canvas 607 488 441 264 plot-diffs 0;
+#X obj 51 113 list prepend 0;
+#X obj 51 62 t l l;
+#X obj 173 93 list length;
+#X obj 173 115 change;
+#X obj 173 137 pack f \$0;
+#X msg 173 159 \; \$2-band-diffs resize \$1 \;;
+#X obj 51 135 s \$0-band-diffs;
+#X obj 51 32 inlet;
+#X connect 0 0 6 0;
+#X connect 1 0 0 0;
+#X connect 1 1 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
+#X connect 4 0 5 0;
+#X connect 7 0 1 0;
+#X restore 298 547 pd plot-diffs;
 #X connect 1 0 7 0;
-#X connect 4 0 21 0;
-#X connect 7 0 12 0;
-#X connect 8 0 23 0;
-#X connect 10 0 8 0;
-#X connect 10 1 11 0;
-#X connect 11 0 15 0;
-#X connect 12 0 21 0;
-#X connect 15 0 16 0;
-#X connect 16 0 22 0;
-#X connect 17 0 21 0;
-#X connect 21 0 0 0;
-#X connect 21 1 10 0;
+#X connect 4 0 16 0;
+#X connect 7 0 9 0;
+#X connect 9 0 16 0;
+#X connect 12 0 16 0;
+#X connect 16 0 0 0;
+#X connect 16 1 18 0;

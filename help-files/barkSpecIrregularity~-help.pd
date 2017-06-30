@@ -1,5 +1,5 @@
-#N canvas 233 118 807 674 10;
-#X obj 520 354 timbreID;
+#N canvas 230 122 848 674 10;
+#X obj 550 354 timbreID;
 #X obj 207 404 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X msg 207 424 algorithm \$1;
@@ -10,7 +10,7 @@
 #X obj 138 160 *~;
 #X obj 168 160 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#N canvas 531 223 795 680 other-settings 0;
+#N canvas 528 227 856 680 other-settings 0;
 #X obj 34 56 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 4;
 #X msg 34 76 window_function \$1;
@@ -75,16 +75,16 @@ things to behave properly;
 #X obj 160 327 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X obj 47 561 barkSpecIrregularity~ 1024 0.5 0;
-#X text 299 415 Choose between Jensen (0) and Krimphoff (1) algorithms
+#X text 318 415 Choose between Jensen (0) and Krimphoff (1) algorithms
 , f 30;
 #X text 108 289 Bang to output irregularity;
 #X obj 48 210 +~;
 #X text 585 615 Updated for timbreID version 0.7;
 #X obj 47 598 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
 -262144 -1 -1 0 256;
-#X text 276 549 Creation arguments are window size in samples \, filterbank
+#X text 306 553 Creation arguments are window size in samples \, filterbank
 spacing in Barks \, and algorithm: Jensen (0) \, or Krimphoff (1),
-f 47;
+f 70;
 #X text 377 297 This feature can be sent to the timbreID external in
 order to identify timbres in real time. For more on using audio features
 for classification \, see the timbreID helpfile:;

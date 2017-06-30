@@ -213,14 +213,16 @@ static void bark_filter_range(t_bark *x, t_floatarg lo, t_floatarg hi)
 {
 	if(hi<lo)
 	{
-		post("%s WARNING: high bin less than low bin.", x->x_objSymbol->s_name);
-		x->x_hiBin = lo;
-		x->x_loBin = hi;
+		t_float tmp;
+		
+		tmp = hi;
+		hi = lo;
+		lo = tmp;
 
-		x->x_loBin = (x->x_loBin<0)?0:x->x_loBin;
-		x->x_hiBin = (x->x_hiBin>=x->x_numFilters)?x->x_numFilters-1:x->x_hiBin;
+		x->x_loBin = (lo<0)?0:lo;
+		x->x_hiBin = (hi>=x->x_numFilters)?x->x_numFilters-1:hi;
 
-//		post("bark: using filters %i through %i (inclusive) for the growth sum.", x->x_loBin, x->x_hiBin);
+		post("%s WARNING: high band less than low band. Reversing order.", x->x_objSymbol->s_name);
 	}
 	else
 	{

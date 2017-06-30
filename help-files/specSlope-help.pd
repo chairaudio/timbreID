@@ -1,11 +1,11 @@
-#N canvas 247 50 884 737 10;
+#N canvas 244 81 884 737 10;
 #X obj 51 289 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 256 float 0;
 #X coords 0 1 255 -1 200 140 1 0 0;
 #X restore 48 48 graph;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-magSpec-graph 129 float 0;
 #X coords 0 0.35 128 0 200 140 1 0 0;
 #X restore 314 48 graph;
@@ -19,8 +19,8 @@
 #X connect 1 0 0 0;
 #X connect 2 0 3 0;
 #X connect 3 0 1 0;
-#X restore 490 457 pd soundfile;
-#N canvas 723 239 304 333 waveform 0;
+#X restore 460 467 pd soundfile;
+#N canvas 720 243 304 333 waveform 0;
 #X obj 46 61 inlet;
 #X obj 46 82 t f f;
 #X msg 46 200 copy_range 0 \$3-sample \$1 \$2;
@@ -33,25 +33,25 @@
 #X connect 2 0 3 0;
 #X connect 4 0 2 0;
 #X connect 5 0 4 1;
-#X restore 490 509 pd waveform;
+#X restore 460 519 pd waveform;
 #X obj 51 244 hsl 800 25 0 128000 0 0 \$0-scrub-bar empty Scrub-bar
 -2 -8 0 12 -191407 -1 -1 0 1;
 #X obj 4 4 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 0 22 450 278 (subpatch) 0;
+#N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-slope-graph 2 float 1;
 #A 0 0.0195302 -0.0195302;
 #X coords 0 0.08 1 -0.08 200 140 1 0 0;
 #X restore 584 48 graph;
 #X obj 134 386 r \$0-scrub-bar;
 #X msg 99 334 analyze 44100 2000;
-#X text 235 324 Analyze a window starting at sample 44100 that is 2000
+#X text 245 328 Analyze a window starting at sample 44100 that is 2000
 samples long (samples 44100 - 46099);
-#X obj 490 487 r \$0-scrub-bar;
-#X text 643 666 Updated for timbreID version 0.7;
-#N canvas 596 82 709 523 other-settings 0;
+#X obj 460 497 r \$0-scrub-bar;
+#X text 633 671 Updated for timbreID version 0.7;
+#N canvas 593 86 709 523 other-settings 0;
 #X obj 44 56 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 4;
 #X msg 44 76 window_function \$1;
@@ -86,12 +86,12 @@ samples long (samples 44100 - 46099);
 #X restore 196 530 pd other-settings;
 #X obj 51 453 s \$0-analyze;
 #X obj 51 523 r \$0-analyze;
-#X text 229 382 Use the slider above to move through the audio file
-;
+#X text 259 390 Use the slider above to move through the audio file
+, f 30;
 #X obj 51 597 specSlope \$0-sample;
-#X text 202 588 Creation argument is the name of the sample array to
+#X text 212 588 Creation argument is the name of the sample array to
 read from, f 33;
-#N canvas 357 375 895 386 graph-slope-measure-magSpec 0;
+#N canvas 354 379 895 386 graph-slope-measure-magSpec 0;
 #X obj 114 125 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
 -262144 -1 -1 -0.0390604 256;
 #X obj 114 55 inlet;
@@ -123,11 +123,11 @@ read from, f 33;
 #X connect 12 0 10 0;
 #X coords 0 -1 1 1 250 70 1 100 100;
 #X restore 51 633 pd graph-slope-measure-magSpec;
-#X obj 628 420 specSlope~;
+#X obj 628 450 specSlope~;
 #X msg 134 411 analyze \$1 256;
-#X text 643 686 July 2017;
-#X text 626 371 See the real-time version for more information on spectral
-slope in general., f 33;
+#X text 633 691 July 2017;
+#X text 626 401 See the real-time version for more information on spectral
+slope in general., f 31;
 #X connect 0 0 16 0;
 #X connect 10 0 23 0;
 #X connect 11 0 16 0;

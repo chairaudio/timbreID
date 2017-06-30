@@ -1,11 +1,11 @@
-#N canvas 237 23 874 631 10;
+#N canvas 234 81 874 631 10;
 #X obj 50 310 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 1024 float 0;
 #X coords 0 1 1023 -1 200 140 1 0 0;
 #X restore 47 47 graph;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-magSpec-graph 513 float 0;
 #X coords 0 0.25 512 0 200 140 1 0 0;
 #X restore 313 47 graph;
@@ -41,7 +41,7 @@
 0;
 #X obj 3 3 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 611 185 670 483 other-settings 0;
+#N canvas 608 189 746 483 other-settings 0;
 #X obj 44 56 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 4;
 #X msg 44 76 window_function \$1;
@@ -78,7 +78,8 @@
 #X msg 94 379 analyze 44100 2000;
 #X obj 107 433 r \$0-scrub-bar;
 #X obj 655 116 r \$0-scrub-bar;
-#X text 209 432 Move through the soundfile with the slider above;
+#X text 235 438 Move through the soundfile with the slider above,
+f 28;
 #N canvas 205 170 463 267 do-plotting 0;
 #X obj 79 37 inlet;
 #X obj 79 173 list prepend 0;
@@ -103,7 +104,7 @@ read from., f 33;
 #X text 596 389 See the real-time version for more information on magnitude
 spectrum in general., f 33;
 #X text 607 570 July 2017;
-#X text 103 339 Analyze a window starting at sample 44100 that is 2000
+#X text 92 345 Analyze a window starting at sample 44100 that is 2000
 samples long (samples 44100 - 46099).;
 #X connect 0 0 18 0;
 #X connect 5 0 18 0;

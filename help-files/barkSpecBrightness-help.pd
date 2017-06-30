@@ -1,18 +1,18 @@
-#N canvas 216 33 957 675 10;
+#N canvas 213 81 1001 675 10;
 #X obj 58 73 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 79 73 Bang to analyze the entire array.;
 #X obj 58 561 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 0.399099 256;
+-262144 -1 -1 0 256;
 #X obj 157 238 hsl 400 15 0 128000 0 0 empty empty Scrub -2 -8 0 12
--191407 -1 -1 23900 1;
+-191407 -1 -1 0 1;
 #X obj 3 3 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 3 3 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 452 22 727 651 other-settings 0;
+#N canvas 449 81 727 651 other-settings 0;
 #X obj 34 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
--1 0;
+-1 2;
 #X msg 34 106 window_function \$1;
 #X msg 90 168 set another-sample-array;
 #X msg 129 224 samplerate 48000;
@@ -57,7 +57,7 @@ can either sum or average the energy in each filter. (default: sum)
 #X connect 14 0 7 0;
 #X connect 19 0 7 0;
 #X restore 241 420 pd other-settings;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 1024 float 0;
 #X coords 0 1 1023 -1 200 140 1 0 0;
 #X restore 652 246 graph;
@@ -71,7 +71,7 @@ can either sum or average the energy in each filter. (default: sum)
 #X connect 2 0 0 0;
 #X connect 3 0 2 0;
 #X restore 652 396 pd soundfile;
-#N canvas 869 469 369 330 waveform 0;
+#N canvas 866 473 369 330 waveform 0;
 #X obj 46 61 inlet;
 #X obj 46 82 t f f;
 #X obj 46 284 outlet;
@@ -99,7 +99,7 @@ samples long (samples 44100 - 46099).;
 #X obj 629 105 barkSpecBrightness~;
 #X text 513 58 See the real-time version for more information on Bark
 spectrum brightness in general.;
-#X text 314 510 Creation arguments are the name of the sample array
+#X text 334 510 Creation arguments are the name of the sample array
 to read from \, filterbank spacing in Barks \, and boundary point in
 Barks;
 #X text 725 618 July 2017;

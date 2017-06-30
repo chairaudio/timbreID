@@ -1,4 +1,4 @@
-#N canvas 216 33 904 595 10;
+#N canvas 213 81 972 595 10;
 #X obj 58 73 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 79 73 Bang to analyze the entire array.;
@@ -11,7 +11,7 @@
 0;
 #X obj 3 3 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 497 37 676 525 other-settings 0;
+#N canvas 494 81 691 525 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 0;
 #X msg 54 106 window_function \$1;
@@ -40,7 +40,7 @@
 #X connect 10 0 7 0;
 #X connect 12 0 7 0;
 #X restore 206 322 pd other-settings;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 1024 float 0;
 #X coords 0 1 1023 -1 200 140 1 0 0;
 #X restore 652 246 graph;
@@ -72,15 +72,16 @@
 #X restore 154 258 pd waveform;
 #X text 106 142 Analyze a window starting at sample 44100 that is 2000
 samples long (samples 44100 - 46099).;
-#X text 653 526 Updated for timbreID version 0.7;
+#X text 693 526 Updated for timbreID version 0.7;
 #X msg 97 122 analyze 44100 2000;
-#X text 259 445 Creation arguments are the name of the sample array
-to read from \, and a spectral energy concentration target.;
+#X text 269 445 Creation arguments are the name of the sample array
+to read from \, and a spectral energy concentration target., f 55
+;
 #X obj 58 452 specRolloff \$0-sample 0.85;
 #X obj 703 84 specRolloff~;
 #X text 513 58 See the real-time version for more information on spectral
 rolloff in general.;
-#X text 653 546 July 2017;
+#X text 693 546 July 2017;
 #X connect 0 0 15 0;
 #X connect 3 0 15 0;
 #X connect 4 0 10 0;

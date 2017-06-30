@@ -1,4 +1,4 @@
-#N canvas 327 258 881 529 10;
+#N canvas 324 262 941 529 10;
 #X obj 159 155 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X obj 569 319 timbreID;
@@ -14,7 +14,7 @@
 0;
 #X obj 3 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 679 226 707 568 other-settings 0;
+#N canvas 676 230 772 568 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 0;
 #X msg 54 106 window_function \$1;
@@ -69,7 +69,7 @@ two. The second creation argument specifies the Bark-spacing of the
 filterbank. This can also be changed later with the "filterbank" message.
 ;
 #X obj 55 429 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 0.000472255 256;
+-262144 -1 -1 0 256;
 #X text 166 90 Activate a signal;
 #X msg 193 215 window 2000;
 #X text 249 384 Creation arguments are window size in samples and filterbank

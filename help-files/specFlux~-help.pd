@@ -1,4 +1,4 @@
-#N canvas 156 101 1091 592 10;
+#N canvas 153 105 1091 592 10;
 #X obj 177 173 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X obj 88 90 *~;
@@ -8,7 +8,7 @@
 #X obj 169 90 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X floatatom 88 361 10 0 0 0 - - specFlux, f 10;
-#N canvas 587 64 517 376 attack-detection 0;
+#N canvas 584 81 517 376 attack-detection 0;
 #X obj 33 289 select 1;
 #X obj 33 330 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
@@ -38,7 +38,7 @@ Turn on the toggle below to check it out.;
 0;
 #X obj 4 5 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 281 48 848 662 other-settings 0;
+#N canvas 278 81 890 662 other-settings 0;
 #X text 191 249 Change window size.;
 #X obj 144 189 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
@@ -84,7 +84,7 @@ things to behave properly;
 #X restore 240 263 pd other-settings;
 #X text 223 313 Creation arguments are window size and separation in
 samples between analysis windows., f 48;
-#N canvas 0 22 450 278 (subpatch) 0;
+#N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-bin-diffs 513 float 0;
 #X coords 0 0.1 512 -0.1 200 140 1 0 0;
 #X restore 393 63 graph;
@@ -117,7 +117,7 @@ is used in an attack detector. bonk~ and timbreID's bark~ objects are
 much better designed for this purpose - the sub-patch here is only
 a proof of concept.;
 #X text 67 512 July 2017;
-#N canvas 0 22 450 300 do-plotting 0;
+#N canvas 0 81 450 300 do-plotting 0;
 #X obj 84 51 inlet;
 #X obj 84 150 list prepend 0;
 #X obj 84 90 t l l;

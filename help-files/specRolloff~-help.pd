@@ -1,4 +1,4 @@
-#N canvas 211 24 889 568 10;
+#N canvas 208 81 948 568 10;
 #X obj 133 147 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X floatatom 55 503 10 0 0 0 - - -, f 10;
@@ -7,7 +7,7 @@
 0;
 #X obj 3 3 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 641 97 661 488 other-settings 0;
+#N canvas 638 101 716 488 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 3;
 #X msg 54 106 window_function \$1;
@@ -32,11 +32,11 @@ things to behave properly;
 #X connect 8 0 4 0;
 #X restore 268 376 pd other-settings;
 #X text 657 497 Updated for timbreID version 0.7;
-#X obj 641 358 timbreID;
-#X text 474 293 This feature can be sent to the timbreID external in
+#X obj 651 358 timbreID;
+#X text 484 293 This feature can be sent to the timbreID external in
 order to identify timbres in real time. For more on using audio features
 for classification \, see the timbreID helpfile:;
-#X text 474 209 Audio buffering and windowing are taken care of by
+#X text 484 209 Audio buffering and windowing are taken care of by
 the external \, so there is no need for tabreceive~ or block~. You
 can set the window size with a creation argument \, or change it with
 the "window" message. Window size is not required to be a power of
@@ -50,14 +50,14 @@ two.;
 an energy concentration target between 0 and 1, f 47;
 #X text 130 129 Bang to output rolloff frequency;
 #X text 202 236 Change window size;
-#X obj 171 177 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+#X obj 171 177 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X obj 171 197 metro 100;
 #X text 197 176 Output continuously;
 #X obj 142 53 hsl 128 15 100 15000 1 0 empty empty empty -2 -8 0 10
--262144 -1 -1 12700 1;
+-262144 -1 -1 0 1;
 #X floatatom 139 73 10 0 0 0 - - -, f 10;
-#X text 474 33 Spectral Rolloff is the frequency below which a certain
+#X text 484 33 Spectral Rolloff is the frequency below which a certain
 amount of total spectral energy is concentrated. The default concentration
 is 0.85 \, but you can change this with the concentration message below.
 Keep in mind that roll-off reports the frequency associated with the

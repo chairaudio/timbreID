@@ -1,9 +1,9 @@
-#N canvas 241 127 920 592 10;
+#N canvas 238 131 920 592 10;
 #X obj 58 74 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 79 74 Bang to analyze the entire array.;
 #X obj 58 492 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 1.75867 256;
+-262144 -1 -1 0 256;
 #X msg 154 281 analyze \$1 1024;
 #X obj 157 239 hsl 400 15 0 128000 0 0 empty empty Scrub -2 -8 0 12
 -191407 -1 -1 0 1;
@@ -11,7 +11,7 @@
 0;
 #X obj 3 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 454 76 798 664 other-settings 0;
+#N canvas 451 81 798 664 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 0;
 #X msg 54 106 window_function \$1;
@@ -58,7 +58,7 @@ energy in the unfiltered bins (default: OFF);
 #X connect 14 0 7 0;
 #X connect 20 0 7 0;
 #X restore 206 333 pd other-settings;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 1024 float 0;
 #X coords 0 1 1023 -1 200 140 1 0 0;
 #X restore 652 207 graph;
@@ -91,14 +91,14 @@ energy in the unfiltered bins (default: OFF);
 #X msg 97 123 analyze 44100 2000;
 #X text 298 447 Creation arguments are the name of the sample array
 to read from \, and filterbank spacing in Barks;
-#X text 691 523 Updated for timbreID version 0.7;
+#X text 661 523 Updated for timbreID version 0.7;
 #X text 117 153 Analyze a window starting at sample 44100 that is 2000
 samples long (samples 44100 - 46099).;
 #X obj 58 453 barkSpecSkewness \$0-sample 0.5;
-#X obj 703 85 barkSpecSkewness~;
+#X obj 743 86 barkSpecSkewness~;
 #X text 512 59 See the real-time version for more information on Bark
 spectrum skewness in general.;
-#X text 691 543 July 2017;
+#X text 661 543 July 2017;
 #X connect 0 0 15 0;
 #X connect 3 0 15 0;
 #X connect 4 0 10 0;

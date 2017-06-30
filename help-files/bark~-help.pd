@@ -1,12 +1,12 @@
-#N canvas 204 140 786 725 10;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 201 144 830 725 10;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-bark-output 50 float 0;
 #X coords 0 10 49 0 200 140 1 0 0;
 #X restore 481 187 graph;
 #X obj 176 495 list prepend 0;
 #X obj 53 570 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
-#N canvas 233 235 632 330 init 0;
+#N canvas 230 239 683 330 init 0;
 #X msg 26 166 \; pd dsp 1 \;;
 #X obj 63 19 loadbang;
 #X msg 122 220 85;
@@ -44,7 +44,7 @@ thresh -1 6.5;
 master-volume -2 -8 0 12 -228856 -1 -1 10795 1;
 #X obj 53 465 bark~ 2048 128 0.5;
 #X msg 84 248 stop;
-#N canvas 106 23 1285 780 other-messages-and-settings 0;
+#N canvas 103 81 1285 780 other-messages-and-settings 0;
 #X msg 166 135 debug \$1;
 #X msg 60 85 spew \$1;
 #X obj 166 115 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
@@ -146,7 +146,7 @@ bark~ of the overlap for it to behave properly;
 #X connect 41 0 40 0;
 #X restore 467 674 pd other-messages-and-settings;
 #X msg 396 510 mask 4 0.75;
-#N canvas 567 151 470 186 thresh-details 0;
+#N canvas 564 155 470 186 thresh-details 0;
 #X text 26 19 As with bonk~ \, the thresh message lets you specify
 lower and upper growth thresholds. An onset is reported when growth
 exceeds the upper threshold \, then falls below the lower threshold.
@@ -156,11 +156,11 @@ sign of decay after growth exceeds the upper threshold.;
 information on the "measure" function \, which can help you find appropriate
 thresholds.;
 #X restore 576 470 pd thresh-details;
-#N canvas 868 187 477 161 mask-details 0;
+#N canvas 865 191 477 161 mask-details 0;
 #X text 18 49 As with bonk~ \, you can specify a number of analysis
 periods and decay rate for the energy mask.;
 #X restore 576 510 pd mask-details;
-#N canvas 913 269 464 176 debounce-details 0;
+#N canvas 910 273 464 176 debounce-details 0;
 #X text 18 39 The spectral flux that goes on during the first few milliseconds
 of an instrument's attack can cause extra onset reports. Provide a
 time in milliseconds with the "debounce" message to deal with this.
@@ -182,7 +182,7 @@ resonance \, bonk~ sometimes misses low notes in this piano recording.
 tuning process \, which is always finicky. See the [pd other-messages-and-settings]
 subpatch for more details.;
 #X msg 436 590 filter_range 0 20;
-#N canvas 810 377 466 228 filter_range-details 0;
+#N canvas 807 381 466 228 filter_range-details 0;
 #X text 18 39 Use the "filter_range" message to specify a range of
 filters to use in the total growth measurement. The appropriate limits
 for these values depend on how many filters are in the Bark filterbank.

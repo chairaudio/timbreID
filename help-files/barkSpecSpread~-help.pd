@@ -1,4 +1,4 @@
-#N canvas 295 113 907 543 10;
+#N canvas 292 117 950 543 10;
 #X obj 98 189 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 160 220 Bang repeatedly...;
@@ -9,7 +9,7 @@
 0;
 #X obj 3 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 629 66 730 632 other-settings 0;
+#N canvas 626 81 781 632 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 0;
 #X msg 54 106 window_function \$1;
@@ -57,7 +57,7 @@ things to behave properly;
 #X obj 56 49 noise~;
 #X msg 172 293 window 2000;
 #X text 171 275 Change analysis window size;
-#X text 238 430 Creation arguments are window size in samples \, and
+#X text 248 430 Creation arguments are window size in samples \, and
 filterbank spacing in Barks;
 #X obj 121 32 loadbang;
 #X obj 121 76 bark2freq;

@@ -150,6 +150,7 @@ typedef struct attributeData
 	t_normData normData;
 	t_float weight;
 	t_attributeIdx order;
+	t_symbol *name;
 } t_attributeData;
 
 

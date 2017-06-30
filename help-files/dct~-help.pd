@@ -1,17 +1,17 @@
-#N canvas 270 78 898 589 10;
+#N canvas 267 82 958 589 10;
 #X obj 108 132 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-dct-graph 1024 float 0;
 #X coords 0 1 1023 -1 200 140 1 0 0;
 #X restore 483 310 graph;
-#X obj 137 171 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+#X obj 137 171 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X obj 4 4 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 651 259 721 479 other-settings 0;
+#N canvas 648 263 721 479 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 1;
 #X msg 54 106 window_function \$1;
@@ -39,7 +39,7 @@ things to behave properly;
 #X obj 57 72 adc~;
 #X text 52 507 Updated for timbreID version 0.7;
 #X msg 173 243 window 2000;
-#X text 255 243 Change analysis window size;
+#X text 285 236 Change analysis window size, f 17;
 #X obj 648 536 timbreID;
 #X text 161 170 Bang repeatedly to keep refreshing...;
 #X text 481 471 This feature can be sent to the timbreID external in

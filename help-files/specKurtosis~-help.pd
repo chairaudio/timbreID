@@ -1,4 +1,4 @@
-#N canvas 283 59 859 483 10;
+#N canvas 280 81 898 483 10;
 #X obj 119 201 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X floatatom 50 433 10 0 0 0 - - -, f 10;
@@ -6,7 +6,7 @@
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 638 93 609 497 other-settings 0;
+#N canvas 635 97 609 497 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 0;
 #X msg 54 106 window_function \$1;
@@ -44,7 +44,7 @@ two.;
 #X msg 185 296 window 2000;
 #X obj 50 400 specKurtosis~ 1024;
 #X text 171 224 Bang continuously;
-#X obj 150 225 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+#X obj 150 225 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X obj 50 44 noise~;
 #X obj 151 135 *~;
@@ -55,7 +55,7 @@ two.;
 #X floatatom 107 41 5 0 0 1 Q - -, f 5;
 #X obj 107 60 * 10;
 #X obj 50 135 *~;
-#X obj 86 135 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+#X obj 86 135 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X text 425 60 Spectral kurtosis measures the peakedness of a spectrum.
 The kurtosis of a single sinusoid will be extremely high \, while that

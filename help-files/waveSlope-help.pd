@@ -1,7 +1,7 @@
-#N canvas 282 187 884 737 10;
+#N canvas 279 191 884 737 10;
 #X obj 51 289 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 1024 float 0;
 #X coords 0 1 1023 -1 200 140 1 0 0;
 #X restore 48 48 graph;
@@ -21,7 +21,7 @@
 #X connect 3 0 4 0;
 #X connect 5 0 3 0;
 #X connect 6 0 0 0;
-#X restore 490 457 pd soundfile;
+#X restore 490 497 pd soundfile;
 #N canvas 723 239 304 333 waveform 0;
 #X obj 46 61 inlet;
 #X obj 46 82 t f f;
@@ -35,26 +35,26 @@
 #X connect 2 0 5 1;
 #X connect 3 0 4 0;
 #X connect 5 0 3 0;
-#X restore 490 509 pd waveform;
+#X restore 490 549 pd waveform;
 #X obj 51 244 hsl 800 25 0 50976 0 0 \$0-scrub-bar \$0-scrub-bar-set
 Scrub-bar -2 -8 0 12 -191407 -1 -1 0 1;
 #X obj 4 4 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 0 22 450 278 (subpatch) 0;
+#N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-slope-graph 2 float 1;
 #A 0 1.58351e-05 -1.58351e-05;
 #X coords 0 0.35 1 -0.35 200 140 1 0 0;
 #X restore 48 48 graph;
 #X obj 134 386 r \$0-scrub-bar;
 #X msg 99 334 analyze 44100 2000;
-#X text 235 326 Analyze a window starting at sample 44100 that is 2000
+#X text 245 328 Analyze a window starting at sample 44100 that is 2000
 samples long (samples 44100 - 46099);
 #X msg 134 411 analyze \$1 1024;
-#X obj 490 487 r \$0-scrub-bar;
-#X text 643 666 Updated for timbreID version 0.7;
-#N canvas 596 82 654 440 other-settings 0;
+#X obj 490 527 r \$0-scrub-bar;
+#X text 623 676 Updated for timbreID version 0.7;
+#N canvas 590 90 654 440 other-settings 0;
 #X obj 44 62 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
 ;
 #X msg 44 80 normalize \$1;
@@ -74,12 +74,12 @@ the peak amplitude is 1 (default: OFF);
 #X connect 3 0 5 0;
 #X connect 7 0 5 0;
 #X restore 196 480 pd other-settings;
-#X text 229 382 Use the slider above to move through the audio file
-;
+#X text 269 392 Use the slider above to move through the audio file
+, f 27;
 #X obj 51 547 waveSlope \$0-sample;
 #N canvas 654 581 671 360 graph-slope 0;
 #X obj 114 125 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 -3.16701e-05 256;
+-262144 -1 -1 0 256;
 #X obj 114 55 inlet;
 #X msg 538 242 1;
 #X obj 403 227 / 2;
@@ -102,16 +102,16 @@ the peak amplitude is 1 (default: OFF);
 #X connect 9 0 6 1;
 #X coords 0 -1 1 1 250 70 1 100 100;
 #X restore 51 593 pd graph-slope;
-#X text 192 539 Creation argument is the name of the sample array to
+#X text 212 541 Creation argument is the name of the sample array to
 read from, f 33;
-#X obj 628 420 waveSlope~;
-#X text 626 371 See the real-time version for more information on waveform
+#X obj 628 450 waveSlope~;
+#X text 626 401 See the real-time version for more information on waveform
 slope in general., f 33;
-#X text 643 686 July 2017;
+#X text 623 696 July 2017;
 #X text 342 88 Note that quiet moments between sound events will produce
 erratic slope reports that constantly change between positive and negative
-values \, so it's usually best to have a basic amplitude threshold
-before analysis.;
+values. A basic amplitude threshold before analysis can be used to
+filter this information out if it's not needed.;
 #X connect 0 0 17 0;
 #X connect 9 0 12 0;
 #X connect 10 0 17 0;

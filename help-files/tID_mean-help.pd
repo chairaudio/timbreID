@@ -1,4 +1,4 @@
-#N canvas 271 134 860 476 10;
+#N canvas 268 138 901 476 10;
 #X floatatom 496 234 10 0 0 0 - - -, f 10;
 #X msg 496 143 927.55 819.1 527.85 497.31 303.98;
 #X text 39 131 Suppose you take 32 spectral centroid measurements over

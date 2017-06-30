@@ -1,10 +1,10 @@
-#N canvas 205 174 1036 716 10;
+#N canvas 202 178 1047 716 10;
 #X floatatom 50 574 10 0 0 0 - - -, f 10;
 #X obj 4 4 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 679 226 857 706 other-settings 0;
+#N canvas 515 140 899 706 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 0;
 #X msg 54 106 window_function \$1;
@@ -57,7 +57,7 @@ fundamental. (default: OFF);
 #X connect 17 0 4 0;
 #X connect 18 0 4 0;
 #X restore 350 423 pd other-settings;
-#X text 786 616 Updated for timbreID version 0.7;
+#X text 786 646 Updated for timbreID version 0.7;
 #X obj 742 532 timbreID;
 #X text 595 471 This feature can be sent to the timbreID external in
 order to identify timbres in real time. For more on using audio features
@@ -68,12 +68,12 @@ can set the window size with a creation argument \, or change it with
 the "window" message. Window size is not required to be a power of
 two.;
 #X text 200 521 Creation argument is window size in samples;
-#X text 786 636 July 2017;
+#X text 786 666 July 2017;
 #X obj 50 191 *~;
 #X obj 80 191 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X floatatom 190 574 10 0 0 0 - - -, f 10;
-#N canvas 0 22 450 300 (subpatch) 0;
+#X floatatom 200 574 10 0 0 0 - - -, f 10;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-magSpec-graph 256 float 0;
 #X coords 0 0.15 255 0 200 140 1 0 0;
 #X restore 334 65 graph;
@@ -102,7 +102,7 @@ two.;
 #X restore 334 208 pd wavetables;
 #X text 197 280 Bang to output harmonicity and inharmonicity, f 18
 ;
-#X obj 170 309 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+#X obj 170 309 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X obj 170 329 metro 100;
 #X obj 170 351 t b b;
@@ -114,7 +114,7 @@ two.;
 #X obj 50 42 loadbang;
 #X msg 50 64 57;
 #X obj 50 106 mtof;
-#N canvas 962 327 705 408 get-spectrum-and-pitch 0;
+#N canvas 505 281 757 408 get-spectrum-and-pitch 0;
 #X obj 355 248 mtof;
 #X obj 297 199 moses 0;
 #N canvas 205 170 525 260 do-plotting 0;
@@ -180,7 +180,7 @@ non-DC peak in the spectrum is the fundamental. This could be useful
 for cases when the spectrum is relatively inharmonic (and therefore
 may not work well with pitch-tracking algorithms) \, but you still
 want some measure of harmonicity.;
-#N canvas 636 23 736 321 inharmonic 0;
+#N canvas 636 50 736 321 inharmonic 0;
 #X obj 61 43 inlet;
 #X obj 61 251 outlet~;
 #X obj 61 65 t f f f f f f f f;

@@ -1,7 +1,7 @@
-#N canvas 429 174 646 604 10;
+#N canvas 426 178 675 604 10;
 #X obj 266 340 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#N canvas 739 157 304 400 random-point 0;
+#N canvas 736 161 304 400 random-point 0;
 #X obj 54 36 t b b b;
 #X obj 54 167 random 100;
 #X obj 54 249 pack f f f;
@@ -35,9 +35,6 @@
 ;
 #X text 289 338 Generate a random point in space.;
 #X obj 45 415 nearestPoint 3;
-#X text 42 41 This object exists in order to enable the timbreID timbre-space
-example patches \, but it's bound to be useful in other situations
-too.;
 #X text 42 91 nearestPoint accepts members from a set of points in
 its left inlet. All members of the set must have the same dimensionality
 \, set by a creation argument. Once you've given it all the points
@@ -55,12 +52,15 @@ the right inlet to see which point in the set is nearest.;
 #X obj 175 454 print Distance;
 #X msg 45 188 1 0 0 \, 0 1 0 \, 0 0 1 \, 1 1 0 \, 0 1 1 \, 1 0 1;
 #X text 411 556 July 2017;
+#X text 42 41 This object exists in order to enable the timbreID timbre-space
+example patches \, but it's bound to be useful in other situations
+too.;
 #X connect 0 0 1 0;
 #X connect 1 0 8 1;
 #X connect 3 0 8 0;
 #X connect 5 0 8 0;
-#X connect 8 0 17 0;
-#X connect 8 1 18 0;
+#X connect 8 0 16 0;
+#X connect 8 1 17 0;
+#X connect 14 0 8 0;
 #X connect 15 0 8 0;
-#X connect 16 0 8 0;
-#X connect 19 0 8 0;
+#X connect 18 0 8 0;

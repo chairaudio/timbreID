@@ -1,4 +1,4 @@
-#N canvas 283 59 859 483 10;
+#N canvas 280 81 882 483 10;
 #X obj 109 172 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X floatatom 60 424 10 0 0 0 - - -, f 10;
@@ -7,7 +7,7 @@
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 679 226 609 497 other-settings 0;
+#N canvas 676 230 638 497 other-settings 0;
 #X obj 54 86 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 0;
 #X msg 54 106 window_function \$1;

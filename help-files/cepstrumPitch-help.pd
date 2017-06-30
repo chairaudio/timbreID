@@ -1,7 +1,7 @@
-#N canvas 228 81 872 651 10;
+#N canvas 225 85 922 651 10;
 #X obj 50 310 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
-#N canvas 0 22 450 300 (subpatch) 0;
+#N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 1024 float 0;
 #X coords 0 1 1023 -1 200 140 1 0 0;
 #X restore 47 47 graph;
@@ -91,20 +91,21 @@ cepstrum is computed (default: ON);
 #X connect 16 0 7 0;
 #X connect 19 0 7 0;
 #X restore 152 498 pd other-settings;
-#X text 607 550 Updated for timbreID version 0.7;
+#X text 665 592 Updated for timbreID version 0.7;
 #X obj 107 433 r \$0-scrub-bar;
 #X obj 655 116 r \$0-scrub-bar;
-#X text 209 432 Move through the soundfile with the slider above;
+#X text 245 436 Move through the soundfile with the slider above,
+f 28;
 #X msg 94 379 analyze 44100 2000;
-#X text 607 570 July 2017;
+#X text 665 612 July 2017;
 #X floatatom 50 568 5 0 0 0 - - -, f 5;
 #X obj 50 546 cepstrumPitch \$0-sample 43 64;
-#X text 103 339 Analyze a window starting at sample 44100 that is 2000
+#X text 92 345 Analyze a window starting at sample 44100 that is 2000
 samples long (samples 44100 - 46099).;
 #X obj 598 438 cepstrumPitch~;
 #X text 596 389 See the real-time version for more information on cepstrum
 pitch tracking in general., f 33;
-#X text 245 533 Creation arguments are the name of the sample array
+#X text 295 530 Creation arguments are the name of the sample array
 to read from \, and the lower and upper bounds of the expected pitch
 range to track in MIDI units., f 42;
 #X text 48 613 Output value is pitch in MIDI units;
