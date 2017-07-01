@@ -26,6 +26,9 @@ version 0.7, September 26, 2016
 #include "m_pd.h"
 #include "fftw3.h"
 
+// choose either FFTW_MEASURE or FFTW_ESTIMATE here.
+#define FFTWPLANNERFLAG FFTW_ESTIMATE
+
 #define MINBARKSPACING 0.1
 #define MAXBARKSPACING 6.0
 #define BARKSPACINGDEFAULT 0.5

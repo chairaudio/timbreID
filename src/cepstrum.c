@@ -80,8 +80,8 @@ static void cepstrum_resizeWindow(t_cepstrum *x, t_sampIdx oldWindow, t_sampIdx 
 	// set up a new FFTW output buffer
 	x->x_fftwOut = (fftwf_complex *)fftwf_alloc_complex(x->x_windowHalf+1);
 	// FFTW plan
-	x->x_fftwForwardPlan = fftwf_plan_dft_r2c_1d(x->x_window, x->x_fftwIn, x->x_fftwOut, FFTW_MEASURE);
-	x->x_fftwBackwardPlan = fftwf_plan_dft_c2r_1d(x->x_window, x->x_fftwOut, x->x_fftwIn, FFTW_MEASURE);
+	x->x_fftwForwardPlan = fftwf_plan_dft_r2c_1d(x->x_window, x->x_fftwIn, x->x_fftwOut, FFTWPLANNERFLAG);
+	x->x_fftwBackwardPlan = fftwf_plan_dft_c2r_1d(x->x_window, x->x_fftwOut, x->x_fftwIn, FFTWPLANNERFLAG);
 
 	x->x_blackman = (t_float *)t_resizebytes(x->x_blackman, oldWindow*sizeof(t_float), x->x_window*sizeof(t_float));
 	x->x_cosine = (t_float *)t_resizebytes(x->x_cosine, oldWindow*sizeof(t_float), x->x_window*sizeof(t_float));
@@ -380,10 +380,10 @@ static void *cepstrum_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_fftwOut = (fftwf_complex *)fftwf_alloc_complex(x->x_windowHalf+1);
 
 	// Forward DFT plan
-	x->x_fftwForwardPlan = fftwf_plan_dft_r2c_1d(x->x_window, x->x_fftwIn, x->x_fftwOut, FFTW_MEASURE);
+	x->x_fftwForwardPlan = fftwf_plan_dft_r2c_1d(x->x_window, x->x_fftwIn, x->x_fftwOut, FFTWPLANNERFLAG);
 
 	// Backward DFT plan
-	x->x_fftwBackwardPlan = fftwf_plan_dft_c2r_1d(x->x_window, x->x_fftwOut, x->x_fftwIn, FFTW_MEASURE);
+	x->x_fftwBackwardPlan = fftwf_plan_dft_c2r_1d(x->x_window, x->x_fftwOut, x->x_fftwIn, FFTWPLANNERFLAG);
 	
 	for(i=0; i<x->x_window; i++)
 		x->x_fftwIn[i] = 0.0;

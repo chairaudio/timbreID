@@ -189,7 +189,7 @@ static void specBrightness_tilde_window(t_specBrightness_tilde *x, t_floatarg w)
 	x->x_fftwOut = (fftwf_complex *) fftwf_alloc_complex(windowHalf+1);
 
 	// create a new DFT plan based on new window size
-	x->x_fftwPlan = fftwf_plan_dft_r2c_1d(x->x_window, x->x_fftwIn, x->x_fftwOut, FFTW_MEASURE);
+	x->x_fftwPlan = fftwf_plan_dft_r2c_1d(x->x_window, x->x_fftwIn, x->x_fftwOut, FFTWPLANNERFLAG);
 
 	// we're supposed to initialize the input array after we create the plan
  	for(i=0; i<x->x_window; i++)
@@ -353,7 +353,7 @@ static void *specBrightness_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_fftwOut = (fftwf_complex *)fftwf_alloc_complex(x->x_windowHalf+1);
 
 	// DFT plan
-	x->x_fftwPlan = fftwf_plan_dft_r2c_1d(x->x_window, x->x_fftwIn, x->x_fftwOut, FFTW_MEASURE);
+	x->x_fftwPlan = fftwf_plan_dft_r2c_1d(x->x_window, x->x_fftwIn, x->x_fftwOut, FFTWPLANNERFLAG);
 
 	// we're supposed to initialize the input array after we create the plan
  	for(i=0; i<x->x_window; i++)

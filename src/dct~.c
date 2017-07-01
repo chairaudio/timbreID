@@ -144,7 +144,7 @@ static void dct_tilde_window(t_dct_tilde *x, t_floatarg w)
 	fftwf_destroy_plan(x->x_fftwDctPlan); 
 	
 	// create a new DCT plan based on new window size
-	x->x_fftwDctPlan = fftwf_plan_r2r_1d(x->x_window, x->x_dctIn, x->x_dctOut, FFTW_REDFT10, FFTW_MEASURE);
+	x->x_fftwDctPlan = fftwf_plan_r2r_1d(x->x_window, x->x_dctIn, x->x_dctOut, FFTW_REDFT10, FFTWPLANNERFLAG);
 
 	// we're supposed to initialize the input array after we create the plan
  	for(i=0; i<x->x_window; i++)
@@ -276,7 +276,7 @@ static void *dct_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	tIDLib_hannWindow(x->x_hann, x->x_window);
 
 	// DCT plan. FFTW_REDFT10 is the DCT-II
-	x->x_fftwDctPlan = fftwf_plan_r2r_1d(x->x_window, x->x_dctIn, x->x_dctOut, FFTW_REDFT10, FFTW_MEASURE);
+	x->x_fftwDctPlan = fftwf_plan_r2r_1d(x->x_window, x->x_dctIn, x->x_dctOut, FFTW_REDFT10, FFTWPLANNERFLAG);
 
 	// we're supposed to initialize the input array after we create the plan
  	for(i=0; i<x->x_window; i++)

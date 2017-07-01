@@ -66,7 +66,7 @@ static void dct_resizeWindow(t_dct *x, t_sampIdx oldWindow, t_sampIdx window, t_
 
 	fftwf_destroy_plan(x->x_fftwDctPlan); 
 	// FFTW plan
-	x->x_fftwDctPlan = fftwf_plan_r2r_1d(x->x_window, x->x_dctIn, x->x_dctOut, FFTW_REDFT10, FFTW_MEASURE);
+	x->x_fftwDctPlan = fftwf_plan_r2r_1d(x->x_window, x->x_dctIn, x->x_dctOut, FFTW_REDFT10, FFTWPLANNERFLAG);
 
 	x->x_blackman = (t_float *)t_resizebytes(x->x_blackman, oldWindow*sizeof(t_float), x->x_window*sizeof(t_float));
 	x->x_cosine = (t_float *)t_resizebytes(x->x_cosine, oldWindow*sizeof(t_float), x->x_window*sizeof(t_float));
@@ -304,7 +304,7 @@ static void *dct_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_listOut = (t_atom *)t_getbytes(x->x_window*sizeof(t_atom));
 
 	// DCT plan. FFTW_REDFT10 is the DCT-II
-	x->x_fftwDctPlan = fftwf_plan_r2r_1d(x->x_window, x->x_dctIn, x->x_dctOut, FFTW_REDFT10, FFTW_MEASURE);
+	x->x_fftwDctPlan = fftwf_plan_r2r_1d(x->x_window, x->x_dctIn, x->x_dctOut, FFTW_REDFT10, FFTWPLANNERFLAG);
 	
 	for(i=0; i<x->x_window; i++)
 	{
