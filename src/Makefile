@@ -2,50 +2,57 @@ SOURCES = attackTime.c attackTime~.c bark.c bark2freq.c barkSpec.c barkSpecBrigh
 
 
 # ****SUPPLY THE LOCATION OF PD SOURCE****
-pd_src = /Applications/Pd-0.47-1.app/Contents/Resources
 # pd_src = /home/yourname/somedirectory/pd-0.47-1
-
+pd_src = /Applications/Pd-0.47-1.app/Contents/Resources
+# pd_src = "C:\Program Files (x86)\Pd"
 
 CFLAGS = -DPD -I$(pd_src)/src -I/usr/local/include -Wall -W -g
-LDFLAGS =
-LIBS = -lfftw3f
-LIBDIR = /usr/local/lib
+
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Darwin)
-  SOURCES +=
   EXTENSION = pd_darwin
   OS = macosx
+  LIBDIR = /usr/local/lib
   OPT_CFLAGS = -O3 -ftree-vectorize
   FAT_FLAGS = -arch i386 -arch x86_64
   CFLAGS += -fPIC $(FAT_FLAGS)
   LDFLAGS += -bundle -undefined dynamic_lookup $(FAT_FLAGS)
-  LIBS += -lc -L$(LIBDIR)
+  LIBS += -lc -L$(LIBDIR) -lfftw3f
   STRIP = strip -x
  endif
 ifeq ($(UNAME),Linux)
   EXTENSION = pd_linux
   OS = linux
+  LIBDIR = /usr/local/lib
   OPT_CFLAGS = -O6 -funroll-loops -fomit-frame-pointer
   CFLAGS += -fPIC
   LDFLAGS += -Wl,--export-dynamic -shared -fPIC
-  LIBS += -lc
+  LIBS += -lc -lfftw3f
   STRIP = strip --strip-unneeded -R .note -R .comment
 endif
 ifeq (MINGW,$(findstring MINGW,$(UNAME)))
-  SOURCES +=
+  CC = gcc
   EXTENSION = dll
   OS = windows
-  OPT_CFLAGS = -O3 -funroll-loops -fomit-frame-pointer -march=i686 -mtune=pentium4
+  LIBDIR = "C:\MinGW\lib\fftw-3.3.5-dll32"
+  OPT_CFLAGS = -O3 -funroll-loops -fomit-frame-pointer \
+    -march=pentium4 -mfpmath=sse -msse -msse2
   WINDOWS_HACKS = -D'O_NONBLOCK=1'
-  CFLAGS += -mms-bitfields $(WINDOWS_HACKS)
-  LDFLAGS += -s -shared -Wl,--enable-auto-import
-  LIBS += -L$(pd_src)/bin -L$(pd_src)/obj -lpd -lwsock32 -lkernel32 -luser32 -lgdi32
+  CFLAGS += -mms-bitfields $(WINDOWS_HACKS) \
+    -I"C:\MinGW\lib\fftw-3.3.5-dll32"
+  LDFLAGS += -static-libgcc -s -shared \
+    -Wl,--enable-auto-import $(pd_src)/bin/pd.dll
+  LIBS += -L$(LIBDIR) -L$(pd_src)/bin -lpd -lfftw3f-3 \
+    -lwsock32 -lkernel32 -luser32 -lgdi32
   STRIP = strip --strip-unneeded -R .note -R .comment
 endif
 
 CFLAGS += $(OPT_CFLAGS)
 
+
+tIDLib.o: tIDLib.c tIDLib.h
+	$(CC) $(CFLAGS) -o tIDLib.o -c tIDLib.c
 
 
 all: $(SOURCES:.c=.$(EXTENSION))
@@ -58,10 +65,6 @@ all: $(SOURCES:.c=.$(EXTENSION))
 	chmod a-x "$*.$(EXTENSION)"
 	$(STRIP) $*.$(EXTENSION)
 	rm -f -- $*.o
-
-
-tIDLib.o: tIDLib.c tIDLib.h
-	$(CC) $(CFLAGS) -o tIDLib.o -c tIDLib.c
 
 
 .PHONY: clean
