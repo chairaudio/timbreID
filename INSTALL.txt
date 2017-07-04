@@ -1,16 +1,28 @@
 timbreID version 0.7 requires the FFTW library, available at http://www.fftw.org.
 
-FFTW must be compiled in single precision. To do so on a Macintosh, configure FFTW like this:
+FFTW must be compiled in single precision. To do so in Linux, configure FFTW like this:
 
-./configure CFLAGS=“-arch i386 -arch x86_64” --enable-float
+./configure CFLAGS="-fPIC" --enable-float --enable-shared
 
-and like this on Linux:
+and like this on a Macintosh:
 
-./configure CFLAGS=“-fPIC” --enable-float
+./configure CFLAGS="-arch i386 -arch x86_64" --enable-float --enable-shared
 
+Then run:
 
-By default, the FFTW library (i.e., libfftw3f.a) should be installed to /usr/local/lib. Once it is properly built and installed, you can make timbreID from within the src directory by running:
+make
+sudo make install
+
+The FFTW library for Windows is available precompiled at:
+
+http://www.fftw.org/install/windows.html
+
+You will need the 32-bit version, and the single precision version specifically. The provided zip file contains several compiled versions of FFTW, but only libfftw3f-3.dll is required for timbreID version 0.7.
+
+On Linux and Macintosh, the FFTW library files (i.e., libfftw3f.a and libfftw3f.3.dylib) should be installed to /usr/local/lib by default. Once FFTW is properly built and installed, you can make timbreID using the included Makefile by running:
 
 make tIDLib.o all
 
-You must specify the location of your Pure Data source code directory in the Makefile.
+You must specify the location of your Pure Data source code directory in the Makefile beforehand. Compilation from source on Windows can be done with the same Makefile if you use MinGW: http://www.mingw.org
+
+On Linux and Macintosh, timbreID objects will find the shared FFTW library files in the default /usr/local/lib directory, so there is no need to copy the library to the timbreID directory. On Windows, you will either have to set up an environment variable to point to the location of libfftw3f-3.dll, or simply put libfftw3f-3.dll directly in the timbreID directory.
