@@ -19,7 +19,7 @@ http://www.fftw.org/install/windows.html
 
 You will need the 32-bit version, and the single precision version specifically. The provided zip file contains several compiled versions of FFTW, but only libfftw3f-3.dll is required for timbreID version 0.7.
 
-On Linux and Macintosh, the FFTW library files (i.e., libfftw3f.a and libfftw3f.3.dylib) should be installed to /usr/local/lib by default. Once FFTW is properly built and installed, you can make timbreID using the included Makefile by running:
+On Linux and Macintosh, the FFTW library files should be installed to /usr/local/lib by default. Once FFTW is properly built and installed, you can make timbreID using the included Makefile by running:
 
 make tIDLib.o all
 
