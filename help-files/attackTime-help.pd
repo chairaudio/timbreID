@@ -16,7 +16,6 @@
 #X msg 333 344 print;
 #X text 417 345 Print the internal settings to the post window;
 #X msg 153 164 max_search_range 1000;
-#X msg 213 234 onset_samp_delta_thresh 0.0025;
 #X msg 273 294 onset_num_samps_thresh 20;
 #X text 455 226 Specify the sample magnitude threshold that the signal
 must fall below to locate the initial onset. (default: 0.005);
@@ -27,12 +26,13 @@ the initial onset. (default: 10);
 peak sample of an attack to search for the initial onset. This determines
 the size of the internal buffer and is separate from the analysis window
 size (default: 2000ms);
+#X msg 213 234 onset_samp_mag_thresh 0.0025;
 #X connect 0 0 3 0;
 #X connect 1 0 3 0;
 #X connect 5 0 3 0;
 #X connect 7 0 3 0;
 #X connect 8 0 3 0;
-#X connect 9 0 3 0;
+#X connect 12 0 3 0;
 #X restore 207 343 pd other-settings;
 #N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 1024 float 0;

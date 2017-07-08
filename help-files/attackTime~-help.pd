@@ -17,7 +17,6 @@ things to behave properly;
 must fall below to locate the initial onset. (default: 0.005);
 #X msg 275 276 onset_num_samps_thresh 20;
 #X text 396 337 Print the internal settings to the post window;
-#X msg 225 226 onset_samp_delta_thresh 0.0025;
 #X obj 363 374 loadbang;
 #X msg 363 394 onset_samp_mag_thresh 0;
 #X msg 373 414 onset_samp_mag_thresh 0.005;
@@ -33,15 +32,16 @@ peak sample of an attack to search for the initial onset. This determines
 the size of the internal buffer and is separate from the analysis window
 size (default: 2000ms);
 #X text 236 106 Change analysis window size.;
+#X msg 225 226 onset_samp_mag_thresh 0.0025;
 #X connect 1 0 0 0;
 #X connect 2 0 0 0;
 #X connect 4 0 0 0;
 #X connect 5 0 0 0;
 #X connect 7 0 0 0;
-#X connect 9 0 0 0;
-#X connect 10 0 11 0;
+#X connect 9 0 10 0;
+#X connect 10 0 0 0;
 #X connect 11 0 0 0;
-#X connect 12 0 0 0;
+#X connect 16 0 0 0;
 #X restore 182 289 pd other-settings;
 #X text 787 596 Updated for timbreID version 0.7;
 #X obj 763 548 timbreID;
