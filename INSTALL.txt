@@ -1,6 +1,8 @@
 timbreID version 0.7 requires the FFTW library, available at http://www.fftw.org.
 
-FFTW must be compiled as a shared library in single precision. To do so in Linux, configure FFTW like this:
+Pre-compiled FFTW library files are included with timbreID's Macintosh and Windows binary packages available through deken. For Windows, it's fine to simply leave libfftw3f-3.dll in the timbreID directory. For Macintosh, you need to move libfftw3f.3.dylib into /usr/lib or /usr/local/lib.
+
+If you are compliling FFTW yourself, it must be compiled as a shared library in single precision. To do so in Linux, configure FFTW like this:
 
 ./configure CFLAGS="-fPIC" --enable-float --enable-shared
 
