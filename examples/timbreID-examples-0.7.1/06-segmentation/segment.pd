@@ -1,0 +1,380 @@
+#N canvas 116 140 1115 598 10;
+#X declare -path ../lib;
+#X obj 3 4 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
+0;
+#X obj 3 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
+0;
+#N canvas 782 90 637 526 soundfile 0;
+#X obj 50 192 soundfiler;
+#X obj 50 63 pack s \$0;
+#X obj 50 251 s numSamples;
+#X obj 351 318 r numSamples;
+#X obj 351 362 s numFrames;
+#X obj 50 311 r numFrames;
+#X msg 50 333 \; flux-plot resize \$1 \; flux-plot bounds 0 0.5 \$1
+0 \;;
+#X obj 351 148 r numSamples;
+#X floatatom 83 221 20 0 0 0 - - -, f 20;
+#X obj 351 170 pack f \$0;
+#X msg 351 199 \; split-samples resize \$1 \; split-samples bounds
+0 1 \$1 -1 \; \$2-sample bounds 0 1 \$1 -1 \; split-samples const -1
+\;;
+#X obj 351 340 / 256;
+#X msg 50 33 symbol ../audio/percussion.wav;
+#X msg 50 87 read -skip 4.92581e+06 \$1 \$2-sample;
+#X obj 50 11 r lb1;
+#X obj 330 32 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 330 52 openpanel;
+#X obj 330 74 pack s \$0;
+#X msg 330 96 read -resize \$1 \$2-sample;
+#X obj 351 418 r numSamples;
+#X obj 351 440 - 1;
+#X msg 351 462 \; play-position-set range 0 \$1 \;;
+#X connect 0 0 2 0;
+#X connect 0 0 8 0;
+#X connect 1 0 13 0;
+#X connect 3 0 11 0;
+#X connect 5 0 6 0;
+#X connect 7 0 9 0;
+#X connect 9 0 10 0;
+#X connect 11 0 4 0;
+#X connect 12 0 1 0;
+#X connect 13 0 0 0;
+#X connect 14 0 12 0;
+#X connect 15 0 16 0;
+#X connect 16 0 17 0;
+#X connect 17 0 18 0;
+#X connect 18 0 0 0;
+#X connect 19 0 20 0;
+#X connect 20 0 21 0;
+#X restore 49 71 pd soundfile;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X array \$0-sample 927916 float 0;
+#X array split-samples 927916 float 2;
+#X coords 0 1 927916 -1 1000 140 1 0 0;
+#X restore 49 361 graph;
+#N canvas 1030 63 710 755 analysis-routine 0;
+#X obj 78 573 barkSpecFlux \$0-sample 0.5 256;
+#X obj 123 350 r numSamples;
+#X obj 78 383 moses;
+#X obj 78 321 f;
+#X msg 105 288 0;
+#X obj 78 86 bng 15 250 50 0 empty empty analyze 17 7 0 10 -262144
+-1 -1;
+#X obj 78 206 t b b;
+#X obj 78 258 until;
+#X obj 168 260 t b;
+#X obj 78 609 t f b;
+#X obj 78 681 tabwrite flux-plot;
+#X obj 183 652 f;
+#X msg 210 619 0;
+#X obj 223 654 + 1;
+#X floatatom 79 117 5 0 0 1 window-size window-size-set window-size
+, f 5;
+#X floatatom 79 137 5 0 0 1 hop hop-set hop, f 5;
+#X obj 165 323 r hop;
+#X obj 138 323 +;
+#X obj 155 372 r window-size;
+#X obj 123 372 -;
+#X msg 78 461 analyze \$1 \$2;
+#X obj 78 405 pack f f;
+#X msg 234 525 separation \$1;
+#X obj 234 505 r hop;
+#X msg 474 525 power_spectrum \$1;
+#X msg 604 525 normalize \$1;
+#X obj 209 97 tgl 15 0 normalize normalize-set normalize 17 7 0 10
+-262144 -1 -1 1 1;
+#X obj 209 117 tgl 15 0 power power-set power-spectrum 17 7 0 10 -262144
+-1 -1 1 1;
+#X obj 209 137 tgl 15 0 squared-diff squared-diff-set squared-diff
+17 7 0 10 -262144 -1 -1 1 1;
+#X obj 344 505 r squared-diff;
+#X msg 344 525 squared_diff \$1;
+#X obj 474 505 r power;
+#X obj 604 505 r normalize;
+#X obj 404 313 table flux-plot;
+#X connect 0 0 9 0;
+#X connect 1 0 19 0;
+#X connect 2 0 21 0;
+#X connect 2 1 8 0;
+#X connect 3 0 2 0;
+#X connect 3 0 17 0;
+#X connect 4 0 3 1;
+#X connect 5 0 6 0;
+#X connect 6 0 7 0;
+#X connect 6 1 4 0;
+#X connect 6 1 12 0;
+#X connect 7 0 3 0;
+#X connect 8 0 7 1;
+#X connect 9 0 10 0;
+#X connect 9 1 11 0;
+#X connect 11 0 13 0;
+#X connect 11 0 10 1;
+#X connect 12 0 11 1;
+#X connect 13 0 11 1;
+#X connect 16 0 17 1;
+#X connect 17 0 3 1;
+#X connect 18 0 19 1;
+#X connect 18 0 21 1;
+#X connect 19 0 2 1;
+#X connect 20 0 0 0;
+#X connect 21 0 20 0;
+#X connect 22 0 0 0;
+#X connect 23 0 22 0;
+#X connect 24 0 0 0;
+#X connect 25 0 0 0;
+#X connect 29 0 30 0;
+#X connect 30 0 0 0;
+#X connect 31 0 24 0;
+#X connect 32 0 25 0;
+#X coords 0 -1 1 1 275 115 1 70 50;
+#X restore 49 101 pd analysis-routine;
+#N canvas 641 155 565 342 init 0;
+#X obj 69 21 loadbang;
+#X obj 69 43 t b b b b b;
+#X msg 69 225 \; pd dsp 1 \;;
+#X obj 358 134 r lb1;
+#X obj 188 90 s lb1;
+#X obj 168 120 s lb2;
+#X obj 148 150 s lb3;
+#X obj 128 180 s lb4;
+#X msg 358 164 \; window-size-set 4096 \; hop-set 256 \; normalize-set
+1 \; power-set 1 \; squared-diff-set 1 \; master-volume-set 90 \;;
+#X obj 197 289 declare -path ../lib;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X connect 1 1 7 0;
+#X connect 1 2 6 0;
+#X connect 1 3 5 0;
+#X connect 1 4 4 0;
+#X connect 3 0 8 0;
+#X restore 49 51 pd init;
+#N canvas 189 190 1174 726 find-splits 0;
+#X obj 537 114 table splits;
+#X msg 213 305 peaks \$1;
+#X obj 213 327 tabletool flux-plot;
+#X obj 334 412 list prepend;
+#X obj 423 415 t l;
+#X obj 196 394 list;
+#X obj 196 486 list prepend 0;
+#X obj 196 508 list prepend xlabel;
+#X obj 196 530 list trim;
+#X obj 196 552 s flux-plot;
+#X obj 334 646 tabletool splits;
+#X obj 364 475 t b l l;
+#X obj 406 498 list length;
+#X obj 378 576 list prepend 0;
+#X obj 378 598 s splits;
+#X obj 64 516 f;
+#X msg 91 483 0;
+#X obj 64 453 until;
+#X obj 64 430 t f b;
+#X obj 104 518 + 1;
+#X obj 64 390 f;
+#X obj 64 538 t f f;
+#X obj 64 560 tabread splits;
+#X obj 64 582 t b f;
+#X msg 64 604 1;
+#X obj 64 626 tabwrite split-samples;
+#X floatatom 112 79 5 0 100 1 peak-threshold - -, f 5;
+#X obj 169 195 t b f;
+#X msg 442 387 0;
+#X obj 334 362 - 1;
+#X text 374 337 back up a frame from where the peak was detected \,
+which is after the fact, f 37;
+#X msg 334 624 scale 256;
+#X obj 79 366 r num-splits;
+#X msg 406 520 \; num-splits \$1 \; splits resize \$1 \;;
+#X text 481 387 store frame zero as the first split point, f 22;
+#X obj 196 231 t b f b b;
+#X msg 309 256 \; split-samples const -1 \;;
+#X obj 112 109 bng 15 250 50 0 empty empty play-segment 17 7 0 10 -262144
+-1 -1;
+#X obj 666 214 f;
+#X obj 734 193 + 1;
+#X obj 787 382 tabread splits;
+#X obj 895 396 tabread splits;
+#X obj 787 434 -;
+#X obj 666 236 t f f f;
+#X obj 666 395 tabread splits;
+#X obj 666 465 pack f f;
+#X obj 666 487 tabplay~ \$0-sample;
+#X obj 787 362 + 1;
+#X obj 734 215 %;
+#X obj 741 513 bng 15 250 50 0 empty empty segment-done 17 7 0 10 -262144
+-1 -1;
+#X obj 774 215 r num-splits;
+#X obj 877 621 s play-position-set;
+#X obj 787 404 t f f;
+#X obj 877 547 pack f f f;
+#X obj 787 456 / 44.1;
+#X msg 877 569 \$2 \, \$3 \$1;
+#X obj 877 591 line;
+#X obj 787 478 select 0;
+#X obj 1018 475 -;
+#X obj 1018 497 / 44.1;
+#X obj 1038 423 r numSamples;
+#X obj 1018 445 f;
+#X obj 957 547 pack f f f;
+#X obj 213 109 bng 15 250 50 0 empty empty export-segments 17 7 0 10
+-262144 -1 -1;
+#N canvas 846 111 530 654 export-segments 0;
+#X obj 84 19 inlet;
+#X obj 232 47 table export-memory;
+#X obj 134 486 tabletool export-memory;
+#X msg 134 445 copy_range 0 \$3-sample \$1 \$2;
+#X obj 134 418 pack f f \$0;
+#X obj 134 212 f;
+#X msg 161 179 0;
+#X obj 84 139 until;
+#X obj 84 116 t f b;
+#X obj 174 214 + 1;
+#X obj 84 76 f;
+#X obj 99 52 r num-splits;
+#X obj 244 295 tabread splits;
+#X obj 244 275 + 1;
+#X obj 134 295 tabread splits;
+#X obj 134 234 t f f f;
+#X obj 354 295 tabread splits;
+#X obj 244 337 -;
+#X obj 244 359 + 1;
+#X msg 244 381 \; export-memory resize \$1 \;;
+#X obj 84 161 t b b;
+#X obj 37 562 soundfiler;
+#X msg 37 530 write -wave ./exports/export-\$1.wav export-memory;
+#X obj 37 503 f;
+#X connect 0 0 10 0;
+#X connect 3 0 2 0;
+#X connect 4 0 3 0;
+#X connect 5 0 9 0;
+#X connect 5 0 15 0;
+#X connect 6 0 5 1;
+#X connect 7 0 20 0;
+#X connect 8 0 7 0;
+#X connect 8 1 6 0;
+#X connect 9 0 5 1;
+#X connect 10 0 8 0;
+#X connect 11 0 10 1;
+#X connect 12 0 4 1;
+#X connect 12 0 17 0;
+#X connect 13 0 12 0;
+#X connect 14 0 4 0;
+#X connect 15 0 14 0;
+#X connect 15 0 23 1;
+#X connect 15 1 13 0;
+#X connect 15 2 16 0;
+#X connect 16 0 17 1;
+#X connect 17 0 18 0;
+#X connect 18 0 19 0;
+#X connect 20 0 23 0;
+#X connect 20 1 5 0;
+#X connect 22 0 21 0;
+#X connect 23 0 22 0;
+#X restore 393 66 pd export-segments;
+#X obj 112 139 volume~;
+#X connect 1 0 2 0;
+#X connect 2 1 29 0;
+#X connect 3 0 4 0;
+#X connect 3 0 5 1;
+#X connect 4 0 3 1;
+#X connect 5 0 6 0;
+#X connect 5 0 11 0;
+#X connect 6 0 7 0;
+#X connect 7 0 8 0;
+#X connect 8 0 9 0;
+#X connect 11 0 31 0;
+#X connect 11 1 13 0;
+#X connect 11 2 12 0;
+#X connect 12 0 33 0;
+#X connect 13 0 14 0;
+#X connect 15 0 19 0;
+#X connect 15 0 21 0;
+#X connect 16 0 15 1;
+#X connect 17 0 15 0;
+#X connect 18 0 17 0;
+#X connect 18 1 16 0;
+#X connect 19 0 15 1;
+#X connect 20 0 18 0;
+#X connect 21 0 22 0;
+#X connect 22 0 23 0;
+#X connect 23 0 24 0;
+#X connect 23 1 25 1;
+#X connect 24 0 25 0;
+#X connect 26 0 27 0;
+#X connect 27 0 20 0;
+#X connect 27 1 35 0;
+#X connect 28 0 3 1;
+#X connect 29 0 3 0;
+#X connect 31 0 10 0;
+#X connect 32 0 20 1;
+#X connect 35 0 5 0;
+#X connect 35 1 1 0;
+#X connect 35 2 28 0;
+#X connect 35 3 36 0;
+#X connect 37 0 38 0;
+#X connect 38 0 39 0;
+#X connect 38 0 43 0;
+#X connect 39 0 48 0;
+#X connect 40 0 52 0;
+#X connect 41 0 42 1;
+#X connect 41 0 53 1;
+#X connect 41 0 58 1;
+#X connect 41 0 62 1;
+#X connect 42 0 45 1;
+#X connect 42 0 54 0;
+#X connect 43 0 44 0;
+#X connect 43 1 47 0;
+#X connect 43 2 41 0;
+#X connect 44 0 45 0;
+#X connect 45 0 46 0;
+#X connect 46 0 65 0;
+#X connect 46 1 49 0;
+#X connect 47 0 40 0;
+#X connect 48 0 38 1;
+#X connect 50 0 48 1;
+#X connect 52 0 42 0;
+#X connect 52 1 53 2;
+#X connect 53 0 55 0;
+#X connect 54 0 57 0;
+#X connect 55 0 56 0;
+#X connect 56 0 51 0;
+#X connect 57 0 61 0;
+#X connect 57 1 53 0;
+#X connect 58 0 59 0;
+#X connect 59 0 62 0;
+#X connect 60 0 61 1;
+#X connect 60 0 62 2;
+#X connect 61 0 58 0;
+#X connect 62 0 55 0;
+#X connect 63 0 64 0;
+#X coords 0 -1 1 1 230 140 1 100 50;
+#X restore 369 101 pd find-splits;
+#X obj 50 511 hsl 1000 15 0 927915 0 0 empty play-position-set empty
+-2 -8 0 10 -262144 -1 -1 0 1;
+#X text 639 229 The peak-threshold control determines how many peaks
+will be found. At 100% \, only the largest peak in the flux value table
+will be reported. At 50% \, all peaks that are at least 50% as large
+as the maximum peak will be reported. Note that the first segment point
+is programmed to always be sample zero. When you're happy with the
+split points \, hit the export-segments bang to write each segment
+into a separate .wav file in the 06-segmentation/exports directory.
+;
+#X text 47 232 1) Choose analysis settings and hit the "analyze" bang
+, f 28;
+#X text 367 252 2) Set a peak threshold in percent to determine the
+number of split points \, play the resulting segments \, and export
+them as .wav files if you want, f 32;
+#X text 874 552 timbreID - William Brent 2017;
+#X text 639 29 This example shows how to use Bark spectrum flux to
+find sudden changes in timbre. A non-real-time analysis routine is
+in the leftmost subpatch \, which produces flux values for all audio
+frames in the recording (based on given window-size and hop settings).
+Hit the "analyze" bang to perform analysis. Next \, the flux value
+table can be analyzed for peaks in [pd find-splits]. Peaks in flux
+indicate a big change in the spectrum. Unlike onset detection (see
+the [bark] object) \, which looks for peaks in spectral growth only
+\, a large amount of spectral flux could indicate sudden decay of energy
+as well as growth. This makes it good for looking for any type of timbre
+change in the signal \, not just onsets. This could be a useful starting
+point in segmenting speech into phonemes.;

@@ -1,6 +1,6 @@
 timbreID version 0.7 requires the FFTW library, available at http://www.fftw.org.
 
-FFTW must be compiled in single precision. To do so in Linux, configure FFTW like this:
+FFTW must be compiled as a shared library in single precision. To do so in Linux, configure FFTW like this:
 
 ./configure CFLAGS="-fPIC" --enable-float --enable-shared
 

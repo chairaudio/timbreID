@@ -1,0 +1,7 @@
+../../audio/individual-samples/oboe-b-flat.wav
+../../audio/individual-samples/oboe-b.wav
+../../audio/individual-samples/oboe-c-sharp.wav
+../../audio/individual-samples/oboe-c.wav
+../../audio/individual-samples/oboe-d-sharp.wav
+../../audio/individual-samples/oboe-d.wav
+../../audio/individual-samples/oboe-e.wav

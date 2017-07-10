@@ -1,0 +1,460 @@
+#N canvas 182 173 1083 621 10;
+#X declare -path ./data -path ./lib -path ../lib;
+#X obj 682 500 timbreID;
+#X msg 721 462 clear;
+#N canvas 183 31 886 795 timbre-order 0;
+#X obj 124 129 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X msg 124 149 normalize \$1;
+#N canvas 0 22 450 300 (subpatch) 0;
+#X array timbreOrder 68 float 2;
+#X coords 0 67 68 0 500 200 1;
+#X restore 289 310 graph;
+#X obj 47 458 table timbreID-set;
+#X obj 608 165 cnv 15 150 60 empty empty empty 20 12 0 14 -233017 -66577
+0;
+#X msg 45 149 order \$1;
+#X floatatom 45 132 5 0 67 0 - - -, f 5;
+#N canvas 1061 268 266 218 timbreID-attacks 0;
+#N canvas 0 22 450 300 (subpatch) 0;
+#X array timbreID-attacks 68 float 2;
+#X coords 0 200 68 0 200 140 1;
+#X restore 31 35 graph;
+#X restore 47 477 pd timbreID-attacks;
+#X obj 25 131 bng 15 250 50 0 empty reorder empty 17 7 0 10 -4034 -1
+-1;
+#X obj 227 129 tgl 15 1 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X msg 227 149 relative_ordering \$1;
+#N canvas 316 138 677 408 players 0;
+#X obj 147 143 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 194 143 + 1;
+#X text 63 141 Manual step;
+#X msg 183 121 0;
+#X floatatom 116 180 5 0 0 0 - - -, f 5;
+#X obj 195 216 + 1;
+#X obj 165 258 pack f f;
+#X obj 165 195 t b f;
+#X obj 165 30 inlet;
+#X obj 165 51 t f b;
+#X obj 165 99 metro 88;
+#X obj 224 163 r ordering-length;
+#X obj 235 99 r playback-speed;
+#X obj 165 143 f;
+#X obj 194 163 %;
+#X obj 165 216 f;
+#X msg 165 280 \; play-\$1 \$2 \;;
+#X obj 195 237 % 32;
+#X obj 422 161 clone player-unit-abs 32;
+#X text 33 73 Auto-play through timbre order, f 18;
+#X connect 0 0 13 0;
+#X connect 1 0 14 0;
+#X connect 3 0 13 1;
+#X connect 5 0 17 0;
+#X connect 6 0 16 0;
+#X connect 7 0 15 0;
+#X connect 7 1 6 1;
+#X connect 8 0 9 0;
+#X connect 9 0 10 0;
+#X connect 9 1 3 0;
+#X connect 10 0 13 0;
+#X connect 11 0 14 1;
+#X connect 12 0 10 1;
+#X connect 13 0 1 0;
+#X connect 13 0 7 0;
+#X connect 13 0 4 0;
+#X connect 14 0 13 1;
+#X connect 15 0 5 0;
+#X connect 15 0 6 0;
+#X connect 17 0 15 1;
+#X restore 46 341 pd players;
+#X obj 46 321 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#N canvas 697 212 331 141 random-no-replacement 0;
+#X obj 92 38 inlet;
+#X msg 92 59 scramble;
+#X obj 92 80 tabletool timbreOrder;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X restore 289 250 pd random-no-replacement;
+#X obj 289 229 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X text 311 216 Random order as a point \; of comparison.;
+#X msg 474 47 uncluster;
+#X msg 501 89 cluster_list \$1;
+#X msg 514 121 clusters_list;
+#N canvas 682 231 304 110 linear 0;
+#X obj 67 18 inlet;
+#X msg 67 39 series 0 67 1;
+#X obj 67 60 tabletool timbreOrder;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X restore 514 250 pd linear;
+#X obj 514 230 bng 15 250 50 0 empty linear empty 17 7 0 10 -262144
+-1 -1;
+#X obj 276 85 s \$0-tID;
+#X obj 61 85 s \$0-tID;
+#X obj 124 170 s \$0-tID;
+#X obj 45 170 s \$0-tID;
+#X obj 227 170 s \$0-tID;
+#X obj 458 161 s \$0-tID;
+#X obj 293 548 vsl 15 128 0 1 0 0 empty empty ZCR 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 333 548 vsl 15 128 0 1 0 0 empty empty ROL 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 373 548 vsl 15 128 0 1 0 0 empty empty BRI 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 413 548 vsl 15 128 0 1 0 0 empty empty FLA 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 453 548 vsl 15 128 0 1 0 0 empty empty IRR 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 493 548 vsl 15 128 0 1 0 0 empty empty FLU 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 533 548 vsl 15 128 0 1 0 0 empty empty CEN 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 573 548 vsl 15 128 0 1 0 0 empty empty SPR 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 613 548 vsl 15 128 0 1 0 0 empty empty SKW 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 653 548 vsl 15 128 0 1 0 0 empty empty KUR 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 693 548 vsl 15 128 0 1 0 0 empty empty BS 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 733 548 vsl 15 128 0 1 0 0 empty empty BFC 0 -9 0 12 -262144
+-1 -1 0 1;
+#X obj 687 711 bng 15 250 50 0 send-weights empty send-weights 17 7
+0 12 -262144 -1 -1;
+#X obj 773 548 vsl 15 128 0 1 0 0 empty empty RMS 0 -9 0 12 -262144
+-1 -1 0 1;
+#N canvas 113 136 1112 672 feature-weights 0;
+#X obj 843 574 table weights;
+#X obj 96 41 inlet;
+#X obj 146 41 inlet;
+#X obj 196 41 inlet;
+#X obj 246 41 inlet;
+#X obj 296 41 inlet;
+#X obj 346 41 inlet;
+#X obj 396 41 inlet;
+#X obj 446 41 inlet;
+#X obj 496 41 inlet;
+#X obj 546 41 inlet;
+#X obj 596 41 inlet;
+#X obj 646 41 inlet;
+#X obj 96 586 tabletool weights;
+#X obj 146 546 tabletool weights;
+#X obj 196 506 tabletool weights;
+#X obj 246 466 tabletool weights;
+#X obj 296 426 tabletool weights;
+#X obj 346 386 tabletool weights;
+#X obj 396 346 tabletool weights;
+#X obj 446 306 tabletool weights;
+#X obj 496 266 tabletool weights;
+#X obj 546 226 tabletool weights;
+#X obj 596 186 tabletool weights;
+#X obj 646 146 tabletool weights;
+#X msg 844 152 dump;
+#X obj 844 173 tabletool weights;
+#X obj 943 197 list prepend weights;
+#X obj 943 218 list trim;
+#X obj 696 41 inlet;
+#X obj 696 106 tabletool weights;
+#X obj 844 100 r send-weights;
+#X obj 611 445 r lb1;
+#X text 845 387 0-56: ZCR \; 57-113: ROL \; 114-170: BRI \; 171-227:
+FLA \; 228-284: IRR \; 285-341: FLU \; 342-398: CEN \; 399-455: SPR
+\; 456-512: SKW \; 513-569: KUR \; 570-3248: Bark spectrum \; 3249-5870:
+BFCCs \; 5871-5927: RMS \;;
+#X msg 611 466 \; weights resize 5928 \;;
+#X msg 696 85 const \$1 5871 5927;
+#X msg 596 165 const \$1 570 3248;
+#X msg 546 205 const \$1 513 569;
+#X msg 496 245 const \$1 456 512;
+#X msg 446 285 const \$1 399 455;
+#X msg 396 325 const \$1 342 398;
+#X msg 346 365 const \$1 285 341;
+#X msg 296 405 const \$1 228 284;
+#X msg 246 445 const \$1 171 227;
+#X msg 196 485 const \$1 114 170;
+#X msg 146 525 const \$1 57 113;
+#X msg 96 565 const \$1 0 56;
+#X obj 943 245 s \$0-tID;
+#X msg 611 520 \; weights const 0 \;;
+#X msg 646 125 const \$1 3249 5870;
+#X connect 1 0 46 0;
+#X connect 2 0 45 0;
+#X connect 3 0 44 0;
+#X connect 4 0 43 0;
+#X connect 5 0 42 0;
+#X connect 6 0 41 0;
+#X connect 7 0 40 0;
+#X connect 8 0 39 0;
+#X connect 9 0 38 0;
+#X connect 10 0 37 0;
+#X connect 11 0 36 0;
+#X connect 12 0 49 0;
+#X connect 25 0 26 0;
+#X connect 26 1 27 0;
+#X connect 27 0 28 0;
+#X connect 28 0 47 0;
+#X connect 29 0 35 0;
+#X connect 31 0 25 0;
+#X connect 32 0 34 0;
+#X connect 35 0 30 0;
+#X connect 36 0 23 0;
+#X connect 37 0 22 0;
+#X connect 38 0 21 0;
+#X connect 39 0 20 0;
+#X connect 40 0 19 0;
+#X connect 41 0 18 0;
+#X connect 42 0 17 0;
+#X connect 43 0 16 0;
+#X connect 44 0 15 0;
+#X connect 45 0 14 0;
+#X connect 46 0 13 0;
+#X connect 49 0 24 0;
+#X restore 293 728 pd feature-weights;
+#X obj 501 69 hradio 15 1 0 7 empty empty empty 0 -8 0 10 -262144 -1
+-1 6;
+#X msg 458 20 cluster 7;
+#X obj 49 279 hsl 128 15 40 1000 1 0 playback-speed playback-speed-set
+Inter-onset-time -2 -8 0 12 -262144 -1 -1 3111 1;
+#X obj 687 738 bng 15 250 50 0 reorder empty Re-order 17 7 0 12 -262144
+-1 -1;
+#X msg 286 56 attribute_range 0 5927;
+#X msg 276 35 attribute_range 0 500;
+#N canvas 287 110 957 674 INSTRUCTIONS 0;
+#X text 525 441 The [cluster_list( message tells timbreID to spit out
+the members of any particular cluster. This pach is set up to graph
+the output of this request \, so if you have the playback sub-patch
+going \, you can hear the members of each cluster as you make requests
+with [cluster_list(.;
+#X text 45 23 In this sub-patch there are controls for requesting a
+timbre ordering starting on a particular sound (see the "order" message)
+\, some relevant messages for manipulating the feature database at
+top \, and \, in the [pd players] sub-patch \, a network of tabplay~
+objects to play back the orderings at various speeds.;
+#X text 45 116 The ordering will be different depending on which sound
+you start from. If you've already loaded the .timid file from the parent
+patch \, generate an order relative to sound number 10 \, and try playing
+it back. Notice that all the noisy snare sounds are grouped together.
+Generally \, quite a few similar sounding instruments are played in
+sequence.;
+#X text 45 244 Next \, normalize the database and re-request the order
+relative to sound number 10 to see what effect attribute normalization
+has. Grouping of similar instruments is improved. Try slowing down
+the speed of playback with the inter-onset time slider. Make playback
+slow enough to hear how each sound relates to the next timbrally. Then
+try speeding things up to hear a massive sweep.;
+#X text 45 368 You can also try calculating variance and only looking
+at attributes 0 through 500 instead of the the full range of attributes
+0 through 5927 \; Click "order_attributes" to go back to regular order
+and [attribute_range 0 5927( to go back to comparing the complete feature
+vector.;
+#X text 45 444 If you think you have an idea of which attributes are
+more important than others \, you can give a 5928 component list of
+weights to impact the distance calculation. The [pd feature-weights]
+subpatch makes this much easier for you \, so that you can use the
+sliders to weight the different features however you like. YOU MUST
+CLICK the "send weights" button to actually send them to timbreID.
+Click into [pd feature-weights] if you'd like to have something other
+than a constant weight on each feature. For instance \, it might be
+good to weight the first half of spectral centroid higher than the
+second half \, where (for many of the instruments) the signal gets
+quieter and less pitched. Whether you manipulate weights systematically
+or by trial and error \, you can find interesting differences between
+orderings.;
+#X text 525 101 Try giving a weight of zero to everything but the spectral
+flatness feature. Then click "send weights" and re-request an ordering
+for 10 (which will implement your weights). Giving the other features
+no weight in the distance calculation causes some discontinuities in
+the ordering - for instance \, the complete set of snares and cymbals
+are no longer played in complete sequences. However \, the sequences
+are still fairly long \, apparently because spectral flatness is a
+useful measure for describin snare drum. By playing around with weights
+in this way \, you should be able to find measures that are effective
+for the particular members of your own sound set.;
+#X text 525 271 Last \, try out the clustering algorithm by clicking
+the [cluster 7( message at the bottom right. To improve results you
+should set the weights of all features back to 0 \, then fully weight
+Bark spectrum alone. Then click "send weights". After clicking the
+cluster message \, timbreID will group the 68 sounds into its best
+approximation of 7 timbrally similar groups. With normalization on
+\, some of the clusters are reasonable. Changes you make in normalization
+\, weights \, and attribute ranges do affect clustering \, so you can
+uncluster \, make changes \, then cluster again to see if you get anything
+you like better. You could also try more or fewer than 7 clusters.
+;
+#X restore 623 185 pd INSTRUCTIONS;
+#X obj 46 371 catch~ timbre-order-sum;
+#X obj 46 393 volume~;
+#X msg 61 36 order_attributes_by_variance;
+#X msg 71 56 reorder_attributes;
+#X text 43 525 Features are:;
+#X text 43 555 ZCR: zero crossing \; ROL: rolloff \; BRI: brightness
+\; FLA: flatness \; IRR: irregularity \; FLU: flux \; CEN: centroid
+\; SPR: spread \; SKW: skew \; KUR: kurtosis \; BS: Bark spectrum \;
+BFC: BFCCs \; RMS: RMS amplitude;
+#X connect 0 0 1 0;
+#X connect 1 0 23 0;
+#X connect 5 0 24 0;
+#X connect 6 0 5 0;
+#X connect 8 0 6 0;
+#X connect 9 0 10 0;
+#X connect 10 0 25 0;
+#X connect 12 0 11 0;
+#X connect 14 0 13 0;
+#X connect 16 0 26 0;
+#X connect 17 0 26 0;
+#X connect 18 0 26 0;
+#X connect 20 0 19 0;
+#X connect 27 0 41 0;
+#X connect 28 0 41 1;
+#X connect 29 0 41 2;
+#X connect 30 0 41 3;
+#X connect 31 0 41 4;
+#X connect 32 0 41 5;
+#X connect 33 0 41 6;
+#X connect 34 0 41 7;
+#X connect 35 0 41 8;
+#X connect 36 0 41 9;
+#X connect 37 0 41 10;
+#X connect 38 0 41 11;
+#X connect 40 0 41 12;
+#X connect 42 0 17 0;
+#X connect 43 0 26 0;
+#X connect 46 0 21 0;
+#X connect 47 0 21 0;
+#X connect 49 0 50 0;
+#X connect 51 0 22 0;
+#X connect 52 0 22 0;
+#X restore 781 236 pd timbre-order;
+#X msg 205 79 stop;
+#X obj 105 150 tabplay~ timbreID-set;
+#X obj 242 182 s end;
+#X obj 40 140 s start;
+#N canvas 350 83 752 404 attack-times 0;
+#X obj 46 16 r start;
+#X obj 77 90 r end;
+#X obj 46 312 outlet;
+#X obj 46 274 del 23.22;
+#X obj 46 139 qlist;
+#X msg 77 112 rewind;
+#X obj 46 218 r perc-qlist;
+#X text 196 132 This sub-patch uses [qlist] to schedule bangs to be
+sent out the outlet to perform analysis starting at the attack of each
+sound. The perc-labels-qlist.txt file was prepared in advance based
+on the attack times of the percussion audio file.;
+#X obj 61 246 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 120 268 Offset by 23.22 ms to wait for 1024 samples to pass
+by before analysis. Our analysis window size is 1024 \, so we should
+fill up the buffer with that many samples...;
+#X msg 46 61 read ./qlists/perc-labels-qlist.txt \, rewind \, bang
+;
+#X connect 0 0 10 0;
+#X connect 1 0 5 0;
+#X connect 3 0 2 0;
+#X connect 5 0 4 0;
+#X connect 6 0 3 0;
+#X connect 6 0 8 0;
+#X connect 10 0 4 0;
+#X restore 210 265 pd attack-times;
+#N canvas 966 110 379 293 order-routing 0;
+#X obj 31 40 inlet;
+#X obj 31 219 s timbreOrder;
+#X obj 31 200 list prepend 0;
+#X obj 180 184 list length;
+#X msg 180 245 \; timbreOrder resize \$1;
+#X obj 180 205 t f f;
+#X obj 212 225 s ordering-length;
+#X obj 31 150 t l l;
+#X obj 31 78 route order cluster_list;
+#X connect 0 0 8 0;
+#X connect 2 0 1 0;
+#X connect 3 0 5 0;
+#X connect 5 0 4 0;
+#X connect 5 1 6 0;
+#X connect 7 0 2 0;
+#X connect 7 1 3 0;
+#X connect 8 0 7 0;
+#X connect 8 1 7 0;
+#X restore 735 526 pd order-routing;
+#X text 680 393 Skip training and use a pre-prepared analysis file:
+;
+#N canvas 263 142 601 370 init 0;
+#X obj 37 10 loadbang;
+#X msg 27 121 \; pd dsp 1 \;;
+#X obj 37 242 soundfiler;
+#X text 106 186 Load the training sample to a table:;
+#X text 106 282 Load the attack times to a table:;
+#X obj 37 185 r lb1;
+#X obj 37 282 r lb2;
+#X obj 162 78 s lb1;
+#X obj 142 108 s lb2;
+#X obj 122 138 s lb3;
+#X obj 421 216 r lb1;
+#X msg 37 208 read -resize -maxsize 8.2e+06 ../audio/percussion.wav
+timbreID-set;
+#X msg 37 305 \; timbreID-attacks read ../data/perc-labels.txt \;;
+#X obj 282 39 declare -path ./data -path ./lib -path ../lib;
+#X msg 421 237 \; playback-speed-set 88 \; master-volume-set 90 \;
+linear bang \;;
+#X obj 37 31 t b b b b;
+#X connect 0 0 15 0;
+#X connect 5 0 11 0;
+#X connect 6 0 12 0;
+#X connect 10 0 14 0;
+#X connect 11 0 2 0;
+#X connect 15 0 1 0;
+#X connect 15 1 9 0;
+#X connect 15 2 8 0;
+#X connect 15 3 7 0;
+#X restore 935 472 pd init;
+#X obj 105 406 s \$0-tID;
+#X obj 602 460 r \$0-tID;
+#X text 117 322 Open this abstraction to see live graphs of timbre
+changes over time. Do training while you watch \, producing data for
+timbre ordering in the [pd timbre-order] sub-patch.;
+#X text 193 406 Or \, just load the prepared analysis database with
+the "read" message at right. You can also analyze sounds in Pd's batch
+mode with the included "analyze-batch-perc.pd" patch.;
+#X obj 105 298 temporal_evolution;
+#X text 666 189 ***Open this sub-patch to see ordering possibilities***
+;
+#X text 724 209 (But load the .timid file below first);
+#X obj 4 5 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
+0;
+#X obj 4 5 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
+0;
+#X text 339 68 This example shows how to use timbreID to come up with
+a timbrally-based ordering of a given sound set. It's similar to the
+quick example in timbreID-help.pd \, but this one captures temporal
+changes in timbre and uses some of the other feature externs in addition
+to bfcc~. It also uses Pd's standard env~ obect to measure amplitude
+envelope.;
+#X obj 105 70 t b b;
+#X obj 105 50 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 69 553 timbreID - William Brent 2017;
+#X msg 682 415 read ./data/percussion-db.timid;
+#X obj 205 101 t a b;
+#X obj 138 208 volume~;
+#X obj 682 437 t a b;
+#X connect 0 3 8 0;
+#X connect 1 0 0 0;
+#X connect 3 0 25 0;
+#X connect 4 0 15 0;
+#X connect 4 0 26 0;
+#X connect 4 1 5 0;
+#X connect 7 0 15 1;
+#X connect 12 0 0 0;
+#X connect 15 0 11 0;
+#X connect 21 0 6 0;
+#X connect 21 1 4 0;
+#X connect 22 0 21 0;
+#X connect 24 0 27 0;
+#X connect 25 0 4 0;
+#X connect 25 1 5 0;
+#X connect 27 0 0 0;
+#X connect 27 1 1 0;
