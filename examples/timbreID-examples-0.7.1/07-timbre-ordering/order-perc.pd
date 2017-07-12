@@ -127,7 +127,7 @@
 0 12 -262144 -1 -1;
 #X obj 773 548 vsl 15 128 0 1 0 0 empty empty RMS 0 -9 0 12 -262144
 -1 -1 0 1;
-#N canvas 557 127 1112 672 feature-weights 0;
+#N canvas 252 82 1112 672 feature-weights 0;
 #X obj 843 574 table weights;
 #X obj 96 41 inlet;
 #X obj 146 41 inlet;
@@ -221,7 +221,6 @@ BFCCs \; 6213-6269: RMS \;;
 Inter-onset-time -2 -8 0 12 -262144 -1 -1 3111 1;
 #X obj 687 738 bng 15 250 50 0 reorder empty Re-order 17 7 0 12 -262144
 -1 -1;
-#X msg 286 56 attribute_range 0 5927;
 #X msg 276 35 attribute_range 0 500;
 #N canvas 287 110 957 674 INSTRUCTIONS 0;
 #X text 525 441 The [cluster_list( message tells timbreID to spit out
@@ -246,34 +245,6 @@ has. Grouping of similar instruments is improved. Try slowing down
 the speed of playback with the inter-onset time slider. Make playback
 slow enough to hear how each sound relates to the next timbrally. Then
 try speeding things up to hear a massive sweep.;
-#X text 45 368 You can also try calculating variance and only looking
-at attributes 0 through 500 instead of the the full range of attributes
-0 through 5927 \; Click "order_attributes" to go back to regular order
-and [attribute_range 0 5927( to go back to comparing the complete feature
-vector.;
-#X text 45 444 If you think you have an idea of which attributes are
-more important than others \, you can give a 5928 component list of
-weights to impact the distance calculation. The [pd feature-weights]
-subpatch makes this much easier for you \, so that you can use the
-sliders to weight the different features however you like. YOU MUST
-CLICK the "send weights" button to actually send them to timbreID.
-Click into [pd feature-weights] if you'd like to have something other
-than a constant weight on each feature. For instance \, it might be
-good to weight the first half of spectral centroid higher than the
-second half \, where (for many of the instruments) the signal gets
-quieter and less pitched. Whether you manipulate weights systematically
-or by trial and error \, you can find interesting differences between
-orderings.;
-#X text 525 101 Try giving a weight of zero to everything but the spectral
-flatness feature. Then click "send weights" and re-request an ordering
-for 10 (which will implement your weights). Giving the other features
-no weight in the distance calculation causes some discontinuities in
-the ordering - for instance \, the complete set of snares and cymbals
-are no longer played in complete sequences. However \, the sequences
-are still fairly long \, apparently because spectral flatness is a
-useful measure for describin snare drum. By playing around with weights
-in this way \, you should be able to find measures that are effective
-for the particular members of your own sound set.;
 #X text 525 271 Last \, try out the clustering algorithm by clicking
 the [cluster 7( message at the bottom right. To improve results you
 should set the weights of all features back to 0 \, then fully weight
@@ -285,6 +256,33 @@ approximation of 7 timbrally similar groups. With normalization on
 uncluster \, make changes \, then cluster again to see if you get anything
 you like better. You could also try more or fewer than 7 clusters.
 ;
+#X text 45 368 You can also try calculating variance and only looking
+at attributes 0 through 500 instead of the the full range of attributes
+0 through 6269 \; Click "reorder_attributes" to go back to regular
+order and [attribute_range 0 6269( to go back to comparing the complete
+feature vector.;
+#X text 45 444 If you think you have an idea of which attributes are
+more important than others \, you can give a list of weights to impact
+the distance calculation. The [pd feature-weights] subpatch makes this
+much easier for you \, so that you can use the sliders to weight the
+different features however you like. YOU MUST CLICK the "send weights"
+button to actually send them to timbreID. Click into [pd feature-weights]
+if you'd like to have something other than a constant weight on each
+feature. For instance \, it might be good to weight the first half
+of spectral centroid higher than the second half \, where (for many
+of the instruments) the signal gets quieter and less pitched. Whether
+you manipulate weights systematically or by trial and error \, you
+can find interesting differences between orderings.;
+#X text 525 101 Try giving a weight of zero to everything but the spectral
+flatness feature. Then click "send weights" and re-request an ordering
+for 10 (which will implement your weights). Giving the other features
+no weight in the distance calculation causes some discontinuities in
+the ordering - for instance \, the complete set of snares and cymbals
+are no longer played in complete sequences. However \, the sequences
+are still fairly long \, apparently because spectral flatness is a
+useful measure for describing snare drum. By playing around with weights
+in this way \, you should be able to find measures that are effective
+for the particular members of your own sound set.;
 #X restore 623 185 pd INSTRUCTIONS;
 #X obj 46 371 catch~ timbre-order-sum;
 #X obj 46 393 volume~;
@@ -295,6 +293,7 @@ you like better. You could also try more or fewer than 7 clusters.
 \; FLA: flatness \; IRR: irregularity \; FLU: flux \; CEN: centroid
 \; SPR: spread \; SKW: skew \; KUR: kurtosis \; BS: Bark spectrum \;
 BFC: BFCCs \; RMS: RMS amplitude;
+#X msg 286 56 attribute_range 0 6269;
 #X connect 0 0 1 0;
 #X connect 1 0 23 0;
 #X connect 5 0 24 0;
@@ -324,10 +323,10 @@ BFC: BFCCs \; RMS: RMS amplitude;
 #X connect 42 0 17 0;
 #X connect 43 0 26 0;
 #X connect 46 0 21 0;
-#X connect 47 0 21 0;
-#X connect 49 0 50 0;
+#X connect 48 0 49 0;
+#X connect 50 0 22 0;
 #X connect 51 0 22 0;
-#X connect 52 0 22 0;
+#X connect 54 0 21 0;
 #X restore 781 236 pd timbre-order;
 #X msg 205 79 stop;
 #X obj 105 150 tabplay~ timbreID-set;
