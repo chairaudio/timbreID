@@ -17,11 +17,10 @@ version 0.7, September 26, 2016
 */
 
 #include "tIDLib.h"
-#define NUMWEIGHTPOINTS 29
 
-t_float weights_dB[] = {-69.9, -60.4, -51.4, -43.3, -36.6, -30.3, -24.3, -19.5, -14.8, -10.7, -7.5, -4.8, -2.6, -0.8, 0.0, 0.6, 0.5, 0.0, -0.1, 0.5, 1.5, 3.6, 5.9, 6.5, 4.2, -2.6, -10.2, -10.0, -2.8};
+t_float bark_tilde_weights_dB[] = {-69.9, -60.4, -51.4, -43.3, -36.6, -30.3, -24.3, -19.5, -14.8, -10.7, -7.5, -4.8, -2.6, -0.8, 0.0, 0.6, 0.5, 0.0, -0.1, 0.5, 1.5, 3.6, 5.9, 6.5, 4.2, -2.6, -10.2, -10.0, -2.8};
 
-t_float weights_freqs[] = {20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300, 8000, 10000, 12500};
+t_float bark_tilde_weights_freqs[] = {20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300, 8000, 10000, 12500};
 
 static t_class *bark_tilde_class;
 
@@ -73,8 +72,6 @@ typedef struct _bark_tilde
     t_bool x_debounceActive;
     t_bool x_haveHit;
 
-	t_float x_weights_dB[NUMWEIGHTPOINTS];
-	t_float x_weights_freqs[NUMWEIGHTPOINTS];
     t_float *x_blackman;
     t_float *x_cosine;
     t_float *x_hamming;
@@ -119,8 +116,8 @@ static void bark_tilde_create_loudness_weighting(t_bark_tilde *x)
 		t_binIdx nearIdx;
 		t_float nearFreq, diffFreq, diffdB, dBint;
 
-		nearIdx = tIDLib_nearestBinIndex(barkFreqs[i], weights_freqs, NUMWEIGHTPOINTS);
-		nearFreq = weights_freqs[nearIdx];
+		nearIdx = tIDLib_nearestBinIndex(barkFreqs[i], bark_tilde_weights_freqs, NUMWEIGHTPOINTS);
+		nearFreq = bark_tilde_weights_freqs[nearIdx];
 		diffdB = 0.0;
 
 		// this doesn't have to be if/else'd into a greater/less situation.  later on i should write a more general interpolation solution, and maybe move it up to 4 points instead.
@@ -128,21 +125,21 @@ static void bark_tilde_create_loudness_weighting(t_bark_tilde *x)
 		{
 			if(nearIdx<=NUMWEIGHTPOINTS-2)
 			{
-				diffFreq = (barkFreqs[i] - nearFreq)/(weights_freqs[nearIdx+1] - nearFreq);
-				diffdB = diffFreq * (weights_dB[nearIdx+1] - weights_dB[nearIdx]);
+				diffFreq = (barkFreqs[i] - nearFreq)/(bark_tilde_weights_freqs[nearIdx+1] - nearFreq);
+				diffdB = diffFreq * (bark_tilde_weights_dB[nearIdx+1] - bark_tilde_weights_dB[nearIdx]);
 			}
 
-			dBint = weights_dB[nearIdx] + diffdB;
+			dBint = bark_tilde_weights_dB[nearIdx] + diffdB;
 		}
 		else
 		{
 			if(nearIdx>0)
 			{
-				diffFreq = (barkFreqs[i] - weights_freqs[nearIdx-1])/(nearFreq - weights_freqs[nearIdx-1]);
-				diffdB = diffFreq * (weights_dB[nearIdx] - weights_dB[nearIdx-1]);
+				diffFreq = (barkFreqs[i] - bark_tilde_weights_freqs[nearIdx-1])/(nearFreq - bark_tilde_weights_freqs[nearIdx-1]);
+				diffdB = diffFreq * (bark_tilde_weights_dB[nearIdx] - bark_tilde_weights_dB[nearIdx-1]);
 			}
 
-			dBint = weights_dB[nearIdx-1] + diffdB;
+			dBint = bark_tilde_weights_dB[nearIdx-1] + diffdB;
 		}
 
 		if(x->x_powerSpectrum)
