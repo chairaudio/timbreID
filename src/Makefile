@@ -1,5 +1,4 @@
-SOURCES = attackTime.c attackTime~.c bark.c bark2freq.c barkSpec.c barkSpecBrightness.c barkSpecBrightness~.c barkSpecCentroid.c barkSpecCentroid~.c barkSpecFlatness.c barkSpecFlatness~.c barkSpecFlux.c barkSpecFlux~.c barkSpecIrregularity.c barkSpecIrregularity~.c barkSpecKurtosis.c barkSpecKurtosis~.c barkSpecRolloff.c barkSpecRolloff~.c barkSpecSkewness.c barkSpecSkewness~.c barkSpecSlope.c barkSpecSlope~.c barkSpecSpread.c barkSpecSpread~.c barkSpec~.c bark~.c bfcc.c bfcc~.c bin2freq.c binWrangler.c cepstrum.c cepstrum~.c cepstrumPitch.c cepstrumPitch~.c dct.c dct~.c featureAccum.c freq2bark.c freq2bin.c freq2mel.c magSpec.c magSpec~.c maxSample.c maxSample~.c maxSampleDelta.c maxSampleDelta~.c mel2freq.c melSpec.c melSpec~.c mfcc.c mfcc~.c minSample.c minSample~.c minSampleDelta.c minSampleDelta~.c nearestPoint.c peakSample.c peakSample~.c sampleBuffer~.c specBrightness.c specBrightness~.c specCentroid.c specCentroid~.c specFlatness.c specFlatness~.c specFlux.c specFlux~.c specHarmonicity.c specHarmonicity~.c specIrregularity.c specIrregularity~.c specKurtosis.c specKurtosis~.c specRolloff.c specRolloff~.c specSkewness.c specSkewness~.c specSlope.c specSlope~.c specSpread.c specSpread~.c tID_mean.c tID_std.c tabletool.c timbreID.c waveSlope.c waveSlope~.c zeroCrossing.c zeroCrossing~.c
-
+SOURCES = attackTime.c attackTime~.c bark.c bark2freq.c barkSpec.c barkSpecBrightness.c barkSpecBrightness~.c barkSpecCentroid.c barkSpecCentroid~.c barkSpecFlatness.c barkSpecFlatness~.c barkSpecFlux.c barkSpecFlux~.c barkSpecIrregularity.c barkSpecIrregularity~.c barkSpecKurtosis.c barkSpecKurtosis~.c barkSpecRolloff.c barkSpecRolloff~.c barkSpecSkewness.c barkSpecSkewness~.c barkSpecSlope.c barkSpecSlope~.c barkSpecSpread.c barkSpecSpread~.c barkSpec~.c bark~.c bfcc.c bfcc~.c bin2freq.c binWrangler.c cepstrum.c cepstrum~.c cepstrumPitch.c cepstrumPitch~.c dct.c dct~.c featureAccum.c freq2bark.c freq2bin.c freq2mel.c magSpec.c magSpec~.c maxSample.c maxSample~.c maxSampleDelta.c maxSampleDelta~.c mel2freq.c melSpec.c melSpec~.c mfcc.c mfcc~.c minSample.c minSample~.c minSampleDelta.c minSampleDelta~.c nearestPoint.c peakSample.c peakSample~.c sampleBuffer~.c specBrightness.c specBrightness~.c specCentroid.c specCentroid~.c specFlatness.c specFlatness~.c specFlux.c specFlux~.c specHarmonicity.c specHarmonicity~.c specIrregularity.c specIrregularity~.c specKurtosis.c specKurtosis~.c specRolloff.c specRolloff~.c specSkewness.c specSkewness~.c specSlope.c specSlope~.c specSpread.c specSpread~.c tID_mean.c tID_std.c tIDLib.c timbreID.c timbreIDLib.c tabletool.c waveSlope.c waveSlope~.c zeroCrossing.c zeroCrossing~.c
 
 # ****SUPPLY THE LOCATION OF PD SOURCE****
 # pd_src = /home/yourname/somedirectory/pd-0.47-1
@@ -51,25 +50,18 @@ endif
 CFLAGS += $(OPT_CFLAGS)
 
 
-tIDLib.o: tIDLib.c tIDLib.h
-	$(CC) $(CFLAGS) -o tIDLib.o -c tIDLib.c
+all: $(SOURCES:.c=.o)
+	$(CC) $(LDFLAGS) -o timbreIDLib.$(EXTENSION) $(SOURCES:.c=.o) $(LIBS)
+	chmod a-x timbreIDLib.$(EXTENSION)
+	$(STRIP) timbreIDLib.$(EXTENSION)
+	rm -f -- $(SOURCES:.c=.o)
 
-
-all: $(SOURCES:.c=.$(EXTENSION))
-
-%.o: %.c tIDLib.c tIDLib.h
+%.o: %.c tIDLib.h
 	$(CC) $(CFLAGS) -o "$*.o" -c "$*.c"
-
-%.$(EXTENSION): %.o
-	$(CC) $(LDFLAGS) -o "$*.$(EXTENSION)" "$*.o" tIDLib.o $(LIBS)
-	chmod a-x "$*.$(EXTENSION)"
-	$(STRIP) $*.$(EXTENSION)
-	rm -f -- $*.o
 
 
 .PHONY: clean
 
 clean:
-	-rm -f -- tIDLib.o
 	-rm -f -- $(SOURCES:.c=.o)
-	-rm -f -- $(SOURCES:.c=.$(EXTENSION))
+	-rm -f -- timbreIDLib.$(EXTENSION)
