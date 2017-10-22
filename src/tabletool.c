@@ -722,13 +722,14 @@ static void tabletool_shift0(t_tabletool *x, t_float s)
 
 		shift = s;
 		lenTable = x->x_arrayPoints;
-		shift = shift % lenTable;
 
 		for(i=0; i<lenTable; i++)
 			tableVals[i] = x->x_vec[i].w_float;
 
 		if(shift>0)
 		{
+			shift = shift % lenTable;
+
 			// need to cast the signed long int shift variable to t_sampIdx to silence warning, because an unsigned long int can never be less than the lowest value of signed long int shift
 			for(i=0; i<(t_sampIdx)shift; i++)
 				x->x_vec[i].w_float = 0.0;
@@ -738,6 +739,9 @@ static void tabletool_shift0(t_tabletool *x, t_float s)
 		}
 		else
 		{
+			// use fmod() since the remainder operator % won't work for negatives here
+			shift = fmod(shift, lenTable);
+
 			// shift==0 and shift<0 is handled by this case
 			for(i=0, j=labs(shift); j<lenTable; i++, j++)
 				x->x_vec[i].w_float = tableVals[j];
