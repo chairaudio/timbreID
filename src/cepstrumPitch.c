@@ -12,9 +12,7 @@ timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARR
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-version 0.7, September 26, 2016
-
-- using FFTW now
+version 0.7.1, February 16, 2018
 
 */
 
@@ -549,6 +547,13 @@ void cepstrumPitch_setup(void)
 		0
     );
 
+	class_addcreator(
+		(t_newmethod)cepstrumPitch_new,
+		gensym("timbreIDLib/cepstrumPitch"),
+		A_GIMME,
+		0
+	);
+	
 	class_addbang(cepstrumPitch_class, cepstrumPitch_bang);
 
 	class_addmethod(

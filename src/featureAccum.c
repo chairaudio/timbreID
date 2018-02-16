@@ -11,7 +11,7 @@ timbreID is free software: you can redistribute it and/or modify it under the te
 timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-version 0.7, September 26, 2016
+version 0.7.1, February 16, 2018
 
 */
 
@@ -221,6 +221,15 @@ void featureAccum_setup(void) {
 		0
 	);
 
+	class_addcreator(
+		(t_newmethod)featureAccum_new,
+		gensym("timbreIDLib/featureAccum"),
+		A_DEFFLOAT,
+		A_DEFFLOAT,
+		A_DEFFLOAT,
+		0
+	);
+	
 	class_addlist(featureAccum_class, featureAccum_accum);
 
 	class_addmethod(

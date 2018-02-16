@@ -1,5 +1,0 @@
-There are a few files in the ordering folder. order-perc.pd & analyze-batch-perc.pd are both for ordering a set of percussion sounds. order-perc.pd contains a very basic ordering example to demonstrate functionality, though it has some advanced feature weighting options and a multi-frame analysis abstraction to look at.
-
-analyze-batch-perc.pd can be run in Pd's batch mode to analyze the sound set in non-real-time. Note that analyze-batch-perc.pd uses the real time analysis objects (i.e., bfcc~ instead of bfcc). This was made before timbreID included non-real-time analysis objects, but is still part of the examples package because it demonstrates how to capture multi-frame feature changes over time when dealing with a real-time audio signal.
-
-The other patch, order.pd, loads samples to RAM and analyzes by reading directly from tables using the non-real-time version of [barkSpec]. Open order.pd and try analyzing cartoons.wav in the sound folder. The patch breaks the audio into grains (you specify the size in samples), then re-orders them based on similarity using BFCCs.

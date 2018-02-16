@@ -12,7 +12,7 @@ timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARR
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-version 0.7, September 26, 2016
+version 0.7.1, February 16, 2018
 
 */
 
@@ -83,6 +83,13 @@ void tID_mean_setup(void)
         CLASS_DEFAULT, 
 		0
     );
+
+	class_addcreator(
+		(t_newmethod)tID_mean_new,
+		gensym("timbreIDLib/tID_mean"),
+		A_GIMME,
+		0
+	);
 
 	class_addlist(
 		tID_mean_class,

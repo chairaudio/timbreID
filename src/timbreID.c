@@ -12,7 +12,7 @@ timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARR
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-version 0.7, September 26, 2016
+version 0.7.1, February 16, 2018
 
 ** 0.7.0 fixed concatID method to give it an option to do wraparound or not. Updated ID method to report a desired number of matches (based on KNN setting), not just one. This will help with doing timbre blending in timbre space example, where we need the N closest matches. Changed write_text method so that if the database is normalized, the normalized data is printed out. Also works with attribute_range and attributeOrder so that you can print out a specific subset of attribute columns instead of the entire attribute list. Still need to update ID method to remove the dynamically assigned *votes memory.
 
@@ -2684,6 +2684,12 @@ void timbreID_setup(void)
         CLASS_DEFAULT, 
 		0
     );
+
+	class_addcreator(
+		(t_newmethod)timbreID_new,
+		gensym("timbreIDLib/timbreID"),
+		0
+	);
 
 	class_addlist(
 		timbreID_class,

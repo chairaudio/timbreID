@@ -1,0 +1,3 @@
+These example patches demonstrate various uses of timbreID objects. Most of them are simple proofs of concept that are provided with the hope that others will expand upon them for more specific needs.
+
+Example package 0.7.1 is a minimal update that was required in order to make patches work with the new timbreID 0.7 release, which added several new analysis objects and changed the functionality of [timbreID]'s fourth outlet. Some significant improvements have been made to 07-concatenative, 08-timbre-ordering, and 09-timbre-space. 06-segmentation is a new example that illustrates how to automatically segment audio files based on Bark spectrum flux, and zero crossing rate.

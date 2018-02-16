@@ -12,9 +12,7 @@ timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARR
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-version 0.7, September 26, 2016
-
-- using FFTW now
+version 0.7.1, February 16, 2018
 
 */
 
@@ -231,6 +229,13 @@ void sampleBuffer_tilde_setup(void)
         A_GIMME,
 		0
     );
+
+	class_addcreator(
+		(t_newmethod)sampleBuffer_tilde_new,
+		gensym("timbreIDLib/sampleBuffer~"),
+		A_GIMME,
+		0
+	);
 
     CLASS_MAINSIGNALIN(sampleBuffer_tilde_class, t_sampleBuffer_tilde, x_f);
 

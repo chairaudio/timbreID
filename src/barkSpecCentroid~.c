@@ -12,9 +12,7 @@ timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARR
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-version 0.7, September 26, 2016
-
-- using FFTW now
+version 0.7.1, February 16, 2018
 
 */
 
@@ -515,6 +513,13 @@ void barkSpecCentroid_tilde_setup(void)
 		0
 	);
 
+	class_addcreator(
+		(t_newmethod)barkSpecCentroid_tilde_new,
+		gensym("timbreIDLib/barkSpecCentroid~"),
+		A_GIMME,
+		0
+	);
+	
 	CLASS_MAINSIGNALIN(barkSpecCentroid_tilde_class, t_barkSpecCentroid_tilde, x_f);
 
 	class_addbang(barkSpecCentroid_tilde_class, barkSpecCentroid_tilde_bang);

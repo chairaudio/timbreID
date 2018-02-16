@@ -12,9 +12,7 @@ timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARR
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-version 0.7, September 26, 2016
-
-- using FFTW now
+version 0.7.1, February 16, 2018
 
 */
 
@@ -517,6 +515,13 @@ void barkSpecSkewness_tilde_setup(void)
 		0
 	);
 
+	class_addcreator(
+		(t_newmethod)barkSpecSkewness_tilde_new,
+		gensym("timbreIDLib/barkSpecSkewness~"),
+		A_GIMME,
+		0
+	);
+	
 	CLASS_MAINSIGNALIN(barkSpecSkewness_tilde_class, t_barkSpecSkewness_tilde, x_f);
 
 	class_addbang(barkSpecSkewness_tilde_class, barkSpecSkewness_tilde_bang);
