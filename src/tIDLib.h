@@ -10,9 +10,7 @@ timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARR
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-version 0.7, September 26, 2016
-
-- made tIDLib.h a proper header file with only type definitions and function declarations. tIDLib.c contains functions definitions
+version 0.7.2, February 17, 2018
 
 */
 

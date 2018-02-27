@@ -19,36 +19,36 @@
 #X restore 265 57 graph;
 #N canvas 435 107 989 662 request-info 0;
 #X msg 253 40 dump;
-#X msg 449 456 restore;
-#X msg 439 431 store;
-#X msg 460 480 wipe;
-#X msg 420 297 std;
-#X msg 366 224 mean;
-#X msg 390 260 geomean;
-#X msg 324 153 sum;
+#X msg 479 456 restore;
+#X msg 469 431 store;
+#X msg 490 480 wipe;
+#X msg 450 327 std;
+#X msg 396 254 mean;
+#X msg 420 290 geomean;
+#X msg 354 183 sum;
 #X text 297 39 Dump all values to a list at the right outlet.;
-#X text 335 116 Ask for the length of the table.;
+#X text 365 146 Ask for the length of the table.;
 #X text 62 21 Specify the active table.;
-#X text 510 455 Restore the stored values after you've messsed them
+#X text 540 455 Restore the stored values after you've messsed them
 up.;
-#X text 503 480 Wipe all memory.;
-#X text 436 356 Store the table values to internal memory. Note that
+#X text 533 480 Wipe all memory.;
+#X text 466 356 Store the table values to internal memory. Note that
 if you store a table \, then set to a different active table \, the
 internal memory will still contain the former table's values. Hit store
 again to update memory after setting to the new table.;
-#X text 358 152 Sum all values.;
-#X text 405 223 Take the arithmetic mean.;
-#X text 456 297 Calculate standard deviation.;
-#X msg 293 117 size;
-#X text 454 259 Take the geometric mean. You will get NANs on negative
+#X text 388 182 Sum all values.;
+#X text 435 253 Take the arithmetic mean.;
+#X text 486 327 Calculate standard deviation.;
+#X msg 323 147 size;
+#X text 484 289 Take the geometric mean. You will get NANs on negative
 data.;
 #X text 407 74 Dump values in a certain range to a list at the right
 outlet.;
 #X msg 274 80 dump_range 17 29;
-#X msg 343 188 range;
-#X text 397 188 Find the range of the table data;
-#X msg 484 532 choose;
-#X text 541 526 Randomly select a value from the table. The index of
+#X msg 373 218 range;
+#X text 427 218 Find the range of the table data;
+#X msg 514 532 choose;
+#X text 571 526 Randomly select a value from the table. The index of
 the chosen value is reported at the right outlet.;
 #X msg 33 65 set \$1-table-1;
 #X obj 33 25 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
@@ -59,6 +59,9 @@ the chosen value is reported at the right outlet.;
 #X obj 73 116 f \$0;
 #X msg 73 136 set \$1-table-2;
 #X obj 253 601 s \$0-tool-1;
+#X text 347 104 Iterate through the table and send each value out the
+left outlet as quickly as possible.;
+#X msg 294 110 drip;
 #X connect 0 0 31 0;
 #X connect 1 0 31 0;
 #X connect 2 0 31 0;
@@ -77,8 +80,9 @@ the chosen value is reported at the right outlet.;
 #X connect 28 0 29 0;
 #X connect 29 0 30 0;
 #X connect 30 0 31 0;
+#X connect 33 0 31 0;
 #X restore 55 383 pd request-info;
-#N canvas 255 327 843 631 multi-table-math 0;
+#N canvas 255 327 868 653 multi-table-math 0;
 #X text 22 65 Dot product;
 #X text 22 85 Euclidean distance;
 #X text 22 105 Taxicab distance;
@@ -433,7 +437,7 @@ straight line.;
 #N canvas 308 126 1046 503 conversion 0;
 #N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-conversion 64 float 0;
-#X coords 0 107.906 63 22.4181 200 140 1 0 0;
+#X coords 0 107.22 63 21.0007 200 140 1 0 0;
 #X restore 738 57 graph;
 #X msg 43 39 mtof;
 #X text 120 38 Convert all values from MIDI to frequency in Hz;
@@ -481,7 +485,7 @@ of the table since the unit ranges here vary wildly..., f 24;
 #X msg 65 183 fit_bounds;
 #N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-fitBoundsTest 64 float 0;
-#X coords 0 1.93901 63 -1.84288 200 140 1 0 0;
+#X coords 0 1 63 -1 200 140 1 0 0;
 #X restore 231 123 graph;
 #X text 29 15 The fit_bounds method finds the maximum and minimum values
 in a table and changes the table display properties so that the Y range
@@ -499,7 +503,7 @@ to fill this table \, and then hit the fit_bounds message;
 #X connect 4 0 3 0;
 #X connect 7 0 5 0;
 #X connect 8 0 3 0;
-#X restore 332 363 pd properties;
+#X restore 332 383 pd properties;
 #N canvas 281 295 1223 500 searching-2 0;
 #N canvas 0 50 450 300 (subpatch) 0;
 #X array valleys 64 float 1;
@@ -673,6 +677,72 @@ of a command is a single number \, it shows up at the left outlet.
 When the output is a list \, it is sent out the right outlet. Some
 methods produce output at both outlets as value/index pairs \, and
 others operate directly on the table data in place.;
+#N canvas 581 240 715 504 overlap-add 0;
+#N canvas 0 50 450 278 (subpatch) 0;
+#X array \$0-ola-result 88200 float 0;
+#X coords 0 1 88199 -1 200 140 1 0 0;
+#X restore 406 309 graph;
+#X obj 25 235 tabletool \$0-ola-result;
+#X obj 263 322 table \$0-sample;
+#X obj 86 375 soundfiler;
+#X obj 86 300 loadbang;
+#X obj 53 324 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 86 321 f \$0;
+#X obj 25 95 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 25 115 f \$0;
+#X obj 75 165 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 75 185 f \$0;
+#X msg 86 354 read -resize ./audio/voice2.wav \$1-sample;
+#X text 22 31 For non-real-time assembling of audio \, the overlap_add
+method takes a range of samples from a table \, applies a specified
+window \, and adds the windowed audio to the target table at the given
+starting sample.;
+#X text 403 114 Arguments \; \$1: window function code \; \$2: number
+of samples (range) \; \$3: starting sample in source array \; \$4:
+source array symbol \; \$5: starting sample in target array \;;
+#X text 403 204 Window function codes \; Rectangular (0) \; Blackman
+(1) \; Cosine (2) \; Hamming (3) \; Hann (4) \;;
+#X obj 468 27 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 468 47 f \$0;
+#X msg 468 68 \; \$1-ola-result const 0 \;;
+#X msg 75 206 overlap_add 300 8192 4 \$1-sample 5096;
+#X msg 25 136 overlap_add 200 8192 4 \$1-sample 1000;
+#X connect 4 0 6 0;
+#X connect 5 0 6 0;
+#X connect 6 0 11 0;
+#X connect 7 0 8 0;
+#X connect 8 0 19 0;
+#X connect 9 0 10 0;
+#X connect 10 0 18 0;
+#X connect 11 0 3 0;
+#X connect 15 0 16 0;
+#X connect 16 0 17 0;
+#X connect 18 0 1 0;
+#X connect 19 0 1 0;
+#X restore 332 363 pd overlap-add;
+#N canvas 826 64 450 300 permutations 1;
+#X obj 66 114 tabletool \$0-perms;
+#X obj 297 228 tabletool \$0-perms;
+#X obj 318 163 loadbang;
+#X obj 176 171 print;
+#X msg 66 23 permute 2;
+#X msg 86 53 permute 3;
+#X msg 116 83 permute -1;
+#X obj 250 58 table \$0-perms 5;
+#X floatatom 54 181 5 0 0 0 - - -, f 5;
+#X msg 297 207 series 0 1 1;
+#X connect 0 0 8 0;
+#X connect 0 1 3 0;
+#X connect 2 0 9 0;
+#X connect 4 0 0 0;
+#X connect 5 0 0 0;
+#X connect 6 0 0 0;
+#X connect 9 0 1 0;
+#X restore 200 396 pd permutations;
 #X connect 17 0 18 0;
 #X connect 18 0 16 0;
 #X connect 18 1 15 0;

@@ -10,7 +10,7 @@ tabletool is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-version 0.7.1, February 16, 2018
+version 0.7.2, February 17, 2018
 
 */
 
@@ -106,6 +106,24 @@ static void tabletool_dumpRange(t_tabletool *x, t_float start, t_float finish)
 
 		// free local memory
 		t_freebytes(listOut, range*sizeof(t_atom));
+ 	}
+}
+
+
+static void tabletool_drip(t_tabletool *x)
+{
+	t_garray *a;
+
+	if(!(a = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
+        pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
+    else if(!garray_getfloatwords(a, (int *)&x->x_arrayPoints, &x->x_vec))
+    	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
+	else
+	{
+		t_sampIdx i;
+
+		for(i=0; i<x->x_arrayPoints; i++)
+			outlet_float(x->x_info, x->x_vec[i].w_float);
  	}
 }
 
@@ -545,6 +563,61 @@ static void tabletool_choose(t_tabletool *x)
 
 		outlet_list(x->x_list, 0, 1, &indexOut);
 		outlet_float(x->x_info, choice);
+	}
+}
+
+
+static void tabletool_permute(t_tabletool *x, t_float n)
+{
+	t_garray *a;
+
+	if(!(a = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
+        pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
+    else if(!garray_getfloatwords(a, (int *)&x->x_arrayPoints, &x->x_vec))
+    	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
+	else
+	{
+		t_uInt i, j, totalElements, totalPerms;
+		t_atom *listOut;
+
+		totalElements = x->x_arrayPoints;
+
+		if(n>totalElements)
+		{
+	    	pd_error(x, "%s: requested grouping larger than number of elements in set", x->x_objSymbol->s_name);
+			return;
+		}				
+
+		if(n<1)
+		{
+	    	pd_error(x, "%s: requested grouping invalid", x->x_objSymbol->s_name);
+			return;
+		}		
+				
+		listOut = (t_atom *)t_getbytes(n*sizeof(t_atom));
+
+		totalPerms = pow(totalElements, n);
+//		post("totalPerms: %i", totalPerms);
+
+		for(i=0; i<totalPerms; i++)
+		{
+			for(j=0; j<n; j++)
+			{
+				t_uInt pIdx, listIdx;
+				
+				listIdx = n-j-1;
+				pIdx = floor(i/pow(totalElements, j));
+				pIdx = pIdx % totalElements;
+				SETFLOAT(listOut+listIdx, x->x_vec[pIdx].w_float);
+			}
+			
+			outlet_list(x->x_list, 0, n, listOut);
+		}
+
+		outlet_float(x->x_info, totalPerms);
+
+		// free the memory
+		t_freebytes(listOut, n*sizeof(t_atom));
 	}
 }
 
@@ -1682,6 +1755,103 @@ static void tabletool_add_range(t_tabletool *x, t_symbol *s, int argc, t_atom *a
 	}
 }
 */
+
+
+static void tabletool_overlapAdd(t_tabletool *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_garray *target;
+
+	if(argc<5)
+	{
+		pd_error(x, "%s: too few arguments for %s method", x->x_objSymbol->s_name, s->s_name);
+		return;
+	}
+	
+	if(!(target = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
+        pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
+    else if(!garray_getfloatwords(target, (int *)&x->x_arrayPoints, &x->x_vec))
+    	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
+	else
+	{
+		t_garray *source;
+		t_word *vecSource;
+		t_symbol *sourceArray;
+		t_sampIdx i, j, k, n, w, sourceArrayPts, sourceStartSamp, targetStartSamp;
+		t_float *wPtr;
+
+		sourceStartSamp = atom_getfloat(argv+0);
+		n = atom_getfloat(argv+1);
+		w = atom_getfloat(argv+2);
+		sourceArray = atom_getsymbol(argv+3);
+		targetStartSamp = atom_getfloat(argv+4);
+		
+		if(!(source = (t_garray *)pd_findbyclass(sourceArray, garray_class)))
+		{
+			pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, sourceArray->s_name);
+			return;
+		}
+		else if(!garray_getfloatwords(source, (int *)&sourceArrayPts, &vecSource))
+		{
+			pd_error(x, "%s: bad template for %s", sourceArray->s_name, x->x_objSymbol->s_name);
+			return;
+		}
+
+		// make sure window code is between 0 and 4
+		w = (w>4)?4:w;
+
+		if(sourceStartSamp>=sourceArrayPts)
+		{
+			pd_error(x, "%s: source starting sample out of bounds", x->x_objSymbol->s_name);
+			return;
+		}
+		else if(sourceStartSamp+n-1>=sourceArrayPts)
+		{
+			pd_error(x, "%s: source sample range out of bounds", x->x_objSymbol->s_name);
+			return;
+		}
+		else if(targetStartSamp>=x->x_arrayPoints)
+		{
+			pd_error(x, "%s: target starting sample out of bounds", x->x_objSymbol->s_name);
+			return;
+		}
+		else if(targetStartSamp+n-1>=x->x_arrayPoints)
+		{
+			pd_error(x, "%s: target sample range out of bounds", x->x_objSymbol->s_name);
+			return;
+		}	
+		
+		wPtr = (t_float *)t_getbytes(n*sizeof(t_float));
+
+		switch(w)
+		{
+			case rectangular:
+				break;
+			case blackman:
+				tIDLib_blackmanWindow(wPtr, n);
+				break;
+			case cosine:
+				tIDLib_cosineWindow(wPtr, n);
+				break;
+			case hamming:
+				tIDLib_hammingWindow(wPtr, n);
+				break;
+			case hann:
+				tIDLib_hannWindow(wPtr, n);
+				break;
+			default:
+				tIDLib_blackmanWindow(wPtr, n);
+				break;
+		};
+	
+		for(i=0, j=sourceStartSamp, k=targetStartSamp; i<n; i++, j++, k++)
+			x->x_vec[k].w_float += vecSource[j].w_float * *(wPtr+i);
+		
+		garray_redraw(target);
+
+		t_freebytes(wPtr, n*sizeof(t_float));
+	}
+}
+
 
 static void tabletool_subtract(t_tabletool *x, t_symbol *array2)
 {
@@ -3017,7 +3187,14 @@ void tabletool_setup(void)
 		A_DEFFLOAT,
 		0
 	);
-	
+
+	class_addmethod(
+		tabletool_class,
+		(t_method)tabletool_drip,
+		gensym("drip"),
+		0
+	);
+
 	class_addmethod(
 		tabletool_class,
 		(t_method)tabletool_size,
@@ -3105,6 +3282,14 @@ void tabletool_setup(void)
 		tabletool_class,
 		(t_method)tabletool_choose,
 		gensym("choose"),
+		0
+	);
+
+	class_addmethod(
+		tabletool_class,
+		(t_method)tabletool_permute,
+		gensym("permute"),
+		A_DEFFLOAT,
 		0
 	);
 
@@ -3380,6 +3565,14 @@ void tabletool_setup(void)
 		0
 	);
 */
+
+	class_addmethod(
+		tabletool_class,
+		(t_method)tabletool_overlapAdd,
+		gensym("overlap_add"),
+		A_GIMME,
+		0
+	);
 
 	class_addmethod(
 		tabletool_class,
