@@ -942,11 +942,21 @@ static void timbreID_manualCluster(t_timbreID *x, t_floatarg numClusters, t_floa
 		pd_error(x, "%s: not enough instances to cluster. clustering failed.", x->x_objSymbol->s_name);
 	else
 	{
+		// BUGFIX: commented out in favor of free/get new memory
 		// resize the members memory from its current .numMembers value to the new incoming numMembers+1
-		x->x_clusters[clusterIdxInt].members = (t_instanceIdx *)t_resizebytes(x->x_clusters[clusterIdxInt].members, x->x_clusters[clusterIdxInt].numMembers * sizeof(t_instanceIdx), numMembers+1 * sizeof(t_instanceIdx));
+//		x->x_clusters[clusterIdxInt].members = (t_instanceIdx *)t_resizebytes(x->x_clusters[clusterIdxInt].members, x->x_clusters[clusterIdxInt].numMembers * sizeof(t_instanceIdx), numMembers+1 * sizeof(t_instanceIdx));
+
+		// BUGFIX: added
+		x->x_numClusters = numClusters;
+
+		// BUGFIX: added
+		t_freebytes(x->x_clusters[clusterIdxInt].members, x->x_clusters[clusterIdxInt].numMembers*sizeof(t_instanceIdx));
 
 		// update the .numMembers value
-		x->x_clusters[clusterIdxInt].numMembers = numMembers+1; // +1 for the terminating -1
+		x->x_clusters[clusterIdxInt].numMembers = numMembers+1; // +1 for the terminating UINT_MAX
+
+		// BUGFIX: added
+		x->x_clusters[clusterIdxInt].members = (t_instanceIdx *)t_getbytes(x->x_clusters[clusterIdxInt].numMembers*sizeof(t_instanceIdx));
 
 		x->x_clusters[clusterIdxInt].votes = 0;
 		
