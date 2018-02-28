@@ -9,10 +9,7 @@ timbreID is free software: you can redistribute it and/or modify it under the te
 timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-version 0.7, September 26, 2016
-
-- made timbreIDLib a single library binary that contains all individual externs and is statically linked to FFTW. This is the source file for that library, which simply runs the _setup routines of all externals in its own _setup()
+version 0.7.2, February 28, 2018
 
 */
 
@@ -37,7 +34,7 @@ void timbreIDLib_setup(void)
 {
 	timbreIDLib_class = class_new(gensym("timbreIDLib"), timbreIDLib_new, 0, sizeof(t_timbreIDLib), CLASS_PD, 0);
 
-	post("timbreID version 0.7.2-Feb27");
+	post("timbreID version 0.7.2");
 
 	attackTime_setup();
 	attackTime_tilde_setup();

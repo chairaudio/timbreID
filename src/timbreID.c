@@ -11,9 +11,6 @@ timbreID is free software: you can redistribute it and/or modify it under the te
 timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-version 0.7.1, February 16, 2018
-
 ** 0.7.0 fixed concatID method to give it an option to do wraparound or not. Updated ID method to report a desired number of matches (based on KNN setting), not just one. This will help with doing timbre blending in timbre space example, where we need the N closest matches. Changed write_text method so that if the database is normalized, the normalized data is printed out. Also works with attribute_range and attributeOrder so that you can print out a specific subset of attribute columns instead of the entire attribute list. Still need to update ID method to remove the dynamically assigned *votes memory.
 
 ** 0.6.0 changed all floats to t_floats, got rid of unused headers, removed underscores from variable names.  FIXED concatenative_id function's search center/neighborhood bug.  Added a similarity matrix function.  Added a "print" method to show internal settings.  Made even or odd neighborhood settings valid since it will sometimes be important to pick an exact range.  Odd settings are fine - with n=5, we search from the center -/+ 2.  With n=6, it be center -2/+3 because of a special case for searchStart.

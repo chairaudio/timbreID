@@ -9,9 +9,6 @@ tabletool is free software: you can redistribute it and/or modify it under the t
 tabletool is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-version 0.7.2, February 17, 2018
-
 */
 
 
@@ -582,22 +579,15 @@ static void tabletool_permute(t_tabletool *x, t_float n)
 
 		totalElements = x->x_arrayPoints;
 
-		if(n>totalElements)
-		{
-	    	pd_error(x, "%s: requested grouping larger than number of elements in set", x->x_objSymbol->s_name);
-			return;
-		}				
-
-		if(n<1)
+		if(n>totalElements || n<1)
 		{
 	    	pd_error(x, "%s: requested grouping invalid", x->x_objSymbol->s_name);
 			return;
-		}		
+		}	
 				
 		listOut = (t_atom *)t_getbytes(n*sizeof(t_atom));
 
 		totalPerms = pow(totalElements, n);
-//		post("totalPerms: %i", totalPerms);
 
 		for(i=0; i<totalPerms; i++)
 		{

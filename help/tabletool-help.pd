@@ -403,7 +403,6 @@ straight line.;
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#X text 550 409 Updated for timbreID version 0.7;
 #N canvas 308 126 790 349 manipulations-3 0;
 #X msg 119 127 ceil;
 #X msg 150 169 floor;
@@ -437,7 +436,7 @@ straight line.;
 #N canvas 308 126 1046 503 conversion 0;
 #N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-conversion 64 float 0;
-#X coords 0 107.22 63 21.0007 200 140 1 0 0;
+#X coords 0 107.953 63 21.261 200 140 1 0 0;
 #X restore 738 57 graph;
 #X msg 43 39 mtof;
 #X text 120 38 Convert all values from MIDI to frequency in Hz;
@@ -480,7 +479,6 @@ of the table since the unit ranges here vary wildly..., f 24;
 #X connect 23 0 19 0;
 #X connect 23 1 20 0;
 #X restore 202 363 pd conversion;
-#X text 550 429 July 2017;
 #N canvas 836 346 463 407 properties 0;
 #X msg 65 183 fit_bounds;
 #N canvas 0 50 450 278 (subpatch) 0;
@@ -677,72 +675,133 @@ of a command is a single number \, it shows up at the left outlet.
 When the output is a list \, it is sent out the right outlet. Some
 methods produce output at both outlets as value/index pairs \, and
 others operate directly on the table data in place.;
-#N canvas 581 240 715 504 overlap-add 0;
+#N canvas 572 286 715 504 overlap-add 0;
 #N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-ola-result 88200 float 0;
 #X coords 0 1 88199 -1 200 140 1 0 0;
 #X restore 406 309 graph;
-#X obj 25 235 tabletool \$0-ola-result;
-#X obj 263 322 table \$0-sample;
-#X obj 86 375 soundfiler;
-#X obj 86 300 loadbang;
-#X obj 53 324 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X obj 86 321 f \$0;
-#X obj 25 95 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X obj 25 115 f \$0;
-#X obj 75 165 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X obj 75 185 f \$0;
-#X msg 86 354 read -resize ./audio/voice2.wav \$1-sample;
-#X text 22 31 For non-real-time assembling of audio \, the overlap_add
+#X obj 25 265 tabletool \$0-ola-result;
+#X obj 459 227 table \$0-sample;
+#X text 22 21 For non-real-time assembling of audio \, the overlap_add
 method takes a range of samples from a table \, applies a specified
 window \, and adds the windowed audio to the target table at the given
 starting sample.;
-#X text 403 114 Arguments \; \$1: window function code \; \$2: number
-of samples (range) \; \$3: starting sample in source array \; \$4:
+#X text 284 98 Arguments \; \$1: starting sample in source array \;
+\$2: number of samples (range) \; \$3: window function code \; \$4:
 source array symbol \; \$5: starting sample in target array \;;
-#X text 403 204 Window function codes \; Rectangular (0) \; Blackman
+#X text 544 98 Window function codes \; Rectangular (0) \; Blackman
 (1) \; Cosine (2) \; Hamming (3) \; Hann (4) \;;
-#X obj 468 27 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+#X obj 90 421 tabplay~ \$0-ola-result;
+#X obj 90 452 dac~;
+#X obj 25 115 f \$0;
+#X obj 25 95 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
-#X obj 468 47 f \$0;
-#X msg 468 68 \; \$1-ola-result const 0 \;;
-#X msg 75 206 overlap_add 300 8192 4 \$1-sample 5096;
-#X msg 25 136 overlap_add 200 8192 4 \$1-sample 1000;
-#X connect 4 0 6 0;
+#X obj 65 185 f \$0;
+#X obj 65 165 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X msg 25 136 overlap_add 1000 32768 4 \$1-sample 1000;
+#X msg 65 207 overlap_add 44100 32768 4 \$1-sample 17384;
+#N canvas 276 34 561 469 example-process 0;
+#X obj 25 405 tabletool \$0-ola-result;
+#X obj 25 355 pack f f \$0;
+#X msg 25 376 overlap_add \$2 8192 4 \$3-sample \$1;
+#X obj 25 89 t f b;
+#X obj 5 140 until;
+#X obj 25 201 f;
+#X msg 45 178 0;
+#X obj 25 262 t f b;
+#X obj 85 312 random;
+#X obj 55 202 + 2048;
+#X msg 25 68 40;
+#X obj 118 268 r \$0-overlap-add-source-len;
+#X obj 118 289 - 8192;
+#X obj 25 29 inlet;
+#X text 137 54 Here's a toy example where we grab random 8192-point
+grains from the source audio array (a recording of Satie) \, and overlap
+them spaced 2048 samples apart using a Hann window. We do it 40 times
+to fill up the \$0-ola-result array.;
+#X connect 1 0 2 0;
+#X connect 2 0 0 0;
+#X connect 3 0 4 0;
+#X connect 3 1 6 0;
+#X connect 4 0 5 0;
+#X connect 5 0 7 0;
+#X connect 5 0 9 0;
+#X connect 6 0 5 1;
+#X connect 7 0 1 0;
+#X connect 7 1 8 0;
+#X connect 8 0 1 1;
+#X connect 9 0 5 1;
+#X connect 10 0 3 0;
+#X connect 11 0 12 0;
+#X connect 12 0 8 1;
+#X connect 13 0 10 0;
+#X restore 130 370 pd example-process;
+#X obj 90 310 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#N canvas 719 470 450 300 load-sample 0;
+#X obj 85 121 soundfiler;
+#X obj 85 56 loadbang;
+#X obj 85 77 f \$0;
+#X msg 85 100 read -resize ./audio/satie.wav \$1-sample;
+#X obj 125 162 s \$0-overlap-add-source-len;
+#X obj 85 142 t b f;
+#X obj 85 182 f \$0;
+#X msg 85 203 \; \$1-sample normalize \;;
+#X connect 0 0 5 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 0 0;
 #X connect 5 0 6 0;
-#X connect 6 0 11 0;
-#X connect 7 0 8 0;
-#X connect 8 0 19 0;
-#X connect 9 0 10 0;
-#X connect 10 0 18 0;
-#X connect 11 0 3 0;
-#X connect 15 0 16 0;
-#X connect 16 0 17 0;
-#X connect 18 0 1 0;
-#X connect 19 0 1 0;
+#X connect 5 1 4 0;
+#X connect 6 0 7 0;
+#X restore 459 247 pd load-sample;
+#X obj 203 302 f \$0;
+#X msg 203 323 \; \$1-ola-result const 0 \;;
+#X obj 203 282 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 90 330 t b b b;
+#X connect 6 0 7 0;
+#X connect 6 0 7 1;
+#X connect 8 0 12 0;
+#X connect 9 0 8 0;
+#X connect 10 0 13 0;
+#X connect 11 0 10 0;
+#X connect 12 0 1 0;
+#X connect 13 0 1 0;
+#X connect 15 0 20 0;
+#X connect 17 0 18 0;
+#X connect 19 0 17 0;
+#X connect 20 0 6 0;
+#X connect 20 1 14 0;
+#X connect 20 2 17 0;
 #X restore 332 363 pd overlap-add;
-#N canvas 826 64 450 300 permutations 1;
+#N canvas 727 422 652 250 permutations 0;
 #X obj 66 114 tabletool \$0-perms;
-#X obj 297 228 tabletool \$0-perms;
-#X obj 318 163 loadbang;
-#X obj 176 171 print;
+#X obj 289 184 tabletool \$0-perms;
+#X obj 289 137 loadbang;
 #X msg 66 23 permute 2;
 #X msg 86 53 permute 3;
-#X msg 116 83 permute -1;
-#X obj 250 58 table \$0-perms 5;
-#X floatatom 54 181 5 0 0 0 - - -, f 5;
-#X msg 297 207 series 0 1 1;
-#X connect 0 0 8 0;
-#X connect 0 1 3 0;
-#X connect 2 0 9 0;
+#X obj 447 158 table \$0-perms 5;
+#X floatatom 66 165 5 0 0 0 - - -, f 5;
+#X obj 176 165 print;
+#X msg 289 163 series 0 4 1;
+#X text 227 29 The permute method lists all permutations (with repetition)
+of the data in the target table. The number of elements in the permutation
+results can be controlled with an argument. Here \, a table is filled
+with 0 \, 1 \, 2 \, 3 \, 4 (via tabletool's series method) \, and we
+get all 2-element or 3-element permutations of that set as a sequence
+of lists out the right outlet. The left outlet reports the number of
+resulting permutations.;
+#X connect 0 0 6 0;
+#X connect 0 1 7 0;
+#X connect 2 0 8 0;
+#X connect 3 0 0 0;
 #X connect 4 0 0 0;
-#X connect 5 0 0 0;
-#X connect 6 0 0 0;
-#X connect 9 0 1 0;
-#X restore 200 396 pd permutations;
-#X connect 17 0 18 0;
-#X connect 18 0 16 0;
-#X connect 18 1 15 0;
+#X connect 8 0 1 0;
+#X restore 202 383 pd permutations;
+#X text 550 409 Updated for timbreID version 0.7.2;
+#X text 550 429 March 2018;
+#X connect 15 0 16 0;
+#X connect 16 0 14 0;
+#X connect 16 1 13 0;
