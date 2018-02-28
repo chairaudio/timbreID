@@ -1,8 +1,8 @@
 SOURCES = attackTime.c attackTime~.c bark.c bark2freq.c barkSpec.c barkSpecBrightness.c barkSpecBrightness~.c barkSpecCentroid.c barkSpecCentroid~.c barkSpecFlatness.c barkSpecFlatness~.c barkSpecFlux.c barkSpecFlux~.c barkSpecIrregularity.c barkSpecIrregularity~.c barkSpecKurtosis.c barkSpecKurtosis~.c barkSpecRolloff.c barkSpecRolloff~.c barkSpecSkewness.c barkSpecSkewness~.c barkSpecSlope.c barkSpecSlope~.c barkSpecSpread.c barkSpecSpread~.c barkSpec~.c bark~.c bfcc.c bfcc~.c bin2freq.c binWrangler.c cepstrum.c cepstrum~.c cepstrumPitch.c cepstrumPitch~.c dct.c dct~.c featureAccum.c freq2bark.c freq2bin.c freq2mel.c magSpec.c magSpec~.c maxSample.c maxSample~.c maxSampleDelta.c maxSampleDelta~.c mel2freq.c melSpec.c melSpec~.c mfcc.c mfcc~.c minSample.c minSample~.c minSampleDelta.c minSampleDelta~.c nearestPoint.c peakSample.c peakSample~.c sampleBuffer~.c specBrightness.c specBrightness~.c specCentroid.c specCentroid~.c specFlatness.c specFlatness~.c specFlux.c specFlux~.c specHarmonicity.c specHarmonicity~.c specIrregularity.c specIrregularity~.c specKurtosis.c specKurtosis~.c specRolloff.c specRolloff~.c specSkewness.c specSkewness~.c specSlope.c specSlope~.c specSpread.c specSpread~.c tID_mean.c tID_std.c tIDLib.c timbreID.c timbreIDLib.c tabletool.c waveSlope.c waveSlope~.c zeroCrossing.c zeroCrossing~.c
 
 # ****SUPPLY THE LOCATION OF PD SOURCE****
-pd_src = /home/wbrent/PUREDATA/pd-0.48-1
-# pd_src = /Users/yourname/Pd/pd-0.48-1
+pd_src = /home/yourname/somedirectory/pd-0.48-1
+# pd_src = /Users/yourname/somedirectory/pd-0.48-1
 # pd_src = "C:\Program Files (x86)\Pd"
 
 CFLAGS = -DPD -I$(pd_src)/src -I/usr/local/include -Wall -W -g
