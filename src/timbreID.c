@@ -942,20 +942,16 @@ static void timbreID_manualCluster(t_timbreID *x, t_floatarg numClusters, t_floa
 		pd_error(x, "%s: not enough instances to cluster. clustering failed.", x->x_objSymbol->s_name);
 	else
 	{
-		// BUGFIX: commented out in favor of free/get new memory
-		// resize the members memory from its current .numMembers value to the new incoming numMembers+1
-//		x->x_clusters[clusterIdxInt].members = (t_instanceIdx *)t_resizebytes(x->x_clusters[clusterIdxInt].members, x->x_clusters[clusterIdxInt].numMembers * sizeof(t_instanceIdx), numMembers+1 * sizeof(t_instanceIdx));
-
-		// BUGFIX: added
+		// update the number of clusters, trusting that the user knows what they're doing!
 		x->x_numClusters = numClusters;
 
-		// BUGFIX: added
+		// free this cluster's members memory
 		t_freebytes(x->x_clusters[clusterIdxInt].members, x->x_clusters[clusterIdxInt].numMembers*sizeof(t_instanceIdx));
 
 		// update the .numMembers value
 		x->x_clusters[clusterIdxInt].numMembers = numMembers+1; // +1 for the terminating UINT_MAX
 
-		// BUGFIX: added
+		// get new memory for this cluster's members
 		x->x_clusters[clusterIdxInt].members = (t_instanceIdx *)t_getbytes(x->x_clusters[clusterIdxInt].numMembers*sizeof(t_instanceIdx));
 
 		x->x_clusters[clusterIdxInt].votes = 0;
@@ -968,7 +964,16 @@ static void timbreID_manualCluster(t_timbreID *x, t_floatarg numClusters, t_floa
 	
 		// terminate with UINT_MAX
 		x->x_clusters[clusterIdxInt].members[j] = UINT_MAX;
-			
+
+		// resize the excess clusterMembers memory back to the default size of 2 and store the default instance index as the cluster member followed by a terminating UINT_MAX
+		for(i=x->x_numClusters; i<x->x_numInstances; i++)
+		{
+			x->x_clusters[i].members = (t_instanceIdx *)t_resizebytes(x->x_clusters[i].members, x->x_clusters[i].numMembers*sizeof(t_instanceIdx), 2*sizeof(t_instanceIdx));
+			x->x_clusters[i].numMembers = 2;
+			x->x_clusters[i].members[0] = i;
+			x->x_clusters[i].members[1] = UINT_MAX;
+		}
+	
 		post("%s: cluster %i contains instances %i through %i.", x->x_objSymbol->s_name, clusterIdxInt, lowIdx, hiIdx);
 	};
 }
@@ -1048,7 +1053,7 @@ static void timbreID_computeCluster(t_timbreID *x, t_floatarg numClusters)
 						if( clusterData[i+j].data[0] != FLT_MAX )
 						{	
 							pairDists[k] = timbreID_getDist(x, clusterData[i], clusterData[i+j]);
-							numClusterMembers1 = x->x_clusters[i].numMembers-1; // -1 because the list is terminated with -1
+							numClusterMembers1 = x->x_clusters[i].numMembers-1; // -1 because the list is terminated with UINT_MAX
 							numClusterMembers2 = x->x_clusters[i+j].numMembers-1;
 								
 							// definition of Ward's linkage from MATLAB linkage doc
@@ -2563,7 +2568,7 @@ static void timbreID_readClustersText(t_timbreID *x, t_symbol *s)
 			if(textLine[j]==32)
 				numSpaces++;
 
-		// there's a space after each entry in a file written by write_clusters_text(). So numMembers should be numSpaces, +1 for the terminating -1 for each cluster list
+		// there's a space after each entry in a file written by write_clusters_text(). So numMembers should be numSpaces, +1 for the terminating UINT_MAX for each cluster list
 		x->x_clusters[i].numMembers = numSpaces+1;
 
 		// get the appropriate number of bytes for the data 
