@@ -2048,11 +2048,12 @@ static void timbreID_writeText(t_timbreID *x, t_symbol *s)
 			thisAttribute = x->x_attributeData[j].order;
 
 			if(thisAttribute>=x->x_instances[i].length)
-			{	
-				pd_error(x, "%s: attribute %i out of range for instance %i. aborting file write", x->x_objSymbol->s_name, thisAttribute, i);
-				fclose(filePtr);
-				return;
-			}
+				break;
+// 			{	
+// 				pd_error(x, "%s: attribute %i out of range for instance %i. aborting file write", x->x_objSymbol->s_name, thisAttribute, i);
+// 				fclose(filePtr);
+// 				return;
+// 			}
 			
 			if(x->x_normalize)
 				thisFeatureData = (*(featurePtr+thisAttribute) - x->x_attributeData[thisAttribute].normData.min)*x->x_attributeData[thisAttribute].normData.normScalar;
