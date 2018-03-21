@@ -873,7 +873,7 @@ static void timbreID_normalize(t_timbreID *x, t_floatarg n)
 
 static void timbreID_print(t_timbreID *x)
 {
-	post("timbreID version 0.7.0");
+	post("timbreID version 0.7.3");
 	post("%s: no. of instances: %i", x->x_objSymbol->s_name, x->x_numInstances);
 	post("%s: max feature length: %i", x->x_objSymbol->s_name, x->x_maxFeatureLength);
 	post("%s: min feature length: %i", x->x_objSymbol->s_name, x->x_minFeatureLength);
@@ -2046,11 +2046,10 @@ static void timbreID_writeText(t_timbreID *x, t_symbol *s)
 			t_attributeIdx thisAttribute;
 
 			thisAttribute = x->x_attributeData[j].order;
-			
+
 			if(thisAttribute>=x->x_instances[i].length)
 			{	
 				pd_error(x, "%s: attribute %i out of range for instance %i. aborting file write", x->x_objSymbol->s_name, thisAttribute, i);
-			    t_freebytes(fileNameBuf, MAXPDSTRING*sizeof(char));
 				fclose(filePtr);
 				return;
 			}
