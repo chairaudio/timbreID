@@ -163,10 +163,6 @@ Change the number of nearest neighbors searched in the KNN algorithm
 of training examples you give per instrument \, the confidence measure
 reported from timbreID's 3rd outlet will be much more meaningful.;
 #N canvas 372 127 946 714 file-formats 0;
-#X text 48 322 Write an ARFF file for direct importation into WEKA
-(www.cs.waikato.ac.nz/ml/weka). Arguments are file name \, relation
-name \, then triples composed of <float> <float> <symbol> to label
-ranges of the feature. The message below is an example.;
 #X text 48 8 timbreID's default binary file format is .timid. This
 will write and read much faster than the text format \, so it's the
 best choice for large databases (i.e. 1000s of instances);
@@ -177,8 +173,6 @@ best choice for large databases (i.e. 1000s of instances);
 #X obj 49 652 s \$0-tID;
 #X msg 49 611 OCTAVE ./data/octave-db.txt variableName;
 #X msg 389 526 MATLAB ./data/matlab-db.mat variableName;
-#X msg 49 397 ARFF ./data/arff-db.arff relation-name 0 9 feature1-name
-10 46 feature2-name;
 #X msg 49 222 write_text ./data/feature-db.txt;
 #X msg 79 247 read_text ./data/feature-db.txt;
 #X msg 49 67 write ./data/feature-db.timid;
@@ -201,13 +195,19 @@ either program with the command load -ascii 'filename';
 #X text 48 533 Write an OCTAVE data file in text data format. You can
 load this file in Octave using load octave-db.txt \, and it will appear
 in Octave memory space as a matrix called "variableName"., f 40;
-#X connect 7 0 6 0;
-#X connect 8 0 2 0;
+#X text 48 322 Write an ARFF file for direct import into WEKA (www.cs.waikato.ac.nz/ml/weka).
+Arguments are file name \, relation name \, then triples composed of
+<float> <float> <symbol> to label ranges of the feature. The message
+below is an example.;
+#X msg 49 397 ARFF ./data/arff-db.arff relation-name 0 9 feature1-name
+10 24 feature2-name;
+#X connect 6 0 5 0;
+#X connect 7 0 1 0;
+#X connect 8 0 3 0;
 #X connect 9 0 3 0;
 #X connect 10 0 4 0;
 #X connect 11 0 4 0;
-#X connect 12 0 5 0;
-#X connect 13 0 5 0;
+#X connect 18 0 2 0;
 #X restore 35 132 pd file-formats;
 #N canvas 369 206 940 574 requesting-info 0;
 #X msg 32 260 feature_list \$1;

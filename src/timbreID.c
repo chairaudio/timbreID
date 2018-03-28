@@ -873,7 +873,7 @@ static void timbreID_normalize(t_timbreID *x, t_floatarg n)
 
 static void timbreID_print(t_timbreID *x)
 {
-	post("timbreID version 0.7.3");
+	post("timbreID version 0.7.4");
 	post("%s: no. of instances: %i", x->x_objSymbol->s_name, x->x_numInstances);
 	post("%s: max feature length: %i", x->x_objSymbol->s_name, x->x_maxFeatureLength);
 	post("%s: min feature length: %i", x->x_objSymbol->s_name, x->x_minFeatureLength);
@@ -2178,7 +2178,8 @@ static void timbreID_readText(t_timbreID *x, t_symbol *s)
 static void timbreID_ARFF(t_timbreID *x, t_symbol *s, int argc, t_atom *argv)
 {
 	FILE *filePtr;
-    t_instanceIdx i, j, featuresWritten, attRangeLow, attRangeHi, argCount;
+	t_sLongInt excessAtt;
+    t_instanceIdx i, j, attRangeLow, attRangeHi, argCount;
     t_float *featurePtr;
 	t_symbol *filenameSymbol, *relationSymbol, *attSymbol;
     char fileNameBuf[MAXPDSTRING], *fileName, *relation, *attName;
@@ -2229,17 +2230,21 @@ static void timbreID_ARFF(t_timbreID *x, t_symbol *s, int argc, t_atom *argv)
 				case 2:
 					attSymbol = atom_getsymbol(argv+i);
 					attName = attSymbol->s_name;
+		
 					for(j=0; j<=attRangeHi-attRangeLow; j++)
 						fprintf(filePtr, "@ATTRIBUTE %s-%i NUMERIC\n", attName, j);
 					break;
 				default:
 					break;
 			}
-
 		}
 
+		// BUG: this was causing a crash because x_maxFeatureLength and attRangeHi are unsigned integers, so we won't get a negative number as expected when there are indeed enough arguments. This came up with version 0.7 because of typedefs - no longer using int. Quick fix is to typecast back to int during the arithmetic
+		
+		excessAtt = (int)(x->x_maxFeatureLength-1-attRangeHi);
+		
 		// in case the argument list was incomplete
-		for(j=0; j<(x->x_maxFeatureLength-1-attRangeHi); j++)
+		for(j=0; j<excessAtt; j++)
 			fprintf(filePtr, "@ATTRIBUTE undefined-attribute-%i NUMERIC\n", j);
 	}
 	else
@@ -2255,22 +2260,15 @@ static void timbreID_ARFF(t_timbreID *x, t_symbol *s, int argc, t_atom *argv)
     {    
 		featurePtr = x->x_instances[i].data;
 
-		featuresWritten=0; // to keep track of each instances no. of features written.
-
-		while(1)
-		{
-			if(featuresWritten++ == (x->x_instances[i].length-1))
-			{
-				fprintf(filePtr, "%0.20f", *featurePtr++);
-				break;
-			}
-			else
-				fprintf(filePtr, "%0.20f, ", *featurePtr++);
-		};
+		for(j=0; j<x->x_instances[i].length-1; j++)
+			fprintf(filePtr, "%0.20f, ", *featurePtr++);
+		
+		// last attribute shouldn't be followed by a command and space
+		fprintf(filePtr, "%0.20f", *featurePtr++);
 		
 		fprintf(filePtr, "\n");
    	};
-    
+
     post("%s: wrote %i instances to %s.", x->x_objSymbol->s_name, x->x_numInstances, fileNameBuf);
     
     fclose(filePtr);
