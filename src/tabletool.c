@@ -1653,7 +1653,7 @@ static void tabletool_add(t_tabletool *x, t_symbol *array2)
 	{
 		t_garray *b;
 		t_word *vec2;
-		t_sampIdx i, array2pts, totalPoints;
+		t_sampIdx i, array2pts;
 		t_atom *listOut;
 
 		if(!(b = (t_garray *)pd_findbyclass(array2, garray_class)))
@@ -1667,27 +1667,21 @@ static void tabletool_add(t_tabletool *x, t_symbol *array2)
 			return;
 		}
 
-		totalPoints = x->x_arrayPoints + array2pts;
-		
-		post("x_arrayPoints: %i, array2pts: %i, totalPoints: %i", x->x_arrayPoints, array2pts, totalPoints);
+		listOut = (t_atom *)t_getbytes(x->x_arrayPoints * sizeof(t_atom));
 
 		for(i=0; i<x->x_arrayPoints; i++)
-			post("x_vec[%lu].w_float: %f", x->x_vec[i].w_float);
-
-/*
-		listOut = (t_atom *)t_getbytes(totalPoints*sizeof(t_atom));
-
-		for(i=0; i<x->x_arrayPoints; i++)
-			if(i>array2pts-1)
-				break;
+		{
+			if(i>=array2pts)
+				SETFLOAT(listOut+i, x->x_vec[i].w_float);
 			else
 				SETFLOAT(listOut+i, x->x_vec[i].w_float + vec2[i].w_float);
+		}
 
-		outlet_list(x->x_list, 0, totalPoints, listOut);
+		outlet_list(x->x_list, 0, x->x_arrayPoints, listOut);
 
 		// free local memory
-		t_freebytes(listOut, totalPoints * sizeof(t_atom));
-*/
+		t_freebytes(listOut, x->x_arrayPoints * sizeof(t_atom));
+
 	}
 }
 
@@ -1860,7 +1854,7 @@ static void tabletool_subtract(t_tabletool *x, t_symbol *array2)
     	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
 	else
 	{
-		t_sampIdx i, array2pts, totalPoints;
+		t_sampIdx i, array2pts;
 		t_garray *b;
 		t_word *vec2;
 		t_atom *listOut;
@@ -1876,20 +1870,18 @@ static void tabletool_subtract(t_tabletool *x, t_symbol *array2)
 			return;
 		}
 
-		totalPoints = x->x_arrayPoints + array2pts;
-
-		listOut = (t_atom *)t_getbytes(totalPoints*sizeof(t_atom));
+		listOut = (t_atom *)t_getbytes(x->x_arrayPoints * sizeof(t_atom));
 
 		for(i=0; i<x->x_arrayPoints; i++)
-			if(i>array2pts-1)
-				break;
+			if(i>=array2pts)
+				SETFLOAT(listOut+i, x->x_vec[i].w_float);
 			else
 				SETFLOAT(listOut+i, x->x_vec[i].w_float - vec2[i].w_float);
 
-		outlet_list(x->x_list, 0, totalPoints, listOut);
+		outlet_list(x->x_list, 0, x->x_arrayPoints, listOut);
 
 		// free local memory
-		t_freebytes(listOut, totalPoints * sizeof(t_atom));
+		t_freebytes(listOut, x->x_arrayPoints * sizeof(t_atom));
 	}
 }
 
@@ -1907,7 +1899,7 @@ static void tabletool_multiply(t_tabletool *x, t_symbol *array2)
 		t_garray *b;
 		t_word *vec2;
 		t_atom *listOut;
-		t_sampIdx i, array2pts, totalPoints;
+		t_sampIdx i, array2pts;
 
 		if(!(b = (t_garray *)pd_findbyclass(array2, garray_class)))
 		{
@@ -1920,20 +1912,18 @@ static void tabletool_multiply(t_tabletool *x, t_symbol *array2)
 			return;
 		}
 
-		totalPoints = x->x_arrayPoints + array2pts;
-
-		listOut = (t_atom *)t_getbytes(totalPoints*sizeof(t_atom));
+		listOut = (t_atom *)t_getbytes(x->x_arrayPoints * sizeof(t_atom));
 
 		for(i=0; i<x->x_arrayPoints; i++)
-			if(i>array2pts-1)
-				break;
+			if(i>=array2pts)
+				SETFLOAT(listOut+i, x->x_vec[i].w_float);
 			else
 				SETFLOAT(listOut+i, x->x_vec[i].w_float * vec2[i].w_float);
 
-		outlet_list(x->x_list, 0, totalPoints, listOut);
+		outlet_list(x->x_list, 0, x->x_arrayPoints, listOut);
 
 		// free local memory
-		t_freebytes(listOut, totalPoints * sizeof(t_atom));
+		t_freebytes(listOut, x->x_arrayPoints * sizeof(t_atom));
 	}
 }
 
@@ -1948,7 +1938,7 @@ static void tabletool_divide(t_tabletool *x, t_symbol *array2)
     	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
 	else
 	{
-		t_sampIdx i, array2pts, totalPoints;
+		t_sampIdx i, array2pts;
 		t_garray *b;
 		t_word *vec2;
 		t_atom *listOut;
@@ -1964,13 +1954,11 @@ static void tabletool_divide(t_tabletool *x, t_symbol *array2)
 			return;
 		}
 
-		totalPoints = x->x_arrayPoints + array2pts;
-
-		listOut = (t_atom *)t_getbytes(totalPoints*sizeof(t_atom));
+		listOut = (t_atom *)t_getbytes(x->x_arrayPoints*sizeof(t_atom));
 
 		for(i=0; i<x->x_arrayPoints; i++)
-			if(i>array2pts-1)
-				break;
+			if(i>=array2pts)
+				SETFLOAT(listOut+i, x->x_vec[i].w_float);
 			else
 				if(vec2[i].w_float == 0.0)
 				{
@@ -1981,10 +1969,10 @@ static void tabletool_divide(t_tabletool *x, t_symbol *array2)
 					SETFLOAT(listOut+i, x->x_vec[i].w_float / vec2[i].w_float);
 
 
-		outlet_list(x->x_list, 0, totalPoints, listOut);
+		outlet_list(x->x_list, 0, x->x_arrayPoints, listOut);
 
 		// free local memory
-		t_freebytes(listOut, totalPoints * sizeof(t_atom));
+		t_freebytes(listOut, x->x_arrayPoints * sizeof(t_atom));
 	}
 }
 
