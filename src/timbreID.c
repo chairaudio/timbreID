@@ -873,7 +873,7 @@ static void timbreID_normalize(t_timbreID *x, t_floatarg n)
 
 static void timbreID_print(t_timbreID *x)
 {
-	post("timbreID version 0.7.4");
+	post("timbreID version %s", TIDVERSION);
 	post("%s: no. of instances: %i", x->x_objSymbol->s_name, x->x_numInstances);
 	post("%s: max feature length: %i", x->x_objSymbol->s_name, x->x_maxFeatureLength);
 	post("%s: min feature length: %i", x->x_objSymbol->s_name, x->x_minFeatureLength);

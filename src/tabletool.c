@@ -1668,7 +1668,13 @@ static void tabletool_add(t_tabletool *x, t_symbol *array2)
 		}
 
 		totalPoints = x->x_arrayPoints + array2pts;
+		
+		post("x_arrayPoints: %i, array2pts: %i, totalPoints: %i", x->x_arrayPoints, array2pts, totalPoints);
 
+		for(i=0; i<x->x_arrayPoints; i++)
+			post("x_vec[%lu].w_float: %f", x->x_vec[i].w_float);
+
+/*
 		listOut = (t_atom *)t_getbytes(totalPoints*sizeof(t_atom));
 
 		for(i=0; i<x->x_arrayPoints; i++)
@@ -1681,6 +1687,7 @@ static void tabletool_add(t_tabletool *x, t_symbol *array2)
 
 		// free local memory
 		t_freebytes(listOut, totalPoints * sizeof(t_atom));
+*/
 	}
 }
 

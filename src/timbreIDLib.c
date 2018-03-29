@@ -9,8 +9,6 @@ timbreID is free software: you can redistribute it and/or modify it under the te
 timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-version 0.7.4, March 27, 2018
-
 */
 
 #include "tIDLib.h"
@@ -34,7 +32,7 @@ void timbreIDLib_setup(void)
 {
 	timbreIDLib_class = class_new(gensym("timbreIDLib"), timbreIDLib_new, 0, sizeof(t_timbreIDLib), CLASS_PD, 0);
 
-	post("timbreID version 0.7.4");
+	post("timbreID version %s", TIDVERSION);
 
 	attackTime_setup();
 	attackTime_tilde_setup();
