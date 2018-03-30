@@ -2178,7 +2178,6 @@ static void timbreID_readText(t_timbreID *x, t_symbol *s)
 static void timbreID_ARFF(t_timbreID *x, t_symbol *s, int argc, t_atom *argv)
 {
 	FILE *filePtr;
-	t_sLongInt excessAtt;
     t_instanceIdx i, j, attRangeLow, attRangeHi, argCount;
     t_float *featurePtr;
 	t_symbol *filenameSymbol, *relationSymbol, *attSymbol;
@@ -2240,12 +2239,13 @@ static void timbreID_ARFF(t_timbreID *x, t_symbol *s, int argc, t_atom *argv)
 		}
 
 		// BUG: this was causing a crash because x_maxFeatureLength and attRangeHi are unsigned integers, so we won't get a negative number as expected when there are indeed enough arguments. This came up with version 0.7 because of typedefs - no longer using int. Quick fix is to typecast back to int during the arithmetic
-		
-		excessAtt = (int)(x->x_maxFeatureLength-1-attRangeHi);
-		
+
 		// in case the argument list was incomplete
-		for(j=0; j<excessAtt; j++)
-			fprintf(filePtr, "@ATTRIBUTE undefined-attribute-%i NUMERIC\n", j);
+		if((x->x_maxFeatureLength-1) > attRangeHi)
+		{			
+			for(i=attRangeHi+1, j=0; i<x->x_maxFeatureLength; i++, j++)
+				fprintf(filePtr, "@ATTRIBUTE undefined-attribute-%i NUMERIC\n", j);
+		}
 	}
 	else
 	{
@@ -2263,7 +2263,7 @@ static void timbreID_ARFF(t_timbreID *x, t_symbol *s, int argc, t_atom *argv)
 		for(j=0; j<x->x_instances[i].length-1; j++)
 			fprintf(filePtr, "%0.20f, ", *featurePtr++);
 		
-		// last attribute shouldn't be followed by a command and space
+		// last attribute shouldn't be followed by a comma and space
 		fprintf(filePtr, "%0.20f", *featurePtr++);
 		
 		fprintf(filePtr, "\n");

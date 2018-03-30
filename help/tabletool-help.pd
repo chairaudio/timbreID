@@ -436,7 +436,7 @@ straight line.;
 #N canvas 308 126 1046 503 conversion 0;
 #N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-conversion 64 float 0;
-#X coords 0 107.953 63 21.261 200 140 1 0 0;
+#X coords 0 107.22 63 21.0007 200 140 1 0 0;
 #X restore 738 57 graph;
 #X msg 43 39 mtof;
 #X text 120 38 Convert all values from MIDI to frequency in Hz;
@@ -675,7 +675,7 @@ of a command is a single number \, it shows up at the left outlet.
 When the output is a list \, it is sent out the right outlet. Some
 methods produce output at both outlets as value/index pairs \, and
 others operate directly on the table data in place.;
-#N canvas 572 286 715 504 overlap-add 0;
+#N canvas 572 286 770 509 overlap-add 0;
 #N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-ola-result 88200 float 0;
 #X coords 0 1 88199 -1 200 140 1 0 0;
@@ -686,11 +686,6 @@ others operate directly on the table data in place.;
 method takes a range of samples from a table \, applies a specified
 window \, and adds the windowed audio to the target table at the given
 starting sample.;
-#X text 284 98 Arguments \; \$1: starting sample in source array \;
-\$2: number of samples (range) \; \$3: window function code \; \$4:
-source array symbol \; \$5: starting sample in target array \;;
-#X text 544 98 Window function codes \; Rectangular (0) \; Blackman
-(1) \; Cosine (2) \; Hamming (3) \; Hann (4) \;;
 #X obj 90 421 tabplay~ \$0-ola-result;
 #X obj 90 452 dac~;
 #X obj 25 115 f \$0;
@@ -699,12 +694,9 @@ source array symbol \; \$5: starting sample in target array \;;
 #X obj 65 185 f \$0;
 #X obj 65 165 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
-#X msg 25 136 overlap_add 1000 32768 4 \$1-sample 1000;
-#X msg 65 207 overlap_add 44100 32768 4 \$1-sample 17384;
 #N canvas 276 34 561 469 example-process 0;
 #X obj 25 405 tabletool \$0-ola-result;
 #X obj 25 355 pack f f \$0;
-#X msg 25 376 overlap_add \$2 8192 4 \$3-sample \$1;
 #X obj 25 89 t f b;
 #X obj 5 140 until;
 #X obj 25 201 f;
@@ -720,22 +712,23 @@ source array symbol \; \$5: starting sample in target array \;;
 grains from the source audio array (a recording of Satie) \, and overlap
 them spaced 2048 samples apart using a Hann window. We do it 40 times
 to fill up the \$0-ola-result array.;
-#X connect 1 0 2 0;
-#X connect 2 0 0 0;
+#X msg 25 376 overlap_add \$2 8192 hann \$3-sample \$1;
+#X connect 1 0 14 0;
+#X connect 2 0 3 0;
+#X connect 2 1 5 0;
 #X connect 3 0 4 0;
-#X connect 3 1 6 0;
-#X connect 4 0 5 0;
-#X connect 5 0 7 0;
-#X connect 5 0 9 0;
-#X connect 6 0 5 1;
-#X connect 7 0 1 0;
-#X connect 7 1 8 0;
-#X connect 8 0 1 1;
-#X connect 9 0 5 1;
-#X connect 10 0 3 0;
-#X connect 11 0 12 0;
-#X connect 12 0 8 1;
-#X connect 13 0 10 0;
+#X connect 4 0 6 0;
+#X connect 4 0 8 0;
+#X connect 5 0 4 1;
+#X connect 6 0 1 0;
+#X connect 6 1 7 0;
+#X connect 7 0 1 1;
+#X connect 8 0 4 1;
+#X connect 9 0 2 0;
+#X connect 10 0 11 0;
+#X connect 11 0 7 1;
+#X connect 12 0 9 0;
+#X connect 14 0 0 0;
 #X restore 130 370 pd example-process;
 #X obj 90 310 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
@@ -761,20 +754,27 @@ to fill up the \$0-ola-result array.;
 #X obj 203 282 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X obj 90 330 t b b b;
-#X connect 6 0 7 0;
-#X connect 6 0 7 1;
-#X connect 8 0 12 0;
+#X text 314 98 Arguments \; \$1: starting sample in source array \;
+\$2: number of samples (range) \; \$3: window function name \; \$4:
+source array symbol \; \$5: starting sample in target array \;;
+#X text 574 128 Window function names \; rectangular \; blackman \;
+cosine \; hamming \; hann \;;
+#X msg 65 207 overlap_add 44100 32768 hann \$1-sample 17384;
+#X msg 25 136 overlap_add 1000 32768 hann \$1-sample 1000;
+#X connect 4 0 5 0;
+#X connect 4 0 5 1;
+#X connect 6 0 20 0;
+#X connect 7 0 6 0;
+#X connect 8 0 19 0;
 #X connect 9 0 8 0;
-#X connect 10 0 13 0;
-#X connect 11 0 10 0;
-#X connect 12 0 1 0;
-#X connect 13 0 1 0;
-#X connect 15 0 20 0;
-#X connect 17 0 18 0;
-#X connect 19 0 17 0;
-#X connect 20 0 6 0;
-#X connect 20 1 14 0;
-#X connect 20 2 17 0;
+#X connect 11 0 16 0;
+#X connect 13 0 14 0;
+#X connect 15 0 13 0;
+#X connect 16 0 4 0;
+#X connect 16 1 10 0;
+#X connect 16 2 13 0;
+#X connect 19 0 1 0;
+#X connect 20 0 1 0;
 #X restore 332 363 pd overlap-add;
 #N canvas 727 422 652 250 permutations 0;
 #X obj 66 114 tabletool \$0-perms;
@@ -800,8 +800,8 @@ resulting permutations.;
 #X connect 4 0 0 0;
 #X connect 8 0 1 0;
 #X restore 202 383 pd permutations;
-#X text 550 409 Updated for timbreID version 0.7.2;
 #X text 550 429 March 2018;
+#X text 550 409 Updated for timbreID version 0.7.4;
 #X connect 15 0 16 0;
 #X connect 16 0 14 0;
 #X connect 16 1 13 0;

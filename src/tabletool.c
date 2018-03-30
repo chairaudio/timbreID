@@ -1766,13 +1766,13 @@ static void tabletool_overlapAdd(t_tabletool *x, t_symbol *s, int argc, t_atom *
 	{
 		t_garray *source;
 		t_word *vecSource;
-		t_symbol *sourceArray;
-		t_sampIdx i, j, k, n, w, sourceArrayPts, sourceStartSamp, targetStartSamp;
+		t_symbol *sourceArray, *w;
+		t_sampIdx i, j, k, n, sourceArrayPts, sourceStartSamp, targetStartSamp;
 		t_float *wPtr;
 
 		sourceStartSamp = atom_getfloat(argv+0);
 		n = atom_getfloat(argv+1);
-		w = atom_getfloat(argv+2);
+		w = atom_getsymbol(argv+2);
 		sourceArray = atom_getsymbol(argv+3);
 		targetStartSamp = atom_getfloat(argv+4);
 		
@@ -1786,9 +1786,6 @@ static void tabletool_overlapAdd(t_tabletool *x, t_symbol *s, int argc, t_atom *
 			pd_error(x, "%s: bad template for %s", sourceArray->s_name, x->x_objSymbol->s_name);
 			return;
 		}
-
-		// make sure window code is between 0 and 4
-		w = (w>4)?4:w;
 
 		if(sourceStartSamp>=sourceArrayPts)
 		{
@@ -1813,27 +1810,26 @@ static void tabletool_overlapAdd(t_tabletool *x, t_symbol *s, int argc, t_atom *
 		
 		wPtr = (t_float *)t_getbytes(n*sizeof(t_float));
 
-		switch(w)
+		// initialize to 1.0 for rectangular
+		for(i=0; i<n; i++)
+			wPtr[i] = 1.0;
+			
+		if(w==gensym("rectangular"))
+			;
+		else if(w==gensym("blackman"))
+			tIDLib_blackmanWindow(wPtr, n);
+		else if(w==gensym("cosine"))
+			tIDLib_cosineWindow(wPtr, n);
+		else if(w==gensym("hamming"))
+			tIDLib_hammingWindow(wPtr, n);
+		else if(w==gensym("hann"))
+			tIDLib_hannWindow(wPtr, n);
+		else
 		{
-			case rectangular:
-				break;
-			case blackman:
-				tIDLib_blackmanWindow(wPtr, n);
-				break;
-			case cosine:
-				tIDLib_cosineWindow(wPtr, n);
-				break;
-			case hamming:
-				tIDLib_hammingWindow(wPtr, n);
-				break;
-			case hann:
-				tIDLib_hannWindow(wPtr, n);
-				break;
-			default:
-				tIDLib_blackmanWindow(wPtr, n);
-				break;
-		};
-	
+			pd_error(x, "%s: window type %s not recognized. using default of blackman instead.", x->x_objSymbol->s_name, w->s_name);
+			tIDLib_blackmanWindow(wPtr, n);
+		}
+
 		for(i=0, j=sourceStartSamp, k=targetStartSamp; i<n; i++, j++, k++)
 			x->x_vec[k].w_float += vecSource[j].w_float * *(wPtr+i);
 		
