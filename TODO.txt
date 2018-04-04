@@ -1,6 +1,1 @@
-[tabletool]
-- "dot", "add" methods crash in 64-bit Pd. Maybe all multi-table math methods? This seems to have to do with using i as an unsigned long.
-
-
-[timbreID]
-- line 2247 gives a warning about comparing different integer types (signed vs unsigned)
+plenty of things
