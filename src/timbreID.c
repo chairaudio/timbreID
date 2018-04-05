@@ -750,8 +750,11 @@ static void timbreID_concatSearchCenter(t_timbreID *x, t_floatarg sc)
 
 static void timbreID_concatMaxMatches(t_timbreID *x, t_floatarg mm)
 {	
+	// do this safety check on the incoming floatarg, since doing it later on x_maxMatches won't work. x_maxMatches is an unsigned long, so can't handle negative values normally
+	mm = (mm<1)?1:mm;
+	
 	x->x_maxMatches = (mm>x->x_numInstances)?x->x_numInstances:mm;
-	x->x_maxMatches = (x->x_maxMatches<1)?1:x->x_maxMatches;
+//	x->x_maxMatches = (x->x_maxMatches<1)?1:x->x_maxMatches;
 }
 
 
