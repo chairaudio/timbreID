@@ -729,6 +729,47 @@ static void tabletool_offset(t_tabletool *x, t_float offset)
 }
 
 
+static void tabletool_scale(t_tabletool *x, t_float scalar)
+{
+	t_garray *a;
+
+	if(!(a = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
+        pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
+    else if(!garray_getfloatwords(a, (int *)&x->x_arrayPoints, &x->x_vec))
+    	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
+	else
+	{
+		t_sampIdx i;
+
+		// rescale
+		for(i=0; i<x->x_arrayPoints; i++)
+			x->x_vec[i].w_float *= scalar;
+
+		garray_redraw(a);
+	}
+}
+
+
+static void tabletool_pow(t_tabletool *x, t_float power)
+{
+	t_garray *a;
+
+	if(!(a = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
+        pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
+    else if(!garray_getfloatwords(a, (int *)&x->x_arrayPoints, &x->x_vec))
+    	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
+	else
+	{
+		t_sampIdx i;
+
+		for(i=0; i<x->x_arrayPoints; i++)
+			x->x_vec[i].w_float = powf(x->x_vec[i].w_float, power);
+
+		garray_redraw(a);
+	}
+}
+
+
 static void tabletool_shift(t_tabletool *x, t_float s)
 {
 	t_garray *a;
@@ -818,27 +859,6 @@ static void tabletool_shift0(t_tabletool *x, t_float s)
 		// free local memory
 		t_freebytes(tableVals, lenTable * sizeof(t_float));
  	}
-}
-
-
-static void tabletool_scale(t_tabletool *x, t_float scalar)
-{
-	t_garray *a;
-
-	if(!(a = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
-        pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
-    else if(!garray_getfloatwords(a, (int *)&x->x_arrayPoints, &x->x_vec))
-    	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
-	else
-	{
-		t_sampIdx i;
-
-		// rescale
-		for(i=0; i<x->x_arrayPoints; i++)
-			x->x_vec[i].w_float *= scalar;
-
-		garray_redraw(a);
-	}
 }
 
 
@@ -1223,6 +1243,48 @@ static void tabletool_freq2bark(t_tabletool *x)
 
 		for(i=0; i<x->x_arrayPoints; i++)
 			x->x_vec[i].w_float = tIDLib_freq2bark(x->x_vec[i].w_float);
+
+		garray_redraw(a);
+	}
+}
+
+
+static void tabletool_bashBelow(t_tabletool *x, t_float thresh, t_float newVal)
+{
+	t_garray *a;
+
+	if(!(a = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
+		pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
+	else if(!garray_getfloatwords(a, (int *)&x->x_arrayPoints, &x->x_vec))
+		pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
+	else
+	{
+		t_sampIdx i;
+		
+		for(i=0; i<x->x_arrayPoints; i++)
+			if(x->x_vec[i].w_float <= thresh)
+				x->x_vec[i].w_float = newVal;	
+
+		garray_redraw(a);
+	}
+}
+
+
+static void tabletool_bashAbove(t_tabletool *x, t_float thresh, t_float newVal)
+{
+	t_garray *a;
+
+	if(!(a = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
+		pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
+	else if(!garray_getfloatwords(a, (int *)&x->x_arrayPoints, &x->x_vec))
+		pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
+	else
+	{
+		t_sampIdx i;
+		
+		for(i=0; i<x->x_arrayPoints; i++)
+			if(x->x_vec[i].w_float >= thresh)
+				x->x_vec[i].w_float = newVal;	
 
 		garray_redraw(a);
 	}
@@ -2327,6 +2389,56 @@ static void tabletool_mean(t_tabletool *x)
 }
 
 
+static void tabletool_mode(t_tabletool *x)
+{
+	t_garray *a;
+
+	if(!(a = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
+        pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
+    else if(!garray_getfloatwords(a, (int *)&x->x_arrayPoints, &x->x_vec))
+    	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
+	else
+	{
+		t_sampIdx i, j, maxCount, *instanceCounters;
+		t_float mode;
+		
+		instanceCounters = (t_sampIdx *)t_getbytes(x->x_arrayPoints*sizeof(t_sampIdx));
+
+		for(i=0; i<x->x_arrayPoints; i++)
+			instanceCounters[i] = 0;
+		
+		for(i=0; i<x->x_arrayPoints; i++)
+		{ 
+			t_float thisVal;
+			thisVal = x->x_vec[i].w_float;
+			
+			for(j=0; j<x->x_arrayPoints; j++)
+			{
+				if(x->x_vec[j].w_float==thisVal)
+					instanceCounters[i]++;
+			}
+		}
+
+		maxCount = 0;
+		mode = -1;
+		
+		for(i=0; i<x->x_arrayPoints; i++)
+		{
+			if(instanceCounters[i]>maxCount)
+			{
+				maxCount = instanceCounters[i];
+				mode = x->x_vec[i].w_float;
+			}
+		}
+
+		outlet_float(x->x_info, mode);
+		
+		// free local memory
+		t_freebytes(instanceCounters, x->x_arrayPoints*sizeof(t_sampIdx));		
+ 	}
+}
+
+
 static void tabletool_geomean(t_tabletool *x)
 {
 	t_garray *a;
@@ -3016,6 +3128,87 @@ static void tabletool_peaksThresh(t_tabletool *x, t_float min, t_float max)
 }
 
 
+static void tabletool_hps(t_tabletool *x, t_float loIdx, t_float hiIdx, t_float numHarm)
+{
+	t_garray *a;
+
+	if(!(a = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
+        pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
+    else if(!garray_getfloatwords(a, (int *)&x->x_arrayPoints, &x->x_vec))
+    	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
+	else
+	{
+		t_sampIdx i, j, numIndices, maxIdx;
+		t_float *yValues, maxVal;
+
+		// if the highest harmonic of the hiIdx is beyond the end of the array data, we'll reduce the requested number of harmonics and post a warning
+		while(hiIdx*numHarm > x->x_arrayPoints)
+		{
+			numHarm--;
+			post("%s: WARNING: reducing numHarm to %f", x->x_objSymbol->s_name, numHarm);
+	
+			if(numHarm<=1)
+			{
+				pd_error(x, "%s: HPS function: second harmonic of hiIdx is out of table bounds. Aborting.", x->x_objSymbol->s_name);
+				return;
+			}	
+		}
+
+		numIndices = hiIdx - loIdx + 1;
+		// need a safety check that numIndices is at least 1
+		numIndices = (numIndices<1)?1:numIndices;
+		
+		yValues = (t_float *)t_getbytes(numIndices*sizeof(t_float));
+
+		// init yValues array to zero
+		for(i=0; i<numIndices; i++)
+			yValues[i] = 0.0;
+
+		for(i=0; i<numIndices; i++)
+		{
+			t_float thisProduct;
+			
+			thisProduct = 1.0;
+			
+			for(j=0; j<numHarm; j++)
+			{
+				t_sampIdx thisIdx;
+				
+				thisIdx = (loIdx+i)*j;
+				thisProduct = thisProduct * x->x_vec[thisIdx].w_float;
+				//post("i: %i, thisProduct: %f",  i, thisProduct);
+			}
+			
+			yValues[i] = thisProduct;
+		}
+
+		maxVal = -1.0;
+		maxIdx = UINT_MAX;
+		
+		for(i=0; i<numIndices; i++)
+		{
+			if(yValues[i]>maxVal)
+			{
+				maxVal = yValues[i];
+				maxIdx = i;
+			}
+		}
+
+		//post("maxVal: %f, maxIdx: %i", maxVal, maxIdx);
+		
+		// if maxIdx is somehow not updated, output -1 to indicate failure.
+		// otherwise, add the loIdx offset back in to get the array index of the HPS peak
+		if(maxIdx==UINT_MAX)
+			outlet_float(x->x_info, -1);
+		else
+			outlet_float(x->x_info, loIdx + maxIdx);
+
+		// free local memory
+		t_freebytes(yValues, numIndices * sizeof(t_float));
+	}
+}
+
+
 static void tabletool_store(t_tabletool *x)
 {
 	t_garray *a;
@@ -3315,6 +3508,22 @@ void tabletool_setup(void)
 
 	class_addmethod(
 		tabletool_class,
+		(t_method)tabletool_scale,
+		gensym("scale"),
+		A_DEFFLOAT,
+		0
+	);
+
+	class_addmethod(
+		tabletool_class,
+		(t_method)tabletool_pow,
+		gensym("pow"),
+		A_DEFFLOAT,
+		0
+	);
+	
+	class_addmethod(
+		tabletool_class,
 		(t_method)tabletool_shift,
 		gensym("shift"),
 		A_DEFFLOAT,
@@ -3446,6 +3655,24 @@ void tabletool_setup(void)
 		tabletool_class,
 		(t_method)tabletool_clip,
 		gensym("clip"),
+		A_DEFFLOAT,
+		A_DEFFLOAT,
+		0
+	);
+	
+	class_addmethod(
+		tabletool_class,
+		(t_method)tabletool_bashBelow,
+		gensym("bash_below"),
+		A_DEFFLOAT,
+		A_DEFFLOAT,
+		0
+	);
+
+	class_addmethod(
+		tabletool_class,
+		(t_method)tabletool_bashAbove,
+		gensym("bash_above"),
 		A_DEFFLOAT,
 		A_DEFFLOAT,
 		0
@@ -3639,6 +3866,23 @@ void tabletool_setup(void)
 		0
 	);
 
+// TODO
+/*
+	class_addmethod(
+		tabletool_class,
+		(t_method)tabletool_median,
+		gensym("median"),
+		0
+	);
+*/
+
+	class_addmethod(
+		tabletool_class,
+		(t_method)tabletool_mode,
+		gensym("mode"),
+		0
+	);
+	
 	class_addmethod(
 		tabletool_class,
 		(t_method)tabletool_geomean,
@@ -3657,14 +3901,6 @@ void tabletool_setup(void)
 		tabletool_class,
 		(t_method)tabletool_bestFitLine,
 		gensym("best_fit_line"),
-		0
-	);
-	
-	class_addmethod(
-		tabletool_class,
-		(t_method)tabletool_scale,
-		gensym("scale"),
-		A_DEFFLOAT,
 		0
 	);
 
@@ -3772,6 +4008,16 @@ void tabletool_setup(void)
 		tabletool_class,
 		(t_method)tabletool_peaksThresh,
 		gensym("peaks_thresh"),
+		A_DEFFLOAT,
+		A_DEFFLOAT,
+		0
+	);
+
+	class_addmethod(
+		tabletool_class,
+		(t_method)tabletool_hps,
+		gensym("hps"),
+		A_DEFFLOAT,
 		A_DEFFLOAT,
 		A_DEFFLOAT,
 		0

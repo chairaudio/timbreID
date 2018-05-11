@@ -1,0 +1,22 @@
+#N canvas 1076 516 742 474 10;
+#X text 31 31 \$1: pitch class lowest MIDI note \; \$2: dollar-zero
+of parent patch \;;
+#X obj 27 126 table \$2-\$1-total-energy 8;
+#X obj 27 106 table \$2-\$1-upper-bin-bounds 8;
+#X obj 27 86 table \$2-\$1-lower-bin-bounds 8;
+#X obj 312 32 loadbang;
+#X obj 312 53 pack \$1 \$2;
+#X obj 312 223 pack \$1 \$2;
+#X obj 312 202 r \$2-clear-all-energy-tables;
+#X msg 312 74 \; \$2-\$1-lower-bin-bounds bounds 0 2049 7 0 \; \$2-\$1-upper-bin-bounds
+bounds 0 2049 7 0 \; \$2-\$1-total-energy bounds 0 4096 7 0 \; \; \$2-\$1-lower-bin-bounds
+const -1 \; \$2-\$1-upper-bin-bounds const -1 \; \$2-\$1-total-energy
+const 0 \;;
+#X msg 312 244 \; \$2-\$1-lower-bin-bounds bounds 0 2049 7 0 \; \$2-\$1-upper-bin-bounds
+bounds 0 2049 7 0 \; \$2-\$1-total-energy bounds 0 4096 7 0 \; \; \$2-\$1-lower-bin-bounds
+const -1 \; \$2-\$1-upper-bin-bounds const -1 \; \$2-\$1-total-energy
+const 0 \;;
+#X connect 4 0 5 0;
+#X connect 5 0 8 0;
+#X connect 6 0 9 0;
+#X connect 7 0 6 0;
