@@ -125,6 +125,59 @@ static void tabletool_drip(t_tabletool *x)
 }
 
 
+static void tabletool_asSet(t_tabletool *x)
+{
+	t_garray *a;
+
+	if(!(a = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
+        pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
+    else if(!garray_getfloatwords(a, (int *)&x->x_arrayPoints, &x->x_vec))
+    	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
+	else
+	{	
+		t_sampIdx i, j, setCount;
+		t_atom *listOut;
+
+		listOut = (t_atom *)t_getbytes(x->x_arrayPoints*sizeof(t_atom));
+		setCount = 0;
+
+		for(i=0; i<x->x_arrayPoints; i++)
+		{
+			t_float thisVal;
+			t_bool uniqueFlag;
+			
+			thisVal = x->x_vec[i].w_float;
+			uniqueFlag = true;
+			
+			if(i>0)
+			{
+				// look backwards from i for duplicates. If we find one, mark the uniqueFlag as false, stop looking, and move on to next value
+				for(j=i; j>=1; j--)
+				{
+					if(x->x_vec[j-1].w_float==thisVal)
+					{
+						uniqueFlag = false;
+						break;
+					}
+				}
+			}
+			
+			if(uniqueFlag)
+			{
+				SETFLOAT(listOut+setCount, thisVal);
+				setCount++;
+			}
+		}
+
+		outlet_list(x->x_list, 0, setCount, listOut);
+		outlet_float(x->x_info, setCount);
+		
+		// free local memory
+		t_freebytes(listOut, x->x_arrayPoints * sizeof(t_atom));
+ 	}
+}
+
+
 static void tabletool_size(t_tabletool *x)
 {
 	t_garray *a;
@@ -2389,6 +2442,56 @@ static void tabletool_mean(t_tabletool *x)
 }
 
 
+static void tabletool_median(t_tabletool *x)
+{
+	t_garray *a;
+
+	if(!(a = (t_garray *)pd_findbyclass(x->x_arrayName, garray_class)))
+        pd_error(x, "%s: no array named %s", x->x_objSymbol->s_name, x->x_arrayName->s_name);
+    else if(!garray_getfloatwords(a, (int *)&x->x_arrayPoints, &x->x_vec))
+    	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
+	else
+	{
+		t_sampIdx i, medIdx;
+		t_float *tableVals, median;
+		t_atom indexOut;
+
+		tableVals = (t_float *)t_getbytes(x->x_arrayPoints*sizeof(t_float));
+
+		for(i=0; i<x->x_arrayPoints; i++)
+			tableVals[i] = x->x_vec[i].w_float;
+
+		tIDLib_bubbleSort(x->x_arrayPoints, tableVals);
+
+		medIdx = UINT_MAX;
+		median = FLT_MAX;
+		
+		if(x->x_arrayPoints % 2 == 0)
+		{
+			medIdx = x->x_arrayPoints/2 - 1;
+			median = tableVals[medIdx] + tableVals[medIdx+1];
+			median *= 0.5;
+			
+			SETFLOAT(&indexOut, -1);
+			outlet_list(x->x_list, 0, 1, &indexOut);
+		}
+		else
+		{	
+			medIdx = x->x_arrayPoints/2;
+			median = tableVals[medIdx];
+
+			SETFLOAT(&indexOut, medIdx);
+			outlet_list(x->x_list, 0, 1, &indexOut);
+		}
+
+		outlet_float(x->x_info, median);
+		
+		// free local memory
+		t_freebytes(tableVals, x->x_arrayPoints * sizeof(t_float));
+	}
+}
+
+
 static void tabletool_mode(t_tabletool *x)
 {
 	t_garray *a;
@@ -2401,6 +2504,7 @@ static void tabletool_mode(t_tabletool *x)
 	{
 		t_sampIdx i, j, maxCount, *instanceCounters;
 		t_float mode;
+		t_atom countOut;
 		
 		instanceCounters = (t_sampIdx *)t_getbytes(x->x_arrayPoints*sizeof(t_sampIdx));
 
@@ -2431,6 +2535,9 @@ static void tabletool_mode(t_tabletool *x)
 			}
 		}
 
+		SETFLOAT(&countOut, maxCount);
+		outlet_list(x->x_list, 0, 1, &countOut);
+		
 		outlet_float(x->x_info, mode);
 		
 		// free local memory
@@ -3371,6 +3478,13 @@ void tabletool_setup(void)
 
 	class_addmethod(
 		tabletool_class,
+		(t_method)tabletool_asSet,
+		gensym("as_set"),
+		0
+	);
+
+	class_addmethod(
+		tabletool_class,
 		(t_method)tabletool_size,
 		gensym("size"),
 		0
@@ -3866,15 +3980,12 @@ void tabletool_setup(void)
 		0
 	);
 
-// TODO
-/*
 	class_addmethod(
 		tabletool_class,
 		(t_method)tabletool_median,
 		gensym("median"),
 		0
 	);
-*/
 
 	class_addmethod(
 		tabletool_class,
