@@ -3247,6 +3247,7 @@ static void tabletool_hps(t_tabletool *x, t_float loIdx, t_float hiIdx, t_float 
 	{
 		t_sampIdx i, j, numIndices, maxIdx;
 		t_float *yValues, maxVal;
+		t_atom *yValuesOut;
 
 		// if the highest harmonic of the hiIdx is beyond the end of the array data, we'll reduce the requested number of harmonics and post a warning
 		while(hiIdx*numHarm > x->x_arrayPoints)
@@ -3264,10 +3265,11 @@ static void tabletool_hps(t_tabletool *x, t_float loIdx, t_float hiIdx, t_float 
 		numIndices = hiIdx - loIdx + 1;
 		// need a safety check that numIndices is at least 1
 		numIndices = (numIndices<1)?1:numIndices;
-		
-		yValues = (t_float *)t_getbytes(numIndices*sizeof(t_float));
 
-		// init yValues array to zero
+		yValues = (t_float *)t_getbytes(numIndices*sizeof(t_float));
+		yValuesOut = (t_atom *)t_getbytes(numIndices*sizeof(t_atom));
+
+		// init yValues arrays to zero
 		for(i=0; i<numIndices; i++)
 			yValues[i] = 0.0;
 
@@ -3303,6 +3305,12 @@ static void tabletool_hps(t_tabletool *x, t_float loIdx, t_float hiIdx, t_float 
 
 		//post("maxVal: %f, maxIdx: %i", maxVal, maxIdx);
 		
+		// fill output list with yValues
+		for(i=0; i<numIndices; i++)
+			SETFLOAT(yValuesOut+i, yValues[i]);
+		
+		outlet_list(x->x_list, 0, numIndices, yValuesOut);
+		
 		// if maxIdx is somehow not updated, output -1 to indicate failure.
 		// otherwise, add the loIdx offset back in to get the array index of the HPS peak
 		if(maxIdx==UINT_MAX)
@@ -3312,6 +3320,7 @@ static void tabletool_hps(t_tabletool *x, t_float loIdx, t_float hiIdx, t_float 
 
 		// free local memory
 		t_freebytes(yValues, numIndices * sizeof(t_float));
+		t_freebytes(yValuesOut, numIndices * sizeof(t_atom));
 	}
 }
 
@@ -4093,7 +4102,7 @@ void tabletool_setup(void)
 	class_addmethod(
 		tabletool_class,
 		(t_method)tabletool_randFill,
-		gensym("randFill"),
+		gensym("rand_fill"),
 		A_DEFFLOAT,
 		A_DEFFLOAT,
 		0
