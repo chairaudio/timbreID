@@ -117,6 +117,7 @@ void timbreIDLib_setup(void)
 	specSlope_tilde_setup();
 	specSpread_setup();
 	specSpread_tilde_setup();
+	tempo_tilde_setup();
 	tID_fft_tilde_setup();
 	tID_mean_setup();
 	tID_std_setup();
