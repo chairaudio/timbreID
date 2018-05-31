@@ -9,7 +9,7 @@ timbreID is free software: you can redistribute it and/or modify it under the te
 timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-version 0.7.6, May 30, 2018
+version 0.7.6, May 31, 2018
 
 */
 
@@ -23,7 +23,7 @@ version 0.7.6, May 30, 2018
 #include "m_pd.h"
 #include "fftw3.h"
 
-#define TIDVERSION "0.7.6may30"
+#define TIDVERSION "0.7.6may31"
 
 // choose either FFTW_MEASURE or FFTW_ESTIMATE here.
 #define FFTWPLANNERFLAG FFTW_ESTIMATE

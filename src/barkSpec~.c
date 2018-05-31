@@ -119,6 +119,29 @@ static void barkSpec_tilde_bang(t_barkSpec_tilde *x)
 }
 
 
+static void barkSpec_tilde_magSpec(t_barkSpec_tilde *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+
+	// incoming magSpec list should be N/2+1 elements long, so windowHalf is one less than this
+	windowHalf = argc-1;
+	
+	// fill the x_fftwIn buffer with the incoming magSpec list
+	for(i=0; i<=windowHalf; i++)
+		x->x_fftwIn[i] = atom_getfloat(argv+i);	
+	
+	if(x->x_specBandAvg)
+		tIDLib_specFilterBands(windowHalf+1, x->x_numFilters, x->x_fftwIn, x->x_filterbank, x->x_normalize);
+	else
+		tIDLib_filterbankMultiply(x->x_fftwIn, x->x_normalize, x->x_filterAvg, x->x_filterbank, x->x_numFilters);
+
+	for(i=0; i<x->x_numFilters; i++)
+		SETFLOAT(x->x_listOut+i, x->x_fftwIn[i]);
+
+	outlet_list(x->x_featureList, 0, x->x_numFilters, x->x_listOut);
+}
+
+
 static void barkSpec_tilde_createFilterbank(t_barkSpec_tilde *x, t_floatarg bs)
 {
 	t_filterIdx oldNumFilters;
@@ -561,6 +584,14 @@ void barkSpec_tilde_setup(void)
 
 	class_addbang(barkSpec_tilde_class, barkSpec_tilde_bang);
 
+	class_addmethod(
+		barkSpec_tilde_class,
+		(t_method)barkSpec_tilde_magSpec,
+		gensym("mag_spec"),
+		A_GIMME,
+		0
+	);
+	
 	class_addmethod(
 		barkSpec_tilde_class,
 		(t_method)barkSpec_tilde_filterFreqs,

@@ -108,6 +108,7 @@ void timbreIDLib_setup(void)
 	specIrregularity_tilde_setup();
 	specKurtosis_setup();
 	specKurtosis_tilde_setup();
+	specPhase_tilde_setup();
 	specRolloff_setup();
 	specRolloff_tilde_setup();
 	specSkewness_setup();
@@ -116,6 +117,7 @@ void timbreIDLib_setup(void)
 	specSlope_tilde_setup();
 	specSpread_setup();
 	specSpread_tilde_setup();
+	tID_fft_tilde_setup();
 	tID_mean_setup();
 	tID_std_setup();
 	tabletool_setup();
