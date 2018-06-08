@@ -9,7 +9,7 @@ timbreID is free software: you can redistribute it and/or modify it under the te
 timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-version 0.7.6, May 31, 2018
+version 0.7.6, June 8, 2018
 
 */
 
@@ -23,7 +23,7 @@ version 0.7.6, May 31, 2018
 #include "m_pd.h"
 #include "fftw3.h"
 
-#define TIDVERSION "0.7.6may31"
+#define TIDVERSION "0.7.6june8"
 
 // choose either FFTW_MEASURE or FFTW_ESTIMATE here.
 #define FFTWPLANNERFLAG FFTW_ESTIMATE
@@ -297,6 +297,7 @@ void specIrregularity_setup(void);
 void specIrregularity_tilde_setup(void);
 void specKurtosis_setup(void);
 void specKurtosis_tilde_setup(void);
+void specPhase_tilde_setup(void);
 void specRolloff_setup(void);
 void specRolloff_tilde_setup(void);
 void specSkewness_setup(void);
@@ -305,6 +306,8 @@ void specSlope_setup(void);
 void specSlope_tilde_setup(void);
 void specSpread_setup(void);
 void specSpread_tilde_setup(void);
+void tempo_tilde_setup(void);
+void tID_fft_tilde_setup(void);
 void tID_mean_setup(void);
 void tID_std_setup(void);
 void tabletool_setup(void);

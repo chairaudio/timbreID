@@ -29,10 +29,17 @@ typedef struct _tempo_tilde
     t_uShortInt x_overlap;
     t_bool x_normalize;
     t_bool x_powerSpectrum;
+    t_bool x_alignFirstPeak;
     t_float x_growthThresh;
+    t_float x_belowThreshDefault;
     t_binIdx x_loBin;
     t_binIdx x_hiBin;
     t_uInt x_onsetsBufSize;
+    t_uInt x_numHarm;
+    t_float x_loTempo;
+    t_float x_hiTempo;
+    t_uInt x_loTempoIdx;
+    t_uInt x_hiTempoIdx;
     double x_lastDspTime;
     t_uInt x_dspTicks;
     t_sample *x_signalBuffer;
@@ -57,13 +64,84 @@ typedef struct _tempo_tilde
 } t_tempo_tilde;
 
 
+
+// this needs to be included as part of tIDLib.c, and used in tabletool.c as well as here
+static t_float tempo_tilde_hps(t_tempo_tilde *x, t_float loIdx, t_float hiIdx, t_float numHarm)
+{
+	t_sampIdx i, j, numIndices, maxIdx;
+	t_float *yValues, maxVal;
+
+	// if the highest harmonic of the hiIdx is beyond the end of the array data, we'll reduce the requested number of harmonics and post a warning
+	while(hiIdx*numHarm > x->x_onsetsBufSize)
+	{
+		numHarm--;
+		post("%s: WARNING: reducing numHarm to %f", x->x_objSymbol->s_name, numHarm);
+
+		if(numHarm<=1)
+		{
+			pd_error(x, "%s: HPS function: second harmonic of hiIdx is out of table bounds. Aborting.", x->x_objSymbol->s_name);
+			return(-1);
+		}	
+	}
+
+	numIndices = hiIdx - loIdx + 1;
+	// need a safety check that numIndices is at least 1
+	numIndices = (numIndices<1)?1:numIndices;
+
+	yValues = (t_float *)t_getbytes(numIndices*sizeof(t_float));
+
+	// init yValues arrays to zero
+	for(i=0; i<numIndices; i++)
+		yValues[i] = 0.0;
+
+	for(i=0; i<numIndices; i++)
+	{
+		t_float thisProduct;
+		
+		thisProduct = 1.0;
+		
+		for(j=0; j<numHarm; j++)
+		{
+			t_sampIdx thisIdx;
+			
+			thisIdx = (loIdx+i)*j;
+			thisProduct = thisProduct * atom_getfloat(x->x_listOut + thisIdx);
+			//post("i: %i, thisProduct: %f",  i, thisProduct);
+		}
+		
+		yValues[i] = thisProduct;
+	}
+
+	maxVal = -1.0;
+	maxIdx = UINT_MAX;
+	
+	for(i=0; i<numIndices; i++)
+	{
+		if(yValues[i]>maxVal)
+		{
+			maxVal = yValues[i];
+			maxIdx = i;
+		}
+	}
+
+	// free local memory
+	t_freebytes(yValues, numIndices * sizeof(t_float));
+	
+	// if maxIdx is somehow not updated, output -1 to indicate failure.
+	// otherwise, add the loIdx offset back in to get the array index of the HPS peak
+	if(maxIdx==UINT_MAX)
+		return(-1.0);
+	else
+		return(loIdx + maxIdx);
+}
+	
+
 /* ------------------------ tempo~ -------------------------------- */
 
-static void tempo_tilde_bang(t_tempo_tilde *x)
+static void tempo_tilde_analyze(t_tempo_tilde *x)
 {
-    t_sampIdx i, j, startIdx, window, windowHalf;
-    t_float growth, *windowFuncPtr;
-	double currentTime;
+    t_sampIdx i, j, startIdx, periodIdx, window, windowHalf;
+    t_float growth, tempo, *windowFuncPtr;
 
     window = x->x_window;
     windowHalf = x->x_windowHalf;
@@ -147,9 +225,6 @@ static void tempo_tilde_bang(t_tempo_tilde *x)
 	if(!x->x_powerSpectrum)
 		tIDLib_mag(windowHalf+1, x->x_fftwInBackWindow);
 
-	if(x->x_normalize)
-		tIDLib_normal(windowHalf+1, x->x_fftwInBackWindow);
-		
 	growth=0;
 
 	for(i=x->x_loBin; i<=x->x_hiBin; i++)
@@ -176,27 +251,37 @@ static void tempo_tilde_bang(t_tempo_tilde *x)
 	if(growth>x->x_growthThresh)
 		x->x_onsetsBuffer[x->x_onsetsBufSize-1] = growth;
 	else
-		x->x_onsetsBuffer[x->x_onsetsBufSize-1] = 1.0; //set below thresh growth to 1.0 and NOT ZERO, which would ruin the running product in the HPS algo
-	
-	// align first peak to beginning?
-	startIdx=0;
-	while(x->x_onsetsBuffer[startIdx]==1.0)
-	{
-		startIdx++;
+		x->x_onsetsBuffer[x->x_onsetsBufSize-1] = x->x_belowThreshDefault; //set below thresh growth to 1.0 and NOT ZERO, which would ruin the running product in the HPS algo
 
-		if(startIdx>=x->x_onsetsBufSize-2)
-			break;
+
+	startIdx=0;
+			
+	// align first peak to beginning?
+	if(x->x_alignFirstPeak)
+	{
+		while(x->x_onsetsBuffer[startIdx]==x->x_belowThreshDefault)
+		{
+			startIdx++;
+
+			if(startIdx>=x->x_onsetsBufSize-2)
+				break;
+		}
 	}
-	
+
 	for(i=startIdx, j=0; i<x->x_onsetsBufSize; i++, j++)
 		SETFLOAT(x->x_listOut+j, x->x_onsetsBuffer[i]);
 
 	for(; j<x->x_onsetsBufSize; j++)
-		SETFLOAT(x->x_listOut+j, 1.0);
-	
+		SETFLOAT(x->x_listOut+j, x->x_belowThreshDefault);
+
+	periodIdx = tempo_tilde_hps(x, x->x_hiTempoIdx, x->x_loTempoIdx, x->x_numHarm);
+
+	tempo = (t_float)(periodIdx*x->x_hop); // frames to samples
+	tempo /= x->x_sr; // samples to seconds
+	tempo = 60.0f/tempo; // seconds to BPM
 
  	outlet_list(x->x_onsetList, 0, x->x_onsetsBufSize, x->x_listOut);
-	outlet_float(x->x_tempo, growth);
+	outlet_float(x->x_tempo, tempo);
 }
 
 
@@ -211,6 +296,13 @@ static void tempo_tilde_print(t_tempo_tilde *x)
 	post("%s window function: %i", x->x_objSymbol->s_name, x->x_windowFunction);
 	post("%s hop: %i", x->x_objSymbol->s_name, x->x_hop);
 	post("%s squared difference: %i", x->x_objSymbol->s_name, x->x_squaredDiff);
+	post("%s align first peak: %i", x->x_objSymbol->s_name, x->x_alignFirstPeak);
+	post("%s onset buffer size: %i", x->x_objSymbol->s_name, x->x_onsetsBufSize);
+	post("%s growth thresh: %f.", x->x_objSymbol->s_name, x->x_growthThresh);
+	post("%s below threshold default value: %f.", x->x_objSymbol->s_name, x->x_belowThreshDefault);
+	post("%s frequency range: bin %i through %i.", x->x_objSymbol->s_name, x->x_loBin, x->x_hiBin);
+	post("%s tempo range: frame %i through %i.", x->x_objSymbol->s_name, x->x_loTempoIdx, x->x_hiTempoIdx);
+	post("%s harmonics: %i.", x->x_objSymbol->s_name, x->x_numHarm);
 }
 
 
@@ -360,6 +452,19 @@ static void tempo_tilde_normalize(t_tempo_tilde *x, t_floatarg norm)
 }
 
 
+static void tempo_tilde_alignFirstPeak(t_tempo_tilde *x, t_floatarg align)
+{
+    align = (align<0)?0:align;
+    align = (align)?1:align;
+	x->x_alignFirstPeak = align;
+	
+	if(x->x_alignFirstPeak)
+		post("%s align first peak: ON.", x->x_objSymbol->s_name);
+	else
+		post("%s align first peak: OFF.", x->x_objSymbol->s_name);
+}
+
+
 static void tempo_tilde_thresh(t_tempo_tilde *x, t_floatarg thresh)
 {
     thresh = (thresh<0)?0:thresh;
@@ -385,21 +490,94 @@ static void tempo_tilde_freqRange(t_tempo_tilde *x, t_floatarg loFreq, t_floatar
 }
 
 
-static void tempo_tilde_hop(t_tempo_tilde *x, t_floatarg s)
+static void tempo_tilde_tempoRange(t_tempo_tilde *x, t_floatarg loTempo, t_floatarg hiTempo)
+{	
+    loTempo = (loTempo<10)?10:loTempo;
+    loTempo = (loTempo>500)?500:loTempo;
+	x->x_loTempo = loTempo;
+	    
+	loTempo = 60.0f/loTempo; // BPM to seconds
+	loTempo *= x->x_sr; // seconds to samples
+	loTempo /= x->x_hop;//samples to frames
+	x->x_loTempoIdx = roundf(loTempo);
+
+    hiTempo = (hiTempo<10)?10:hiTempo;
+    hiTempo = (hiTempo>500)?500:hiTempo;
+   	x->x_hiTempo = hiTempo;
+ 
+	hiTempo = 60.0f/hiTempo; // BPM to seconds
+	hiTempo *= x->x_sr; // seconds to samples
+	hiTempo /= x->x_hop;//samples to frames
+	x->x_hiTempoIdx = roundf(hiTempo);
+
+	post("%s tempo range: %fBPM through %fBPM (frameIdx %i through %i).", x->x_objSymbol->s_name, x->x_loTempo, x->x_hiTempo, x->x_loTempoIdx, x->x_hiTempoIdx);
+}
+
+
+static void tempo_tilde_numHarm(t_tempo_tilde *x, t_floatarg h)
 {
-	if(s > x->x_window)
+	x->x_numHarm = (h<2)?2:h;
+
+    post("%s harmonics: %i", x->x_objSymbol->s_name, x->x_numHarm);
+}
+
+
+static void tempo_tilde_onsetsBufSize(t_tempo_tilde *x, t_floatarg n)
+{
+	t_uInt i, newSize;
+	
+    newSize = (n<4)?4:n;
+
+	x->x_onsetsBuffer = (t_float *)t_resizebytes(x->x_onsetsBuffer, x->x_onsetsBufSize * sizeof(t_float), newSize * sizeof(t_float));
+	x->x_listOut = (t_atom *)t_resizebytes(x->x_listOut, x->x_onsetsBufSize * sizeof(t_atom), newSize * sizeof(t_atom));
+    
+    x->x_onsetsBufSize = newSize;
+
+ 	for(i=0; i<x->x_onsetsBufSize; i++)
+		x->x_onsetsBuffer[i] = 0.0;
+
+	post("%s onset buffer size: %i frames.", x->x_objSymbol->s_name, x->x_onsetsBufSize);
+}
+
+
+static void tempo_tilde_belowThreshDefault(t_tempo_tilde *x, t_floatarg val)
+{
+    x->x_belowThreshDefault = val;
+
+	post("%s below threshold default value: %f.", x->x_objSymbol->s_name, x->x_belowThreshDefault);
+}
+
+
+static void tempo_tilde_hop(t_tempo_tilde *x, t_floatarg h)
+{
+	t_float loTempo, hiTempo;
+	
+	if(h > x->x_window)
 	{
 		post("%s frame hop cannot be more than current window size. Using half of current window size instead.", x->x_objSymbol->s_name);
 		x->x_hop = x->x_windowHalf;
 	}
-	else if(s < 0)
+	else if(h < 0)
 	{
 		post("%s frame hop must be > 0. Using half of current window size instead.", x->x_objSymbol->s_name);
 		x->x_hop = x->x_windowHalf;
 	}
 	else
-		x->x_hop = s;
-		
+		x->x_hop = h;
+
+	// recalc tempo indices based on new hop
+	loTempo = x->x_loTempo;
+	loTempo = 60.0f/loTempo; // BPM to seconds
+	loTempo *= x->x_sr; // seconds to samples
+	loTempo /= x->x_hop;//samples to frames
+	x->x_loTempoIdx = roundf(loTempo);
+
+   	hiTempo = x->x_hiTempo; 
+	hiTempo = 60.0f/hiTempo; // BPM to seconds
+	hiTempo *= x->x_sr; // seconds to samples
+	hiTempo /= x->x_hop;//samples to frames
+	x->x_hiTempoIdx = roundf(hiTempo);
+	
     post("%s frame hop: %i", x->x_objSymbol->s_name, x->x_hop);
 }
 
@@ -407,7 +585,7 @@ static void tempo_tilde_hop(t_tempo_tilde *x, t_floatarg s)
 static void *tempo_tilde_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_tempo_tilde *x = (t_tempo_tilde *)pd_new(tempo_tilde_class);
-	t_float sepFloat;
+	t_float sepFloat, loTempo, hiTempo;
 	t_sampIdx i;
 	
 	x->x_tempo = outlet_new(&x->x_obj, &s_float);
@@ -468,10 +646,28 @@ static void *tempo_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_loBin = 0;
 	x->x_hiBin = x->x_windowHalf;
 	x->x_growthThresh = 0.0;
-	x->x_onsetsBufSize = 600;
+	x->x_belowThreshDefault = 0.01;
+	x->x_onsetsBufSize = 1000;
+	x->x_alignFirstPeak = true;
+	x->x_numHarm = 6;
+	
 	x->x_sr = SAMPLERATEDEFAULT;
 	x->x_n = BLOCKSIZEDEFAULT;
 	x->x_overlap = 1;
+
+	x->x_loTempo = 40;
+	x->x_hiTempo = 160;
+
+	loTempo = 60.0f/x->x_loTempo; // BPM to seconds
+	loTempo *= x->x_sr; // seconds to samples
+	loTempo /= x->x_hop;//samples to frames
+	x->x_loTempoIdx = roundf(loTempo);
+
+	hiTempo = 60.0f/x->x_hiTempo; // BPM to seconds
+	hiTempo *= x->x_sr; // seconds to samples
+	hiTempo /= x->x_hop;//samples to frames
+	x->x_hiTempoIdx = roundf(hiTempo);
+		
 	x->x_windowFunction = blackman;
 	x->x_normalize = false;
 	x->x_powerSpectrum = false;
@@ -546,7 +742,7 @@ static t_int *tempo_tilde_perform(t_int *w)
  	if(x->x_dspTicks*n >= x->x_hop)
  	{
  		x->x_dspTicks = 0;
- 		tempo_tilde_bang(x);
+ 		tempo_tilde_analyze(x);
  	}
  	
 	x->x_lastDspTime = clock_getlogicaltime();
@@ -624,8 +820,6 @@ void tempo_tilde_setup(void)
 
     CLASS_MAINSIGNALIN(tempo_tilde_class, t_tempo_tilde, x_f);
 
-	class_addbang(tempo_tilde_class, tempo_tilde_bang);
-
 	class_addmethod(
 		tempo_tilde_class,
 		(t_method)tempo_tilde_print,
@@ -691,6 +885,14 @@ void tempo_tilde_setup(void)
 
 	class_addmethod(
 		tempo_tilde_class, 
+        (t_method)tempo_tilde_alignFirstPeak,
+		gensym("align_first_peak"),
+		A_DEFFLOAT,
+		0
+	);
+	
+	class_addmethod(
+		tempo_tilde_class, 
         (t_method)tempo_tilde_thresh,
 		gensym("thresh"),
 		A_DEFFLOAT,
@@ -706,8 +908,23 @@ void tempo_tilde_setup(void)
 		0
 	);
 
-// TODO
-/*
+	class_addmethod(
+		tempo_tilde_class, 
+        (t_method)tempo_tilde_numHarm,
+		gensym("harmonics"),
+		A_DEFFLOAT,
+		0
+	);
+	
+	class_addmethod(
+		tempo_tilde_class, 
+        (t_method)tempo_tilde_tempoRange,
+		gensym("tempo_range"),
+		A_DEFFLOAT,
+		A_DEFFLOAT,
+		0
+	);
+
 	class_addmethod(
 		tempo_tilde_class, 
         (t_method)tempo_tilde_onsetsBufSize,
@@ -715,8 +932,15 @@ void tempo_tilde_setup(void)
 		A_DEFFLOAT,
 		0
 	);
-*/
-	
+
+	class_addmethod(
+		tempo_tilde_class, 
+        (t_method)tempo_tilde_belowThreshDefault,
+		gensym("below_thresh_default"),
+		A_DEFFLOAT,
+		0
+	);
+
     class_addmethod(
     	tempo_tilde_class,
     	(t_method)tempo_tilde_dsp,

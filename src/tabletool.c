@@ -1081,21 +1081,30 @@ static void tabletool_round(t_tabletool *x, t_float res)
 	else
 	{
 		t_sampIdx i;
-		t_float resRecip;
 
-		if(res<=0)
-			return;
-	
-		resRecip = 1.0/res;
-		
-		for(i=0; i<x->x_arrayPoints; i++)
+		if(res<=0 || res==1.0)
 		{
-			x->x_vec[i].w_float *= resRecip;
-			x->x_vec[i].w_float += res;
-			x->x_vec[i].w_float = floor(x->x_vec[i].w_float);
-			x->x_vec[i].w_float /= resRecip;
+			for(i=0; i<x->x_arrayPoints; i++)
+			{
+				x->x_vec[i].w_float += 0.5;
+				x->x_vec[i].w_float = floor(x->x_vec[i].w_float);
+			}
 		}
-
+		else
+		{
+			t_float resRecip;
+			
+			resRecip = 1.0/res;
+		
+			for(i=0; i<x->x_arrayPoints; i++)
+			{
+				x->x_vec[i].w_float *= resRecip;
+				x->x_vec[i].w_float += res;
+				x->x_vec[i].w_float = floor(x->x_vec[i].w_float);
+				x->x_vec[i].w_float /= resRecip;
+			}
+		}
+		
 		garray_redraw(a);
 	}
 }
@@ -2794,6 +2803,13 @@ static void tabletool_fitBounds(t_tabletool *x)
 			if(x->x_vec[i].w_float < min)
 				min = x->x_vec[i].w_float;
 
+		// don't want the lower and upper bounds of y range to be identical, so offset them by 1.0 if they are.
+		if(max==min)
+		{
+			max = min+1.0;
+			post("%s: WARNING: fit_bounds found y-range of zero.", x->x_objSymbol->s_name);			
+		}
+		
 		x1 = 0;
 		x2 = x->x_arrayPoints-1;
 		y1 = max;
@@ -2803,15 +2819,7 @@ static void tabletool_fitBounds(t_tabletool *x)
 		thisGlist->gl_x2 = x2;
 		thisGlist->gl_y1 = y1;
 		thisGlist->gl_y2 = y2;
-
-		if (thisGlist->gl_x2 == thisGlist->gl_x1 ||
-			thisGlist->gl_y2 == thisGlist->gl_y1)
-		{
-			pd_error(x, "%s: empty bounds rectangle", x->x_objSymbol->s_name);
-			x1 = y1 = 0;
-			x2 = y2 = 1;
-		}
-
+		
 		glist_redraw(thisGlist);
 		garray_redraw(a);
 	}
