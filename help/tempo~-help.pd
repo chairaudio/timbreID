@@ -1,10 +1,9 @@
-#N canvas 118 192 1105 710 10;
-#X obj 44 119 *~;
+#N canvas 198 134 920 714 10;
 #X obj 4 5 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 4 5 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 833 85 890 662 other-settings 1;
+#N canvas 830 58 1016 696 other-settings 0;
 #X text 191 249 Change window size.;
 #X obj 300 368 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
@@ -16,7 +15,7 @@
 #X text 126 123 Use power instead of magnitude;
 #X obj 33 606 outlet;
 #X obj 33 57 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
--1 0;
+-1 1;
 #X msg 33 77 window_function \$1;
 #X msg 300 386 squared_diff \$1;
 #X msg 358 435 overlap 2;
@@ -49,7 +48,6 @@ things to behave properly;
 #X msg 139 206 below_thresh_default \$1;
 #X obj 467 140 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X text 498 140 Use power instead of magnitude;
 #X msg 467 160 align_first_peak \$1;
 #X floatatom 419 64 5 0 0 0 - - -, f 5;
 #X msg 419 84 onset_buf_size \$1;
@@ -57,6 +55,13 @@ things to behave properly;
 #X msg 638 229 harmonics \$1;
 #X msg 464 633 \; \$2-onsets-buffer ylabel 0 \$1 \;;
 #X msg 668 274 tempo_range 90 160;
+#X text 470 50 onset buffer size in ms;
+#X msg 635 96 harmonics 10 \, tempo_range 90 160 \, onset_buf_duration
+5000 \, thresh 75 \, below_thresh_default 1 \, align_first_peak 1 \,
+;
+#X msg 610 595 harmonics \$1 \, tempo_range 90 160 \, onset_buf_duration
+5000;
+#X floatatom 708 561 5 0 0 0 - - -, f 5;
 #X connect 1 0 9 0;
 #X connect 3 0 4 0;
 #X connect 4 0 6 0;
@@ -83,19 +88,22 @@ things to behave properly;
 #X connect 28 0 29 0;
 #X connect 29 0 25 0;
 #X connect 29 1 25 1;
-#X connect 30 0 40 0;
+#X connect 30 0 39 0;
 #X connect 31 0 32 0;
 #X connect 32 0 6 0;
-#X connect 33 0 35 0;
-#X connect 35 0 6 0;
-#X connect 36 0 37 0;
-#X connect 37 0 6 0;
-#X connect 38 0 39 0;
-#X connect 39 0 6 0;
-#X connect 41 0 6 0;
-#X restore 460 442 pd other-settings;
-#X text 809 520 Updated for timbreID version 0.7;
-#X text 809 540 July 2017;
+#X connect 33 0 34 0;
+#X connect 34 0 6 0;
+#X connect 35 0 36 0;
+#X connect 36 0 6 0;
+#X connect 37 0 38 0;
+#X connect 38 0 6 0;
+#X connect 40 0 6 0;
+#X connect 42 0 6 0;
+#X connect 43 0 6 0;
+#X connect 44 0 43 0;
+#X restore 374 203 pd other-settings;
+#X text 599 448 Updated for timbreID version 0.7;
+#X text 599 468 July 2017;
 #N canvas 0 81 450 300 do-plotting 0;
 #X obj 84 51 inlet;
 #X obj 84 150 list prepend 0;
@@ -112,104 +120,181 @@ things to behave properly;
 #X connect 3 0 4 0;
 #X connect 4 0 6 0;
 #X connect 5 0 3 0;
-#X restore 215 601 pd do-plotting;
-#X obj 99 133 vline~;
-#X obj 99 69 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
+#X restore 208 364 pd do-plotting;
+#X obj 54 99 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
 ;
-#X obj 99 89 metro 500;
-#X text 232 549 Creation arguments are window size and hop in samples
+#X text 201 300 Creation arguments are window size and hop in samples
 between analysis windows., f 48;
-#X msg 807 164 fit_bounds;
-#X obj 181 362 readsf~;
-#X msg 227 326 stop;
-#X obj 204 400 output~;
-#X floatatom 345 34 5 0 0 1 bpm - -, f 5;
+#X msg 692 88 fit_bounds;
+#X floatatom 95 98 5 0 0 1 bpm - -, f 5;
+#X floatatom 90 339 5 0 0 1 BPM - -, f 5;
+#X obj 444 95 table \$0-onsets-buffer;
+#X obj 69 303 tempo~ 1024 128;
+#X obj 692 109 tabletool \$0-onsets-buffer;
+#X obj 71 383 t f b;
+#X obj 69 630 tabwrite tempo;
+#X obj 189 625 f;
+#X obj 229 621 + 1;
+#X msg 196 428 mode;
+#X obj 196 457 tabletool tempo;
+#X floatatom 196 486 5 0 0 1 BPM-best-guess - -, f 5;
+#X floatatom 309 458 5 0 0 1 num-occ - -, f 5;
+#X obj 178 193 *~;
+#X obj 178 214 dac~;
+#X floatatom 219 190 5 0 0 0 - - -, f 5;
+#X obj 219 210 dbtorms;
+#X obj 196 506 i;
+#X msg 196 539 \; tempo ylabel -50 \$1;
+#X floatatom 234 518 5 0 0 0 - - -, f 5;
+#N canvas 0 23 540 561 synth-beat 0;
+#X obj 107 361 vline~;
+#X obj 52 395 *~;
+#X obj 151 147 metro 500;
 #X obj 345 54 t b f;
 #X obj 345 96 /;
 #X floatatom 345 117 10 0 0 1 seconds - -, f 10;
 #X obj 345 205 / 1024;
 #X floatatom 345 226 10 0 0 1 frames - -, f 10;
 #X floatatom 362 178 10 0 0 1 samples - -, f 10;
-#X obj 772 311 t b l l;
-#X msg 716 345 fit_bounds;
-#X obj 716 366 tabletool yvalues;
-#X obj 842 301 list length;
-#X msg 842 322 \; yvalues resize \$1 \;;
-#X obj 852 368 list prepend 0;
-#X obj 852 389 s yvalues;
-#X obj 842 255 table yvalues;
-#X floatatom 953 292 5 0 0 0 - - -, f 5;
 #X msg 345 75 60;
 #X obj 345 137 * 44100;
-#X floatatom 76 592 5 0 0 1 BPM - -, f 5;
-#X msg 181 275 open /Users/williambrent/Dropbox/PUREDATA/patches/research/specGrowth/drumLoop1.wav
-\, start;
-#X msg 99 112 0.25 2 \, 0 2 10;
 #X obj 44 88 noise~;
-#X obj 608 56 table \$0-onsets-buffer;
-#X obj 76 540 tempo~ 1024 128;
-#X obj 150 63 * 1000;
-#X obj 807 185 tabletool \$0-onsets-buffer;
-#N canvas 0 22 450 278 (subpatch) 0;
-#X array tempo 100 float 3;
-#A 0 106.556 106.556 106.556 106.556 106.556 106.556 106.556 106.556
-106.556 106.556 106.556 106.556 106.556 106.556 106.556 106.556 106.556
-106.556 106.556 106.556 106.556 96.5975 98.4375 130.835 99.384 132.512
-132.512 102.336 134.233 95.7031 137.812 112.347 112.347 112.347 107.666
-107.666 107.666 107.666 107.666 107.666 107.666 107.666 107.666 107.666
-159.014 159.014 159.014 159.014 159.014 159.014 159.014 159.014 159.014
-159.014 159.014 159.014 159.014 159.014 159.014 159.014 159.014 159.014
-159.014 159.014 159.014 159.014 159.014 159.014 159.014 159.014 159.014
-159.014 159.014 159.014 159.014 159.014 159.014 159.014 159.014 159.014
-159.014 159.014 159.014 159.014 159.014 159.014 159.014 159.014 120.185
-114.844 114.844 123.047 123.047 123.047 106.556 106.556 106.556 106.556
-106.556 106.556;
-#X coords 0 240 100 40 200 140 1 0 0;
-#X restore 536 114 graph;
-#X obj 76 612 t f b;
-#X obj 76 633 tabwrite tempo;
-#X obj 190 630 f;
-#X obj 230 626 + 1;
-#X obj 230 647 % 100;
-#X text 122 509 tempo~ 1024 256;
-#X connect 0 0 38 0;
-#X connect 3 0 38 0;
-#X connect 7 0 0 1;
-#X connect 8 0 9 0;
-#X connect 9 0 35 0;
-#X connect 11 0 40 0;
-#X connect 12 0 14 0;
-#X connect 12 0 14 1;
-#X connect 12 0 38 0;
-#X connect 12 1 34 0;
-#X connect 13 0 12 0;
+#X obj 202 72 * 1000;
+#X obj 272 408 *~;
+#X obj 312 379 vline~;
+#X obj 180 195 f;
+#X obj 255 188 + 1;
+#X obj 180 216 select 0;
+#X floatatom 226 138 5 0 0 0 - - -, f 5;
+#X obj 312 289 t b;
+#X obj 312 310 random 100;
+#X obj 312 331 moses 50;
+#X msg 107 340 0.5 2 \, 0 2 10;
+#X obj 80 472 +~;
+#X floatatom 251 25 5 0 0 0 - - -, f 5;
+#X obj 251 45 t b f;
+#X msg 312 358 0.2 2 \, 0 2 10;
+#X obj 107 291 random 100;
+#X obj 107 312 moses 90;
+#X obj 202 112 / 4;
+#X obj 255 209 % 4;
+#X obj 345 14 inlet;
+#X obj 90 18 inlet;
+#X obj 80 493 outlet~;
+#X connect 0 0 1 1;
+#X connect 1 0 23 0;
+#X connect 2 0 15 0;
+#X connect 3 0 9 0;
+#X connect 3 1 4 1;
+#X connect 4 0 5 0;
+#X connect 4 0 12 0;
+#X connect 5 0 10 0;
+#X connect 6 0 7 0;
+#X connect 9 0 4 0;
+#X connect 10 0 6 0;
+#X connect 10 0 8 0;
+#X connect 11 0 1 0;
+#X connect 11 0 13 0;
+#X connect 12 0 29 0;
+#X connect 13 0 23 1;
+#X connect 14 0 13 1;
 #X connect 15 0 16 0;
-#X connect 16 0 31 0;
-#X connect 16 1 17 1;
-#X connect 17 0 18 0;
-#X connect 17 0 39 0;
-#X connect 18 0 32 0;
+#X connect 15 0 17 0;
+#X connect 16 0 30 0;
+#X connect 17 0 27 0;
+#X connect 17 1 19 0;
 #X connect 19 0 20 0;
-#X connect 22 0 23 0;
-#X connect 22 1 27 0;
-#X connect 22 2 25 0;
-#X connect 23 0 24 0;
-#X connect 25 0 26 0;
-#X connect 25 0 30 0;
+#X connect 20 0 21 0;
+#X connect 21 0 26 0;
+#X connect 22 0 0 0;
+#X connect 23 0 33 0;
+#X connect 24 0 25 0;
+#X connect 25 0 29 0;
+#X connect 25 1 29 1;
+#X connect 25 1 30 1;
+#X connect 26 0 14 0;
 #X connect 27 0 28 0;
-#X connect 31 0 17 0;
-#X connect 32 0 19 0;
-#X connect 32 0 21 0;
-#X connect 33 0 42 0;
-#X connect 34 0 12 0;
-#X connect 35 0 7 0;
-#X connect 36 0 0 0;
-#X connect 38 0 33 0;
-#X connect 38 1 6 0;
-#X connect 39 0 9 1;
-#X connect 42 0 43 0;
-#X connect 42 1 44 0;
-#X connect 44 0 45 0;
-#X connect 44 0 43 1;
-#X connect 45 0 46 0;
-#X connect 46 0 44 1;
+#X connect 28 0 22 0;
+#X connect 29 0 2 1;
+#X connect 29 0 18 0;
+#X connect 30 0 15 1;
+#X connect 31 0 3 0;
+#X connect 32 0 2 0;
+#X restore 54 121 pd synth-beat;
+#N canvas 0 23 450 300 drum-loop-file 0;
+#X obj 65 171 readsf~;
+#X msg 111 135 stop;
+#X msg 65 84 open /Users/williambrent/Dropbox/PUREDATA/patches/research/specGrowth/drumLoop1.wav
+\, start;
+#X obj 74 20 inlet;
+#X obj 65 192 outlet~;
+#X connect 0 0 4 0;
+#X connect 0 1 2 0;
+#X connect 1 0 0 0;
+#X connect 2 0 0 0;
+#X connect 3 0 2 0;
+#X restore 176 122 pd drum-loop-file;
+#X obj 179 95 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 680 133 tabletool tempo;
+#X obj 365 538 change;
+#X obj 365 559 print;
+#X obj 450 390 t b b;
+#X obj 450 411 timer;
+#X obj 450 432 t b f;
+#X msg 450 453 60000;
+#X obj 450 474 /;
+#X floatatom 450 495 10 0 0 0 - - -, f 10;
+#X obj 450 350 key;
+#X obj 450 371 select 32;
+#X text 467 550 Should incorporate the buffer of tempo estimates and
+mode analysis for final output. Could offer a third inlet that spits
+out per-frame tempo estimates for processing differently if desired
+;
+#X text 467 620 How big shoud that tempo estimate buffer be? TWice
+the onset buffer size? The mode function seems to be horrible computationally
+expensive. Better look fro a better impementation than mine in [tabletool]
+;
+#X obj 444 115 table tempo 800;
+#X obj 229 641 % 800;
+#X connect 2 0 12 0;
+#X connect 6 0 29 0;
+#X connect 8 0 13 0;
+#X connect 8 0 32 0;
+#X connect 9 0 29 1;
+#X connect 12 0 10 0;
+#X connect 12 0 14 0;
+#X connect 12 1 5 0;
+#X connect 14 0 15 0;
+#X connect 14 1 16 0;
+#X connect 14 1 18 0;
+#X connect 16 0 17 0;
+#X connect 16 0 15 1;
+#X connect 17 0 46 0;
+#X connect 18 0 19 0;
+#X connect 19 0 20 0;
+#X connect 19 1 21 0;
+#X connect 20 0 26 0;
+#X connect 22 0 23 0;
+#X connect 22 0 23 1;
+#X connect 24 0 25 0;
+#X connect 25 0 22 1;
+#X connect 26 0 27 0;
+#X connect 26 0 28 0;
+#X connect 26 0 33 0;
+#X connect 29 0 12 0;
+#X connect 29 0 22 0;
+#X connect 30 0 12 0;
+#X connect 30 0 22 0;
+#X connect 31 0 30 0;
+#X connect 33 0 34 0;
+#X connect 35 0 36 0;
+#X connect 35 1 36 1;
+#X connect 36 0 37 0;
+#X connect 37 0 38 0;
+#X connect 37 1 39 1;
+#X connect 38 0 39 0;
+#X connect 39 0 40 0;
+#X connect 41 0 42 0;
+#X connect 42 0 35 0;
+#X connect 46 0 16 1;

@@ -23,6 +23,7 @@ typedef struct _tempo_tilde
     t_symbol *x_objSymbol;
     t_float x_sr;
     t_float x_n;
+	t_uInt x_hop;
     t_sampIdx x_window;
     t_sampIdx x_windowHalf;
     t_windowFunction x_windowFunction;
@@ -55,7 +56,6 @@ typedef struct _tempo_tilde
     t_float *x_hamming;
     t_float *x_hann;
     t_bool x_squaredDiff;
-	t_uInt x_hop;
 	t_atom *x_listOut;
     t_outlet *x_onsetList;
     t_outlet *x_tempo;
@@ -510,6 +510,9 @@ static void tempo_tilde_tempoRange(t_tempo_tilde *x, t_floatarg loTempo, t_float
 	hiTempo /= x->x_hop;//samples to frames
 	x->x_hiTempoIdx = roundf(hiTempo);
 
+// we could automatically resize the onsetsBuffer here based on the new loTempoIdx and current numHarm
+//	x->x_onsetsBufSize = x->x_loTempoIdx*(x->x_numHarm+1);
+
 	post("%s tempo range: %fBPM through %fBPM (frameIdx %i through %i).", x->x_objSymbol->s_name, x->x_loTempo, x->x_hiTempo, x->x_loTempoIdx, x->x_hiTempoIdx);
 }
 
@@ -518,25 +521,42 @@ static void tempo_tilde_numHarm(t_tempo_tilde *x, t_floatarg h)
 {
 	x->x_numHarm = (h<2)?2:h;
 
+// we could automatically resize the onsetsBuffer here based on the current loTempoIdx and new numHarm
+//	x->x_onsetsBufSize = x->x_loTempoIdx*(x->x_numHarm+1);
+
     post("%s harmonics: %i", x->x_objSymbol->s_name, x->x_numHarm);
 }
 
 
-static void tempo_tilde_onsetsBufSize(t_tempo_tilde *x, t_floatarg n)
+static void tempo_tilde_onsetsBufDur(t_tempo_tilde *x, t_floatarg n)
 {
-	t_uInt i, newSize;
+	t_float newSizeMs;
+	t_uInt i, newSize, minSize;
 	
-    newSize = (n<4)?4:n;
+    n = (n<100)?100:n;
+	
+	// ms to samples
+	newSizeMs = (n*x->x_sr/1000.0f);
+	
+	// samples to frames
+	newSize = newSizeMs/(t_float)x->x_hop;
+	
+	minSize = x->x_loTempoIdx*(x->x_numHarm+1);
 
-	x->x_onsetsBuffer = (t_float *)t_resizebytes(x->x_onsetsBuffer, x->x_onsetsBufSize * sizeof(t_float), newSize * sizeof(t_float));
-	x->x_listOut = (t_atom *)t_resizebytes(x->x_listOut, x->x_onsetsBufSize * sizeof(t_atom), newSize * sizeof(t_atom));
-    
-    x->x_onsetsBufSize = newSize;
+	if(newSize<minSize)
+		pd_error(x, "%s: requested size is too short based on tempo and harmonic setetings.", x->x_objSymbol->s_name);
+	else
+	{
+		x->x_onsetsBuffer = (t_float *)t_resizebytes(x->x_onsetsBuffer, x->x_onsetsBufSize * sizeof(t_float), newSize * sizeof(t_float));
+		x->x_listOut = (t_atom *)t_resizebytes(x->x_listOut, x->x_onsetsBufSize * sizeof(t_atom), newSize * sizeof(t_atom));
+	
+		x->x_onsetsBufSize = newSize;
 
- 	for(i=0; i<x->x_onsetsBufSize; i++)
-		x->x_onsetsBuffer[i] = 0.0;
+		for(i=0; i<x->x_onsetsBufSize; i++)
+			x->x_onsetsBuffer[i] = 0.0;
 
-	post("%s onset buffer size: %i frames.", x->x_objSymbol->s_name, x->x_onsetsBufSize);
+		post("%s onset buffer size: %f ms, %i frames.", x->x_objSymbol->s_name, n, x->x_onsetsBufSize);
+	}
 }
 
 
@@ -647,7 +667,6 @@ static void *tempo_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_hiBin = x->x_windowHalf;
 	x->x_growthThresh = 0.0;
 	x->x_belowThreshDefault = 0.01;
-	x->x_onsetsBufSize = 1000;
 	x->x_alignFirstPeak = true;
 	x->x_numHarm = 6;
 	
@@ -674,6 +693,8 @@ static void *tempo_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_lastDspTime = clock_getlogicaltime();
 	x->x_squaredDiff = true;
 	x->x_dspTicks = 0;
+	
+	x->x_onsetsBufSize = x->x_loTempoIdx*(x->x_numHarm+1);
 	
 	x->x_signalBuffer = (t_sample *)t_getbytes((x->x_window*2) * sizeof(t_sample));
 	x->x_fftwInForwardWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));
@@ -927,8 +948,8 @@ void tempo_tilde_setup(void)
 
 	class_addmethod(
 		tempo_tilde_class, 
-        (t_method)tempo_tilde_onsetsBufSize,
-		gensym("onset_buf_size"),
+        (t_method)tempo_tilde_onsetsBufDur,
+		gensym("onset_buf_duration"),
 		A_DEFFLOAT,
 		0
 	);
