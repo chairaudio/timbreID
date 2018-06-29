@@ -2511,6 +2511,8 @@ static void tabletool_mode(t_tabletool *x)
     	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
 	else
 	{
+// this method is faster than full mode evaluation, but it only gives you the longest contiguous run, not the real mode
+/*
 		t_sampIdx i, count, modeCount;
 		t_float thisNumber, mode;
 		t_atom countOut;
@@ -2539,12 +2541,23 @@ static void tabletool_mode(t_tabletool *x)
 			}
 		}
 
+
+		// must do this once more after the entire array has been traversed to see if the current count is higher than modeCount. Otherwise, if there's a run of the actual mode near the end of the array all the way to the end, the "else" case above is never evaluated and mode/modeCount are never updated
+		if(count > modeCount)
+		{
+			modeCount = count; // mode is the biggest ocurrences
+			mode = thisNumber;
+		}
+	
 		SETFLOAT(&countOut, modeCount);
 		outlet_list(x->x_list, 0, 1, &countOut);
 		
 		outlet_float(x->x_info, mode);
+*/
 
-/*
+
+// this is the full real mode, but it's intensive on big arrays since there are N*N operations
+
 		t_sampIdx i, j, maxCount, *instanceCounters;
 		t_float mode;
 		t_atom countOut;
@@ -2553,7 +2566,10 @@ static void tabletool_mode(t_tabletool *x)
 
 		for(i=0; i<x->x_arrayPoints; i++)
 			instanceCounters[i] = 0;
-		
+
+		maxCount = 0;
+		mode = -1;
+			
 		for(i=0; i<x->x_arrayPoints; i++)
 		{ 
 			t_float thisVal;
@@ -2564,13 +2580,7 @@ static void tabletool_mode(t_tabletool *x)
 				if(x->x_vec[j].w_float==thisVal)
 					instanceCounters[i]++;
 			}
-		}
 
-		maxCount = 0;
-		mode = -1;
-		
-		for(i=0; i<x->x_arrayPoints; i++)
-		{
 			if(instanceCounters[i]>maxCount)
 			{
 				maxCount = instanceCounters[i];
@@ -2585,7 +2595,7 @@ static void tabletool_mode(t_tabletool *x)
 		
 		// free local memory
 		t_freebytes(instanceCounters, x->x_arrayPoints*sizeof(t_sampIdx));
-*/		
+
  	}
 }
 

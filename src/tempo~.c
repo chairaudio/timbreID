@@ -23,6 +23,8 @@ need to address the fact that analysis hop == frame separation
 
 need to address the fact that analysis hop must be a multiple of x->x_n
 
+tempoBuffer's size should not be hard coded. It would be useful to change that
+
 make it so that changes to numHarm or tempo range automatically resize the onsetsBuffer to a length appropriate for loTempoIdx*(numHarm+1). some other settings may affect tempo or numHarm indirectly, so must look at the big picture
 
 */
@@ -30,7 +32,7 @@ make it so that changes to numHarm or tempo range automatically resize the onset
 
 #include "tIDLib.h"
 
-#define TEMPOBUFFERSIZE 50
+#define TEMPOBUFFERSIZE 20
 
 static t_class *tempo_tilde_class;
 
@@ -56,7 +58,7 @@ typedef struct _tempo_tilde
     t_binIdx x_hiBin;
     t_float x_onsetsBufDur;
     t_uInt x_onsetsBufSize;
-    t_uInt x_numHarm;
+    t_uShortInt x_numHarm;
     t_float x_loTempo;
     t_float x_hiTempo;
     t_uInt x_loTempoIdx;
@@ -84,6 +86,7 @@ typedef struct _tempo_tilde
 	t_atom *x_listOut;
     t_outlet *x_onsetList;
 	t_outlet *x_tempoRaw;
+	t_outlet *x_conf;
     t_outlet *x_tempo;
     t_float x_f;
 
@@ -92,6 +95,8 @@ typedef struct _tempo_tilde
 
 static t_float tempo_tilde_mode(t_float *data, t_uShortInt n, t_uShortInt *countOut)
 {
+// this isn't the real mode, only the longest contiguous repeated value
+/*
 	t_uShortInt i, count, modeCount;
 	t_float thisNumber, mode;
 	
@@ -121,12 +126,50 @@ static t_float tempo_tilde_mode(t_float *data, t_uShortInt n, t_uShortInt *count
 
 	*countOut = modeCount;
 	
-	return(mode);	
+	return(mode);
+*/
+
+// here's the real mode
+	t_uShortInt i, j, maxCount, *instanceCounters;
+	t_float mode;
+
+	instanceCounters = (t_uShortInt *)t_getbytes(n*sizeof(t_uShortInt));
+
+	for(i=0; i<n; i++)
+		instanceCounters[i] = 0;
+
+	maxCount = 0;
+	mode = -1;
+	
+	for(i=0; i<n; i++)
+	{ 
+		t_float thisVal;
+		thisVal = data[i];
+	
+		for(j=0; j<n; j++)
+		{
+			if(data[j]==thisVal)
+				instanceCounters[i]++;
+		}
+
+		if(instanceCounters[i]>maxCount)
+		{
+			maxCount = instanceCounters[i];
+			mode = data[i];
+		}
+	}
+
+	// free local memory
+	t_freebytes(instanceCounters, n*sizeof(t_uShortInt));
+	
+	*countOut = maxCount;
+
+	return(mode);
  }
 
 
 // this needs to be included as part of tIDLib.c, and used in tabletool.c as well as here
-static t_float tempo_tilde_hps(t_float *data, t_uInt n, t_float loIdx, t_float hiIdx, t_float numHarm, t_float *yValues, t_float *maxYValue, t_bool debug)
+static t_float tempo_tilde_hps(t_float *data, t_uInt n, t_float loIdx, t_float hiIdx, t_uShortInt numHarm, t_float *yValues, t_float *maxYValue, t_bool debug)
 {
 	t_sampIdx i, j, numIndices, maxIdx;
 	t_float maxVal;
@@ -404,7 +447,7 @@ static void tempo_tilde_analyze(t_tempo_tilde *x)
 
 		periodIdx = tempo_tilde_hps(onsetsBufferShifted, onsetBufferShiftedSize, x->x_hiTempoIdx, x->x_loTempoIdx, x->x_numHarm, yValues, &maxYValue, x->x_debug);
 	
-		// OUTLET 3: shifted onset peak buffer	
+		// OUTLET 4: shifted onset peak buffer	
 		outlet_list(x->x_onsetList, 0, x->x_onsetsBufSize, x->x_listOut);
 		
 		if(periodIdx==-1)
@@ -427,7 +470,7 @@ static void tempo_tilde_analyze(t_tempo_tilde *x)
 			tempo /= x->x_sr; // samples to seconds
 			tempo = 60.0f/tempo; // seconds to BPM
 	
-			// OUTLET 2: raw tempo per HPS call
+			// OUTLET 3: raw tempo per HPS call
 			outlet_float(x->x_tempoRaw, tempo);
 			
 			x->x_tempoBuffer[x->x_tempoBufferIdx] = tempo;
@@ -435,6 +478,9 @@ static void tempo_tilde_analyze(t_tempo_tilde *x)
 			modeCount = 0;
 			tempoMode = tempo_tilde_mode(x->x_tempoBuffer, TEMPOBUFFERSIZE, &modeCount);
 
+			// OUTLET 2: main tempo output
+			outlet_float(x->x_conf, modeCount*(t_float)5);
+			
 			// OUTLET 1: main tempo output
 			outlet_float(x->x_tempo, tempoMode);
 
@@ -767,6 +813,7 @@ static void *tempo_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	t_sampIdx i;
 	
 	x->x_tempo = outlet_new(&x->x_obj, &s_float);
+	x->x_conf = outlet_new(&x->x_obj, &s_float);
 	x->x_tempoRaw = outlet_new(&x->x_obj, &s_float);
 	x->x_onsetList = outlet_new(&x->x_obj, gensym("list"));
 
@@ -831,6 +878,9 @@ static void *tempo_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_sr = SAMPLERATEDEFAULT;
 	x->x_n = BLOCKSIZEDEFAULT;
 	x->x_overlap = 1;
+
+	x->x_loFreq = 0;
+	x->x_hiFreq = x->x_sr*0.5;
 
 	x->x_loTempo = 40;
 	x->x_hiTempo = 240;
