@@ -2511,10 +2511,44 @@ static void tabletool_mode(t_tabletool *x)
     	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
 	else
 	{
+		t_sampIdx i, count, modeCount;
+		t_float thisNumber, mode;
+		t_atom countOut;
+		
+		count = 1;
+		modeCount = 1;
+		thisNumber = x->x_vec[0].w_float;
+		mode = thisNumber;
+		
+		for(i=1; i<x->x_arrayPoints; i++)
+		{
+			if(x->x_vec[i].w_float == thisNumber)
+			{ // count occurrences of the current number
+				++count;
+			}
+			else
+			{ // now this is a different number
+				if(count > modeCount)
+				{
+					modeCount = count; // mode is the biggest ocurrences
+					mode = thisNumber;
+				}
+				
+				count = 1; // reset count for the new number
+				thisNumber = x->x_vec[i].w_float;
+			}
+		}
+
+		SETFLOAT(&countOut, modeCount);
+		outlet_list(x->x_list, 0, 1, &countOut);
+		
+		outlet_float(x->x_info, mode);
+
+/*
 		t_sampIdx i, j, maxCount, *instanceCounters;
 		t_float mode;
 		t_atom countOut;
-		
+
 		instanceCounters = (t_sampIdx *)t_getbytes(x->x_arrayPoints*sizeof(t_sampIdx));
 
 		for(i=0; i<x->x_arrayPoints; i++)
@@ -2550,7 +2584,8 @@ static void tabletool_mode(t_tabletool *x)
 		outlet_float(x->x_info, mode);
 		
 		// free local memory
-		t_freebytes(instanceCounters, x->x_arrayPoints*sizeof(t_sampIdx));		
+		t_freebytes(instanceCounters, x->x_arrayPoints*sizeof(t_sampIdx));
+*/		
  	}
 }
 
