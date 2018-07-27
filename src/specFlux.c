@@ -331,8 +331,8 @@ static void specFlux_chain_magSpec(t_specFlux *x, t_symbol *s, int argc, t_atom 
 	t_sampIdx i, windowHalf;
 	t_float flux;
 
-	// for specFlux fftData in particular:
-	// incoming fftData list should be 2*(N/2+1) elements long, so windowHalf is:
+	// for specFlux magSpec in particular:
+	// incoming magSpec list should be 2*(N/2+1) elements long, so windowHalf is:
 	windowHalf = argc-2;
 	windowHalf *= 0.5;
 	
@@ -597,7 +597,7 @@ static void *specFlux_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_window = WINDOWSIZEDEFAULT;
 	x->x_windowHalf = x->x_window*0.5;
 	x->x_windowFunction = blackman;
-	x->x_normalize = true;
+	x->x_normalize = false;
 	x->x_powerSpectrum = false;
 	x->x_squaredDiff = false;
 	
