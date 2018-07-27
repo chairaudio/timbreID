@@ -2,8 +2,8 @@
 #X obj 59 74 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 80 74 Bang to analyze the entire array.;
-#X obj 59 522 nbx 5 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 0 256;
+#X obj 59 522 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
+-262144 -1 -1 2858.79 256;
 #X obj 704 85 specCentroid~;
 #X msg 155 291 analyze \$1 1024;
 #X obj 158 249 hsl 400 15 0 128000 0 0 empty empty Scrub -2 -8 0 12
@@ -78,8 +78,32 @@ samples long (samples 44100 - 46099);
 #X obj 59 483 specCentroid \$0-sample;
 #X msg 98 123 analyze 44100 2000;
 #X text 652 547 July 2017;
+#N canvas 508 431 1136 577 test-chain 0;
+#X obj 109 254 list trim;
+#X obj 379 162 magSpec \$0-sample;
+#X obj 379 183 list prepend chain_magSpec;
+#X obj 379 204 list trim;
+#X obj 109 233 list prepend chain_fftData;
+#X obj 109 203 list append;
+#X obj 451 27 inlet;
+#X obj 87 136 tID_fft \$0-sample;
+#X obj 251 427 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
+-262144 -1 -1 2858.79 256;
+#X obj 256 382 specCentroid \$0-sample;
+#X connect 0 0 9 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 9 0;
+#X connect 4 0 0 0;
+#X connect 5 0 4 0;
+#X connect 6 0 1 0;
+#X connect 7 0 5 0;
+#X connect 7 1 5 1;
+#X connect 9 0 8 0;
+#X restore 325 373 pd test-chain;
 #X connect 0 0 16 0;
 #X connect 4 0 16 0;
+#X connect 4 0 19 0;
 #X connect 5 0 12 0;
 #X connect 9 0 16 0;
 #X connect 12 0 4 0;

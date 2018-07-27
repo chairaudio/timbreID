@@ -179,6 +179,75 @@ static void barkSpec_analyze(t_barkSpec *x, t_floatarg start, t_floatarg n)
 }
 
 
+static void barkSpec_chain_fftData(t_barkSpec *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+
+	// incoming fftData list should be 2*(N/2+1) elements long, so windowHalf is:
+	windowHalf = argc-2;
+	windowHalf *= 0.5;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+		
+	// fill the x_fftwOut buffer with the incoming fftData list, for both real and imag elements
+	for(i=0; i<=x->x_windowHalf; i++)
+	{
+		x->x_fftwOut[i][0] = atom_getfloat(argv+i);
+		x->x_fftwOut[i][1] = atom_getfloat(argv+(x->x_windowHalf+1)+i);
+	}
+
+	tIDLib_power(x->x_windowHalf+1, x->x_fftwOut, x->x_fftwIn);
+
+	if(!x->x_powerSpectrum)
+		tIDLib_mag(x->x_windowHalf+1, x->x_fftwIn);
+
+	if(x->x_specBandAvg)
+		tIDLib_specFilterBands(windowHalf+1, x->x_numFilters, x->x_fftwIn, x->x_filterbank, x->x_normalize);
+	else
+		tIDLib_filterbankMultiply(x->x_fftwIn, x->x_normalize, x->x_filterAvg, x->x_filterbank, x->x_numFilters);
+
+	for(i=0; i<x->x_numFilters; i++)
+		SETFLOAT(x->x_listOut+i, x->x_fftwIn[i]);
+
+	outlet_list(x->x_featureList, 0, x->x_numFilters, x->x_listOut);
+}
+
+
+static void barkSpec_chain_magSpec(t_barkSpec *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+
+	// incoming magSpec list should be N/2+1 elements long, so windowHalf is one less than this
+	windowHalf = argc-1;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+	
+	// fill the x_fftwIn buffer with the incoming magSpec list
+	for(i=0; i<=x->x_windowHalf; i++)
+		x->x_fftwIn[i] = atom_getfloat(argv+i);	
+	
+	if(x->x_specBandAvg)
+		tIDLib_specFilterBands(x->x_windowHalf+1, x->x_numFilters, x->x_fftwIn, x->x_filterbank, x->x_normalize);
+	else
+		tIDLib_filterbankMultiply(x->x_fftwIn, x->x_normalize, x->x_filterAvg, x->x_filterbank, x->x_numFilters);
+
+	for(i=0; i<x->x_numFilters; i++)
+		SETFLOAT(x->x_listOut+i, x->x_fftwIn[i]);
+
+	outlet_list(x->x_featureList, 0, x->x_numFilters, x->x_listOut);
+}
+
+
 // analyze the whole damn array
 static void barkSpec_bang(t_barkSpec *x)
 {
@@ -286,6 +355,17 @@ static void barkSpec_samplerate(t_barkSpec *x, t_floatarg sr)
 
 	tIDLib_createFilterbank(x->x_filterFreqs, &x->x_filterbank, x->x_numFilters, x->x_numFilters, x->x_window, x->x_sr);
 
+}
+
+
+static void barkSpec_window(t_barkSpec *x, t_floatarg w)
+{
+	t_sampIdx endSamp;
+    
+    // have to pass in an address to a dummy t_sampIdx value since _resizeWindow() requires that
+    endSamp = 0;
+    
+    barkSpec_resizeWindow(x, x->x_window, w, 0, &endSamp);
 }
 
 
@@ -517,6 +597,22 @@ void barkSpec_setup(void)
 
 	class_addmethod(
 		barkSpec_class,
+		(t_method)barkSpec_chain_fftData,
+		gensym("chain_fftData"),
+		A_GIMME,
+		0
+	);
+	
+	class_addmethod(
+		barkSpec_class,
+		(t_method)barkSpec_chain_magSpec,
+		gensym("chain_magSpec"),
+		A_GIMME,
+		0
+	);
+	
+	class_addmethod(
+		barkSpec_class,
 		(t_method)barkSpec_set,
 		gensym("set"),
 		A_SYMBOL,
@@ -538,6 +634,14 @@ void barkSpec_setup(void)
 		0
 	);
 
+	class_addmethod(
+		barkSpec_class,
+        (t_method)barkSpec_window,
+		gensym("window"),
+		A_DEFFLOAT,
+		0
+	);
+	
 	class_addmethod(
 		barkSpec_class,
         (t_method)barkSpec_windowFunction,

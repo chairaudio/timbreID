@@ -2,12 +2,12 @@
 #X obj 58 73 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 79 73 Bang to analyze the entire array.;
-#X obj 58 491 nbx 5 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 0 256;
+#X obj 58 491 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
+-262144 -1 -1 0.924484 256;
 #X obj 703 84 specBrightness~;
 #X msg 154 280 analyze \$1 1024;
 #X obj 157 238 hsl 400 15 0 128000 0 0 empty empty Scrub -2 -8 0 12
--191407 -1 -1 0 1;
+-191407 -1 -1 9900 1;
 #X text 513 58 See the real-time version for more information on spectral
 brightness in general.;
 #X obj 3 3 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
@@ -82,8 +82,38 @@ samples long (samples 44100 - 46099).;
 to read from \, and a boundary frequency to determine the ratio of
 high spectral content., f 47;
 #X text 653 546 July 2017;
+#N canvas 508 431 1136 577 test-chain 0;
+#X obj 109 254 list trim;
+#X msg 710 293 window 2000;
+#X msg 700 273 window 1024;
+#X obj 379 162 magSpec \$0-sample;
+#X obj 379 183 list prepend chain_magSpec;
+#X obj 379 204 list trim;
+#X obj 109 233 list prepend chain_fftData;
+#X obj 109 203 list append;
+#X obj 451 27 inlet;
+#X obj 87 136 tID_fft \$0-sample;
+#X msg 723 327 print;
+#X obj 251 427 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
+-262144 -1 -1 0.924484 256;
+#X obj 256 382 specBrightness \$0-sample 1200;
+#X connect 0 0 12 0;
+#X connect 1 0 12 0;
+#X connect 2 0 12 0;
+#X connect 3 0 4 0;
+#X connect 4 0 5 0;
+#X connect 5 0 12 0;
+#X connect 6 0 0 0;
+#X connect 7 0 6 0;
+#X connect 8 0 3 0;
+#X connect 9 0 7 0;
+#X connect 9 1 7 1;
+#X connect 10 0 12 0;
+#X connect 12 0 11 0;
+#X restore 325 373 pd test-chain;
 #X connect 0 0 13 0;
 #X connect 4 0 13 0;
+#X connect 4 0 19 0;
 #X connect 5 0 12 0;
 #X connect 9 0 13 0;
 #X connect 12 0 4 0;

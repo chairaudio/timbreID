@@ -374,6 +374,17 @@ static void barkSpecFlux_samplerate(t_barkSpecFlux *x, t_floatarg sr)
 }
 
 
+static void barkSpecFlux_window(t_barkSpecFlux *x, t_floatarg w)
+{
+	t_sampIdx endSamp;
+    
+    // have to pass in an address to a dummy t_sampIdx value since _resizeWindow() requires that
+    endSamp = 0;
+    
+    barkSpecFlux_resizeWindow(x, x->x_window, w, 0, &endSamp);
+}
+
+
 static void barkSpecFlux_windowFunction(t_barkSpecFlux *x, t_floatarg f)
 {
     f = (f<0)?0:f;
@@ -720,6 +731,14 @@ void barkSpecFlux_setup(void)
 		0
 	);
 
+	class_addmethod(
+		barkSpecFlux_class,
+        (t_method)barkSpecFlux_window,
+		gensym("window"),
+		A_DEFFLOAT,
+		0
+	);
+	
 	class_addmethod(
 		barkSpecFlux_class,
         (t_method)barkSpecFlux_windowFunction,

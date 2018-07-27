@@ -2558,6 +2558,7 @@ static void tabletool_mode(t_tabletool *x)
 
 // this is the full real mode, but it's intensive on big arrays since there are N*N operations
 
+/*
 		t_sampIdx i, j, maxCount, *instanceCounters;
 		t_float mode;
 		t_atom countOut;
@@ -2595,7 +2596,26 @@ static void tabletool_mode(t_tabletool *x)
 		
 		// free local memory
 		t_freebytes(instanceCounters, x->x_arrayPoints*sizeof(t_sampIdx));
+*/
 
+		t_uLongInt i, maxCount;
+		t_float *data, mode;
+		t_atom countOut;
+
+		// get memory to buffer x_vec
+		data = (t_float *)t_getbytes(x->x_arrayPoints*sizeof(t_float));
+
+		for(i=0; i<x->x_arrayPoints; i++)
+			data[i] = x->x_vec[i].w_float;
+			
+		mode = tIDLib_mode(data, x->x_arrayPoints, &maxCount);
+
+		// free local memory
+		t_freebytes(data, x->x_arrayPoints*sizeof(t_float));
+		
+		SETFLOAT(&countOut, maxCount);
+		outlet_list(x->x_list, 0, 1, &countOut);
+		outlet_float(x->x_info, mode);
  	}
 }
 

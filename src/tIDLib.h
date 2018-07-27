@@ -9,7 +9,7 @@ timbreID is free software: you can redistribute it and/or modify it under the te
 timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-version 0.7.6, June 29, 2018
+version 0.7.6, July 27, 2018
 
 */
 
@@ -23,7 +23,7 @@ version 0.7.6, June 29, 2018
 #include "m_pd.h"
 #include "fftw3.h"
 
-#define TIDVERSION "0.7.6june29"
+#define TIDVERSION "0.7.6july27a"
 
 // choose either FFTW_MEASURE or FFTW_ESTIMATE here.
 #define FFTWPLANNERFLAG FFTW_ESTIMATE
@@ -171,6 +171,8 @@ t_float tIDLib_mel2freq(t_float mel);
 void tIDLib_linspace(t_float *ramp, t_float start, t_float finish, t_binIdx n);
 t_sChar tIDLib_signum(t_float sample);
 t_float tIDLib_fitLineSlope(t_sampIdx n, t_float *input);
+t_float tIDLib_hps(t_float *data, t_uInt n, t_float loIdx, t_float hiIdx, t_uShortInt numHarm, t_float *yValues, t_float *maxYValue, t_bool debug);
+t_float tIDLib_mode(t_float *data, t_uLongInt n, t_uLongInt *countOut);
 void tIDLib_bubbleSort(t_sampIdx n, t_float *list);
 void tIDLib_knnInfoBubbleSort(t_uShortInt n, t_instance *instances);
 void tIDLib_sortKnnInfo(t_uShortInt k, t_instanceIdx numInstances, t_instanceIdx prevMatch, t_instance *instances);
@@ -297,6 +299,7 @@ void specIrregularity_setup(void);
 void specIrregularity_tilde_setup(void);
 void specKurtosis_setup(void);
 void specKurtosis_tilde_setup(void);
+void specPhase_setup(void);
 void specPhase_tilde_setup(void);
 void specRolloff_setup(void);
 void specRolloff_tilde_setup(void);
@@ -307,6 +310,7 @@ void specSlope_tilde_setup(void);
 void specSpread_setup(void);
 void specSpread_tilde_setup(void);
 void tempo_tilde_setup(void);
+void tID_fft_setup(void);
 void tID_fft_tilde_setup(void);
 void tID_mean_setup(void);
 void tID_std_setup(void);

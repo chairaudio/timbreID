@@ -2,11 +2,11 @@
 #X obj 58 73 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 79 73 Bang to analyze the entire array.;
-#X obj 58 491 nbx 5 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 0 256;
+#X obj 58 491 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
+-262144 -1 -1 0.492954 256;
 #X msg 144 250 analyze \$1 1024;
 #X obj 147 208 hsl 400 15 0 128000 0 0 empty empty Scrub -2 -8 0 12
--191407 -1 -1 0 1;
+-191407 -1 -1 27400 1;
 #X obj 3 3 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 3 3 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
@@ -91,8 +91,34 @@ irregularity in general.;
 #X text 213 287 Choose either Jensen (0) or Krimphoff (1) algorithm.
 (default: Jensen);
 #X text 653 546 July 2017;
+#N canvas 508 431 1136 577 test-chain 0;
+#X obj 109 254 list trim;
+#X obj 379 162 magSpec \$0-sample;
+#X obj 379 183 list prepend chain_magSpec;
+#X obj 379 204 list trim;
+#X obj 109 233 list prepend chain_fftData;
+#X obj 109 203 list append;
+#X obj 451 27 inlet;
+#X obj 87 136 tID_fft \$0-sample;
+#X obj 251 427 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
+-262144 -1 -1 0.492954 256;
+#X obj 256 382 specIrregularity \$0-sample 0;
+#X msg 388 329 algorithm 0;
+#X connect 0 0 9 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 9 0;
+#X connect 4 0 0 0;
+#X connect 5 0 4 0;
+#X connect 6 0 1 0;
+#X connect 7 0 5 0;
+#X connect 7 1 5 1;
+#X connect 9 0 8 0;
+#X connect 10 0 9 0;
+#X restore 418 377 pd test-chain;
 #X connect 0 0 14 0;
 #X connect 3 0 14 0;
+#X connect 3 0 22 0;
 #X connect 4 0 10 0;
 #X connect 7 0 14 0;
 #X connect 10 0 3 0;

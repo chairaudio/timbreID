@@ -299,6 +299,17 @@ static void cepstrumPitch_samplerate(t_cepstrumPitch *x, t_floatarg sr)
 }
 
 
+static void cepstrumPitch_window(t_cepstrumPitch *x, t_floatarg w)
+{
+	t_sampIdx endSamp;
+    
+    // have to pass in an address to a dummy t_sampIdx value since _resizeWindow() requires that
+    endSamp = 0;
+    
+    cepstrumPitch_resizeWindow(x, x->x_window, w, 0, &endSamp);
+}
+
+
 static void cepstrumPitch_windowFunction(t_cepstrumPitch *x, t_floatarg f)
 {
     f = (f<0)?0:f;
@@ -585,6 +596,14 @@ void cepstrumPitch_setup(void)
 		0
 	);
 
+	class_addmethod(
+		cepstrumPitch_class,
+        (t_method)cepstrumPitch_window,
+		gensym("window"),
+		A_DEFFLOAT,
+		0
+	);
+	
 	class_addmethod(
 		cepstrumPitch_class,
         (t_method)cepstrumPitch_windowFunction,

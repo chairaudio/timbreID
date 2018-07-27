@@ -261,6 +261,118 @@ static void specFlux_analyze(t_specFlux *x, t_floatarg start, t_floatarg n)
 }
 
 
+static void specFlux_chain_fftData(t_specFlux *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+	t_float flux;
+
+	// for specFlux fftData in particular:
+	// incoming fftData list should be 4*(N/2+1) elements long, so windowHalf is:
+	windowHalf = argc-4;
+	windowHalf *= 0.25;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+		
+	// fill the x_fftwOut buffers with the incoming fftData list, for both real and imag elements
+	// for specFlux in particular, the first 2*(N/2+1) elements in the atom list are for the FORWARD window complex results. The second set of 2*(N/2+1) elements are for the BACK window complex results.
+	for(i=0; i<=x->x_windowHalf; i++)
+	{
+		x->x_fftwOutForwardWindow[i][0] = atom_getfloat(argv+i);
+		x->x_fftwOutForwardWindow[i][1] = atom_getfloat(argv+(x->x_windowHalf+1)+i);
+		x->x_fftwOutBackWindow[i][0] = atom_getfloat(argv+(x->x_window+2)+i);
+		x->x_fftwOutBackWindow[i][1] = atom_getfloat(argv+(x->x_window+x->x_windowHalf+3)+i);
+	}
+
+	// put the result of power calc back in x_fftwIn
+	tIDLib_power(x->x_windowHalf+1, x->x_fftwOutForwardWindow, x->x_fftwInForwardWindow);
+	tIDLib_power(x->x_windowHalf+1, x->x_fftwOutBackWindow, x->x_fftwInBackWindow);
+
+	if(!x->x_powerSpectrum)
+	{
+		tIDLib_mag(x->x_windowHalf+1, x->x_fftwInForwardWindow);
+		tIDLib_mag(x->x_windowHalf+1, x->x_fftwInBackWindow);
+	}
+	
+	if(x->x_normalize)
+	{
+		tIDLib_normal(x->x_windowHalf+1, x->x_fftwInForwardWindow);
+		tIDLib_normal(x->x_windowHalf+1, x->x_fftwInBackWindow);
+	}
+
+	flux=0.0;
+
+	for(i=0; i<=x->x_windowHalf; i++)
+	{
+		t_float diff, val;
+
+		diff = x->x_fftwInForwardWindow[i] - x->x_fftwInBackWindow[i];
+	
+		if(x->x_squaredDiff)
+			val = diff*diff;
+		else
+			val = fabs(diff);
+		
+		SETFLOAT(x->x_listOut+i, diff);
+		flux += val;
+	}
+
+	outlet_list(x->x_fluxList, 0, x->x_windowHalf+1, x->x_listOut);
+	outlet_float(x->x_flux, flux);
+}
+
+
+static void specFlux_chain_magSpec(t_specFlux *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+	t_float flux;
+
+	// for specFlux fftData in particular:
+	// incoming fftData list should be 2*(N/2+1) elements long, so windowHalf is:
+	windowHalf = argc-2;
+	windowHalf *= 0.5;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+	
+	// fill the x_fftwIn buffers with the incoming magSpec lists
+	// for specFlux in particular, the first N/2+1 elements in the atom list are for the FORWARD window magnitudes. The second set of N/2+1 elements are for the BACK window magnitudes.
+	for(i=0; i<=x->x_windowHalf; i++)
+	{
+		x->x_fftwInForwardWindow[i] = atom_getfloat(argv+i);	
+		x->x_fftwInBackWindow[i] = atom_getfloat(argv+(x->x_windowHalf+1)+i);	
+	}
+	
+	flux=0.0;
+
+	for(i=0; i<=x->x_windowHalf; i++)
+	{
+		t_float diff, val;
+
+		diff = x->x_fftwInForwardWindow[i] - x->x_fftwInBackWindow[i];
+	
+		if(x->x_squaredDiff)
+			val = diff*diff;
+		else
+			val = fabs(diff);
+		
+		SETFLOAT(x->x_listOut+i, diff);
+		flux += val;
+	}
+
+	outlet_list(x->x_fluxList, 0, x->x_windowHalf+1, x->x_listOut);
+	outlet_float(x->x_flux, flux);
+}
+
+
 // analyze the whole damn array
 static void specFlux_bang(t_specFlux *x)
 {
@@ -311,6 +423,17 @@ static void specFlux_samplerate(t_specFlux *x, t_floatarg sr)
 		x->x_sr = MINSAMPLERATE;
 	else
 		x->x_sr = sr;
+}
+
+
+static void specFlux_window(t_specFlux *x, t_floatarg w)
+{
+	t_sampIdx endSamp;
+    
+    // have to pass in an address to a dummy t_sampIdx value since _resizeWindow() requires that
+    endSamp = 0;
+    
+    specFlux_resizeWindow(x, x->x_window, w, 0, &endSamp);
 }
 
 
@@ -567,6 +690,22 @@ void specFlux_setup(void)
 
 	class_addmethod(
 		specFlux_class,
+		(t_method)specFlux_chain_fftData,
+		gensym("chain_fftData"),
+		A_GIMME,
+		0
+	);
+	
+	class_addmethod(
+		specFlux_class,
+		(t_method)specFlux_chain_magSpec,
+		gensym("chain_magSpec"),
+		A_GIMME,
+		0
+	);
+	
+	class_addmethod(
+		specFlux_class,
 		(t_method)specFlux_set,
 		gensym("set"),
 		A_SYMBOL,
@@ -588,6 +727,14 @@ void specFlux_setup(void)
 		0
 	);
 
+	class_addmethod(
+		specFlux_class,
+        (t_method)specFlux_window,
+		gensym("window"),
+		A_DEFFLOAT,
+		0
+	);
+	
 	class_addmethod(
 		specFlux_class,
         (t_method)specFlux_windowFunction,

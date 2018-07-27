@@ -20,7 +20,7 @@
 #X connect 1 0 4 0;
 #X connect 3 0 0 0;
 #X connect 4 0 3 0;
-#X restore 655 86 pd soundfile;
+#X restore 765 86 pd soundfile;
 #X msg 107 455 analyze \$1 1024;
 #N canvas 722 238 304 333 waveform 0;
 #X obj 46 61 inlet;
@@ -35,9 +35,9 @@
 #X connect 2 0 4 1;
 #X connect 3 0 5 0;
 #X connect 4 0 3 0;
-#X restore 655 138 pd waveform;
+#X restore 765 138 pd waveform;
 #X obj 50 243 hsl 800 25 0 128000 0 0 \$0-scrub-bar empty Scrub-bar
--2 -8 0 12 -191407 -1 -1 0 1;
+-2 -8 0 12 -191407 -1 -1 29700 1;
 #X obj 618 468 barkSpec~;
 #X text 223 540 Creation arguments are the name of the sample array
 to read from and spacing of the filterbank in Barks.;
@@ -49,40 +49,42 @@ to read from and spacing of the filterbank in Barks.;
 #X obj 44 56 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 4;
 #X msg 44 76 window_function \$1;
-#X obj 100 118 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X obj 140 158 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X msg 100 136 normalize \$1;
-#X msg 140 188 set another-sample-array;
-#X msg 179 244 samplerate 48000;
-#X text 328 187 Read from a different array;
-#X msg 205 297 power_spectrum \$1;
-#X obj 205 279 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X msg 140 176 normalize \$1;
+#X msg 180 228 set another-sample-array;
+#X msg 219 284 samplerate 48000;
+#X text 368 227 Read from a different array;
+#X msg 245 337 power_spectrum \$1;
+#X obj 245 319 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X obj 44 625 outlet;
-#X text 342 341 Construct a new filterbank with a specific spacing.
+#X text 382 381 Construct a new filterbank with a specific spacing.
 ;
-#X text 206 136 Normalize spectrum (default: ON);
-#X text 313 243 Specify your sample's sampling rate. (default: 44100)
+#X text 246 176 Normalize spectrum (default: ON);
+#X text 353 283 Specify your sample's sampling rate. (default: 44100)
 ;
-#X text 346 297 Use power spectrum. (default: magnitude);
-#X msg 369 526 print;
+#X text 386 337 Use power spectrum. (default: magnitude);
+#X msg 409 566 print;
 #X text 42 19 Change windowing function. Rectangular (0) \, Blackman
 (1) \, Cosine (2) \, Hamming (3) \, or Hann (4). (default: Blackman)
 ;
-#X obj 287 406 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X obj 327 446 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X msg 287 426 spec_band_avg \$1;
-#X obj 317 466 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X msg 327 466 spec_band_avg \$1;
+#X obj 357 506 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X msg 317 486 filter_avg \$1;
-#X text 419 528 Print current settings in the post window;
-#X msg 242 341 filterbank 1;
-#X text 343 454 If using the triangular Bark spaced filters \, you
+#X msg 357 526 filter_avg \$1;
+#X text 459 568 Print current settings in the post window;
+#X msg 282 381 filterbank 1;
+#X text 383 494 If using the triangular Bark spaced filters \, you
 can either sum or average the energy in each filter (default: sum)
 ;
-#X text 313 374 Rather than sum energy in the triangular Bark spaced
+#X text 353 414 Rather than sum energy in the triangular Bark spaced
 filters to get the amount of energy in each Bark band \, you can average
 energy in the unfiltered bins (default: OFF);
+#X text 186 116 Change internal window size setting;
+#X msg 84 116 window 2000;
 #X connect 0 0 1 0;
 #X connect 1 0 9 0;
 #X connect 2 0 3 0;
@@ -97,34 +99,100 @@ energy in the unfiltered bins (default: OFF);
 #X connect 18 0 19 0;
 #X connect 19 0 9 0;
 #X connect 21 0 9 0;
+#X connect 25 0 9 0;
 #X restore 152 498 pd other-settings;
 #X obj 50 568 t l l;
 #X obj 194 615 list length;
 #X obj 194 637 change;
-#X text 717 680 Updated for timbreID version 0.7;
 #X obj 50 546 barkSpec \$0-sample 0.5;
 #X msg 194 680 \; \$2-barkSpec-graph resize \$1 \;;
 #X obj 50 693 s \$0-barkSpec-graph;
 #X obj 194 659 pack f \$0;
 #X msg 94 379 analyze 44100 2000;
 #X obj 107 433 r \$0-scrub-bar;
-#X obj 655 116 r \$0-scrub-bar;
+#X obj 765 116 r \$0-scrub-bar;
 #X text 616 419 See the real-time version for more information on Bark
 spectrum in general., f 33;
 #X text 209 432 Move through the soundfile with the slider above;
 #X text 717 700 July 2017;
 #X text 103 339 Analyze a window starting at sample 44100 that is 2000
 samples long (samples 44100 - 46099).;
-#X connect 0 0 18 0;
-#X connect 3 0 20 0;
-#X connect 6 0 18 0;
-#X connect 13 0 18 0;
+#N canvas 0 22 450 300 (subpatch) 0;
+#X array \$0-barkSpec-graph-alt 50 float 0;
+#X coords 0 0.5 49 0 200 140 1 0 0;
+#X restore 313 47 graph;
+#X text 717 680 Updated for timbreID version 0.7.6;
+#N canvas 761 236 858 587 test-chain 0;
+#X obj 257 382 barkSpec \$0-sample 0.5;
+#X obj 109 254 list trim;
+#X obj 257 403 list prepend 0;
+#X obj 257 424 s \$0-barkSpec-graph-alt;
+#X msg 419 294 window 2000;
+#X msg 409 274 window 1024;
+#X obj 379 162 magSpec \$0-sample;
+#X obj 379 183 list prepend chain_magSpec;
+#X obj 379 204 list trim;
+#X obj 109 233 list prepend chain_fftData;
+#X obj 109 203 list append;
+#X obj 263 32 inlet;
+#X obj 87 136 tID_fft \$0-sample;
+#X msg 260 107 print;
+#X msg 432 328 print;
+#X msg 574 377 subtract \$1-barkSpec-graph-alt;
+#X obj 574 398 tabletool \$0-barkSpec-graph;
+#X obj 625 331 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 625 351 f \$0;
+#X obj 691 433 print;
+#X floatatom 599 102 5 0 0 0 - - -, f 5;
+#X obj 629 202 tabread \$0-barkSpec-graph;
+#X floatatom 629 223 15 0 0 0 - - -, f 15;
+#X floatatom 729 223 15 0 0 0 - - -, f 15;
+#X obj 629 152 tabread \$0-barkSpec-graph-alt;
+#X obj 14 229 list length;
+#X floatatom 14 250 5 0 0 0 - - -, f 5;
+#X connect 0 0 2 0;
+#X connect 1 0 0 0;
+#X connect 2 0 3 0;
+#X connect 4 0 0 0;
+#X connect 4 0 12 0;
+#X connect 5 0 0 0;
+#X connect 6 0 7 0;
+#X connect 7 0 8 0;
+#X connect 8 0 0 0;
+#X connect 9 0 1 0;
+#X connect 10 0 9 0;
+#X connect 10 0 25 0;
+#X connect 11 0 12 0;
+#X connect 12 0 10 0;
+#X connect 12 1 10 1;
+#X connect 13 0 12 0;
+#X connect 14 0 0 0;
+#X connect 15 0 16 0;
+#X connect 16 1 19 0;
+#X connect 17 0 18 0;
+#X connect 18 0 15 0;
+#X connect 20 0 21 0;
+#X connect 20 0 24 0;
+#X connect 21 0 22 0;
+#X connect 24 0 23 0;
+#X connect 25 0 26 0;
+#X restore 298 479 pd test-chain;
+#X text 516 317 results of chain_fftData passed to [barkSpec] are different
+than normal [barkSpec] analysis results. results using chain_magSpec
+are fine \, so it's something to do with chain_fftData;
+#X connect 0 0 17 0;
+#X connect 3 0 19 0;
+#X connect 6 0 17 0;
+#X connect 6 0 30 0;
+#X connect 13 0 17 0;
 #X connect 14 0 3 0;
 #X connect 14 1 15 0;
 #X connect 15 0 16 0;
-#X connect 16 0 21 0;
-#X connect 18 0 14 0;
-#X connect 21 0 19 0;
-#X connect 22 0 18 0;
-#X connect 23 0 6 0;
-#X connect 24 0 7 0;
+#X connect 16 0 20 0;
+#X connect 17 0 14 0;
+#X connect 20 0 18 0;
+#X connect 21 0 17 0;
+#X connect 21 0 30 0;
+#X connect 22 0 6 0;
+#X connect 23 0 7 0;

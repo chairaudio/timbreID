@@ -2395,6 +2395,60 @@ static void timbreID_OCTAVE(t_timbreID *x, t_symbol *file_symbol, t_symbol *var_
 }
 
 
+static void timbreID_FANN(t_timbreID *x, t_symbol *s)
+{
+	FILE *filePtr;
+	t_instanceIdx i, j, *clusterPtr;
+    char *fileName, fileNameBuf[MAXPDSTRING];
+
+	fileName = s->s_name;
+
+    canvas_makefilename(x->x_canvas, fileName, fileNameBuf, MAXPDSTRING);
+
+	filePtr = fopen(fileNameBuf, "w");
+	
+    if(!filePtr)
+    {
+        pd_error(x, "%s: failed to create %s", x->x_objSymbol->s_name, fileNameBuf);
+        return;
+    }		
+
+	// write the header containing the number of instances, input size, output size
+	fprintf(filePtr, "%i ", x->x_numInstances);
+	// note that this is minFeatureLength assuming that all features will be of the same length so x_minFeatureLength==x_maxFeatureLength
+	fprintf(filePtr, "%i ", x->x_minFeatureLength);
+	fprintf(filePtr, "%i ", x->x_numClusters);
+	fprintf(filePtr, "\n");
+
+    for(i=0; i<x->x_numInstances; i++)
+    {
+		clusterPtr = x->x_clusters[i].members;
+
+		for(j=0; j<x->x_minFeatureLength; j++)
+			fprintf(filePtr, "%f ", x->x_instances[i].data[j]);
+
+		// carriage return between input data line and label line
+		fprintf(filePtr, "\n");
+
+		// TODO: fill with all zeros, except a 1.0 in the slot of the cluster idx
+		for(j=0; j<x->x_numClusters; j++)
+		{
+			if(j==x->x_instances[i].clusterMembership)
+				fprintf(filePtr, "%f ", 1.0);
+			else
+				fprintf(filePtr, "%f ", 0.0);
+		}
+		
+		// carriage return between label line and next line of data
+		fprintf(filePtr, "\n");
+   	};
+   	
+    post("%s: wrote %i training instances and labels to %s.", x->x_objSymbol->s_name, x->x_numInstances, fileNameBuf);
+    
+    fclose(filePtr);
+}
+
+
 static void timbreID_writeClusters(t_timbreID *x, t_symbol *s)
 {
 	FILE *filePtr;
@@ -3065,7 +3119,15 @@ void timbreID_setup(void)
 		A_SYMBOL,
 		0
 	);
-	
+
+	class_addmethod(
+		timbreID_class, 
+        (t_method)timbreID_FANN,
+		gensym("FANN"),
+		A_SYMBOL,
+		0
+	);
+
 	class_addmethod(
 		timbreID_class, 
         (t_method)timbreID_writeClusters,

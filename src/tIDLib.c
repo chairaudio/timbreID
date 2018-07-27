@@ -184,6 +184,114 @@ t_float tIDLib_fitLineSlope(t_sampIdx n, t_float *input)
 }
 
 
+t_float tIDLib_hps(t_float *data, t_uInt n, t_float loIdx, t_float hiIdx, t_uShortInt numHarm, t_float *yValues, t_float *maxYValue, t_bool debug)
+{
+	t_sampIdx i, j, numIndices, maxIdx;
+	t_float maxVal;
+
+	// if the highest harmonic of the hiIdx is beyond the end of the array data, we'll reduce the requested number of harmonics and post a warning
+	while(hiIdx*numHarm > n)
+	{
+		numHarm--;
+		if(debug)
+			post("tIDLib HPS function WARNING: reducing numHarm to %i", numHarm);
+
+		if(numHarm<=1)
+		{
+			if(debug)
+				post("tIDLib HPS function ERROR: second harmonic of hiIdx is out of table bounds. Aborting.");
+			return(-1);
+		}	
+	}
+
+	numIndices = hiIdx - loIdx + 1;
+	
+	// init yValues arrays to zero
+	for(i=0; i<n; i++)
+		yValues[i] = 0.0;
+	
+	for(i=loIdx; i<=hiIdx; i++)
+	{
+		t_float thisProduct;
+		
+		thisProduct = 1.0;
+		
+		// NOTE: this was erroneously starting at j=0 before. Should start at harmonic 1
+		for(j=1; j<numHarm; j++)
+		{
+			t_sampIdx thisIdx;
+			
+			thisIdx = i*j;
+
+			thisProduct = thisProduct * data[thisIdx];
+		}
+		
+		yValues[i] = thisProduct;
+	}
+
+	maxVal = -1.0;
+	maxIdx = UINT_MAX;
+	
+	for(i=0; i<n; i++)
+	{
+		if(yValues[i]>maxVal)
+		{
+			maxVal = yValues[i];
+			maxIdx = i;
+		}
+	}
+
+	*maxYValue = maxVal;
+
+	// if maxIdx is somehow not updated, output -1 to indicate failure.
+	// if the largest value in yValues was the initialized value of 0, also indicate failure
+	if(maxIdx==UINT_MAX || maxVal==0.0)
+		return(-1.0);
+	else
+		return(maxIdx); // previously added loIdx offset when the yValues memory was numIndices in length rather than n
+}
+
+
+t_float tIDLib_mode(t_float *data, t_uLongInt n, t_uLongInt *countOut)
+{
+	t_uLongInt i, j, maxCount, *instanceCounters;
+	t_float mode;
+
+	instanceCounters = (t_uLongInt *)t_getbytes(n*sizeof(t_uLongInt));
+
+	for(i=0; i<n; i++)
+		instanceCounters[i] = 0;
+
+	maxCount = 0;
+	mode = -1;
+	
+	for(i=0; i<n; i++)
+	{ 
+		t_float thisVal;
+		thisVal = data[i];
+	
+		for(j=0; j<n; j++)
+		{
+			if(data[j]==thisVal)
+				instanceCounters[i]++;
+		}
+
+		if(instanceCounters[i]>maxCount)
+		{
+			maxCount = instanceCounters[i];
+			mode = data[i];
+		}
+	}
+
+	// free local memory
+	t_freebytes(instanceCounters, n*sizeof(t_uLongInt));
+	
+	*countOut = maxCount;
+
+	return(mode);
+ }
+ 
+ 
 void tIDLib_bubbleSort(t_sampIdx n, t_float *list)
 {	
 	t_sampIdx i;

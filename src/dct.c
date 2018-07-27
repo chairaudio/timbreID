@@ -206,6 +206,17 @@ static void dct_samplerate(t_dct *x, t_floatarg sr)
 }
 
 
+static void dct_window(t_dct *x, t_floatarg w)
+{
+	t_sampIdx endSamp;
+    
+    // have to pass in an address to a dummy t_sampIdx value since _resizeWindow() requires that
+    endSamp = 0;
+    
+    dct_resizeWindow(x, x->x_window, w, 0, &endSamp);
+}
+
+
 static void dct_windowFunction(t_dct *x, t_floatarg f)
 {
     f = (f<0)?0:f;
@@ -394,6 +405,14 @@ void dct_setup(void)
 		0
 	);
 
+	class_addmethod(
+		dct_class,
+        (t_method)dct_window,
+		gensym("window"),
+		A_DEFFLOAT,
+		0
+	);
+	
 	class_addmethod(
 		dct_class,
         (t_method)dct_windowFunction,

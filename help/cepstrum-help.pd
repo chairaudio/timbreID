@@ -36,12 +36,12 @@
 #X connect 4 0 3 0;
 #X restore 655 138 pd waveform;
 #X obj 50 243 hsl 800 25 0 128000 0 0 \$0-scrub-bar empty Scrub-bar
--2 -8 0 12 -191407 -1 -1 0 1;
+-2 -8 0 12 -191407 -1 -1 33800 1;
 #X obj 3 3 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 3 3 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 475 241 849 528 other-settings 0;
+#N canvas 701 331 849 528 other-settings 0;
 #X obj 44 56 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 4;
 #X msg 44 76 window_function \$1;
@@ -64,7 +64,7 @@
 1;
 #X msg 195 297 power_cepstrum \$1;
 #X text 336 297 Report power cepstrum (default: magnitude);
-#X obj 235 329 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X obj 235 329 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
 1;
 #X msg 235 347 spectrum_offset \$1;
 #X text 376 340 Add 1 to the power or magnitude spectrum before the
@@ -89,19 +89,20 @@ cepstrum is computed.;
 in general., f 33;
 #X obj 598 438 cepstrum~;
 #X obj 50 546 cepstrum \$0-sample;
-#N canvas 0 50 584 308 do-plotting 0;
-#X obj 79 37 inlet;
-#X obj 79 59 t b l l;
-#X obj 130 173 list prepend 0;
-#X obj 254 116 list length;
-#X obj 254 138 change;
-#X obj 254 160 pack f \$0;
-#X msg 254 181 \; \$2-cepstrum-graph resize \$1 \;;
-#X obj 130 194 s \$0-cepstrum-graph;
-#X obj 79 253 tabletool \$0-cepstrum-graph;
-#X msg 79 231 clip -0.25 0.5;
-#X text 181 221 clip to graph bounds because first value in cepstrum
-is often extremely low;
+#N canvas 0 50 585 344 do-plotting 0;
+#X obj 53 39 inlet;
+#X obj 53 61 t b l l;
+#X obj 104 175 list prepend 0;
+#X obj 228 118 list length;
+#X obj 228 140 change;
+#X obj 228 162 pack f \$0;
+#X msg 228 183 \; \$2-cepstrum-graph resize \$1 \;;
+#X obj 104 196 s \$0-cepstrum-graph;
+#X obj 53 275 tabletool \$0-cepstrum-graph;
+#X msg 53 253 clip -0.25 0.5;
+#X text 165 233 clip to graph bounds because first value in cepstrum
+is often extremely low \, and it goes out of bounds. This is for aesthetic
+reasons only.;
 #X connect 0 0 1 0;
 #X connect 1 0 9 0;
 #X connect 1 1 2 0;
@@ -118,8 +119,71 @@ read from., f 33;
 #X text 607 570 July 2017;
 #X text 103 339 Analyze a window starting at sample 44100 that is 2000
 samples long (samples 44100 - 46099).;
+#N canvas 761 236 858 587 test-chain 0;
+#X obj 109 254 list trim;
+#X obj 257 403 list prepend 0;
+#X msg 419 294 window 2000;
+#X msg 409 274 window 1024;
+#X obj 379 162 magSpec \$0-sample;
+#X obj 379 183 list prepend chain_magSpec;
+#X obj 379 204 list trim;
+#X obj 109 233 list prepend chain_fftData;
+#X obj 109 203 list append;
+#X obj 263 32 inlet;
+#X obj 87 136 tID_fft \$0-sample;
+#X msg 260 107 print;
+#X msg 432 328 print;
+#X obj 625 331 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 625 351 f \$0;
+#X obj 691 433 print;
+#X floatatom 599 102 5 0 0 0 - - -, f 5;
+#X floatatom 629 223 15 0 0 0 - - -, f 15;
+#X floatatom 729 223 15 0 0 0 - - -, f 15;
+#X obj 14 229 list length;
+#X floatatom 14 250 5 0 0 0 - - -, f 5;
+#X obj 257 382 cepstrum \$0-sample;
+#X obj 257 424 s \$0-cepstrum-graph-alt;
+#X obj 629 202 tabread \$0-cepstrum-graph-alt;
+#X msg 574 377 subtract \$1-cepstrum-graph;
+#X obj 629 152 tabread \$0-cepstrum-graph;
+#X obj 574 398 tabletool \$0-cepstrum-graph-alt;
+#X msg 427 381 spectrum_offset 1;
+#X connect 0 0 21 0;
+#X connect 1 0 22 0;
+#X connect 2 0 10 0;
+#X connect 2 0 21 0;
+#X connect 3 0 21 0;
+#X connect 4 0 5 0;
+#X connect 5 0 6 0;
+#X connect 6 0 21 0;
+#X connect 7 0 0 0;
+#X connect 8 0 7 0;
+#X connect 8 0 19 0;
+#X connect 9 0 10 0;
+#X connect 10 0 8 0;
+#X connect 10 1 8 1;
+#X connect 11 0 10 0;
+#X connect 12 0 21 0;
+#X connect 13 0 14 0;
+#X connect 14 0 24 0;
+#X connect 16 0 23 0;
+#X connect 16 0 25 0;
+#X connect 19 0 20 0;
+#X connect 21 0 1 0;
+#X connect 23 0 17 0;
+#X connect 24 0 26 0;
+#X connect 25 0 18 0;
+#X connect 26 1 15 0;
+#X connect 27 0 21 0;
+#X restore 298 479 pd test-chain;
+#N canvas 0 50 450 300 (subpatch) 0;
+#X array \$0-cepstrum-graph-alt 513 float 0;
+#X coords 0 0.5 512 -0.25 200 140 1 0 0;
+#X restore 313 47 graph;
 #X connect 0 0 17 0;
 #X connect 5 0 17 0;
+#X connect 5 0 23 0;
 #X connect 10 0 17 0;
 #X connect 12 0 5 0;
 #X connect 13 0 6 0;

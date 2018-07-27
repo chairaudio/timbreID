@@ -263,6 +263,255 @@ static void specHarmonicity_analyze(t_specHarmonicity *x, t_floatarg start, t_fl
 }
 
 
+static void specHarmonicity_chain_fftData(t_specHarmonicity *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+	t_uShortInt numPeaks;
+	t_float fund, harmSpacing, halfHarmSpacing, harm, inHarm, harmDividend, inHarmDividend, divisor, *flagsBuf, minPeakVal, maxPeakVal, thresh, *peakFreqs, *peakAmps;
+		
+	// incoming fftData list should be 2*(N/2+1) elements long, so windowHalf is:
+	windowHalf = argc-2;
+	windowHalf *= 0.5;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+		
+	// fill the x_fftwOut buffer with the incoming fftData list, for both real and imag elements
+	for(i=0; i<=x->x_windowHalf; i++)
+	{
+		x->x_fftwOut[i][0] = atom_getfloat(argv+i);
+		x->x_fftwOut[i][1] = atom_getfloat(argv+(x->x_windowHalf+1)+i);
+	}
+
+	tIDLib_power(x->x_windowHalf+1, x->x_fftwOut, x->x_fftwIn);
+
+	if(!x->x_powerSpectrum)
+		tIDLib_mag(x->x_windowHalf+1, x->x_fftwIn);
+
+	// find all significant peaks
+	flagsBuf = (t_float *)t_getbytes((x->x_windowHalf+1)*sizeof(t_float));
+	minPeakVal = FLT_MAX;
+	maxPeakVal = -FLT_MAX;
+	numPeaks = 0;
+
+	tIDLib_peaksValleys(x->x_windowHalf+1, x->x_fftwIn, flagsBuf, &minPeakVal, &maxPeakVal);
+
+	thresh = maxPeakVal * (x->x_threshPct/100.0);
+	peakFreqs = (t_float *)t_getbytes(0);
+	peakAmps = (t_float *)t_getbytes(0);
+
+	for(i=0; i<=x->x_windowHalf; i++)
+	{
+		// 0.5 in the flagsBuf means a half peak, which we'll ignore
+		if(flagsBuf[i]>0.5)
+		{
+			t_float thisAmp;
+			
+			thisAmp = x->x_fftwIn[i];
+			
+			if(thisAmp>=thresh)
+			{	
+				peakFreqs = (t_float *)t_resizebytes(peakFreqs, numPeaks*sizeof(t_float), (numPeaks+1)*sizeof(t_float));
+				peakAmps = (t_float *)t_resizebytes(peakAmps, numPeaks*sizeof(t_float), (numPeaks+1)*sizeof(t_float));
+
+				peakAmps[numPeaks] = thisAmp;
+				peakFreqs[numPeaks] = tIDLib_bin2freq(i, x->x_window, x->x_sr);
+				numPeaks++;
+
+				if(numPeaks>=x->x_maxPeaks)
+					break;
+			}
+		}
+	}
+	
+	t_freebytes(flagsBuf, (x->x_windowHalf+1)*sizeof(t_float));
+
+	harm = inHarm = harmDividend = inHarmDividend = divisor = 0.0;
+
+	if(x->x_inputFund)
+		fund = x->x_fundFreq;
+	else
+	{
+		if(peakFreqs[0]==0.0)
+			fund = peakFreqs[1];
+		else
+			fund = peakFreqs[0];
+	}
+
+	if(fund<x->x_minFund || fund>x->x_maxFund)
+	{
+		harmDividend = -numPeaks; // to make harm value -1.0
+		goto earlyExit;
+	}
+
+	harmSpacing = fund;
+	halfHarmSpacing = harmSpacing*0.5;
+	
+	for(i=0; i<numPeaks; i++)
+	{
+		t_float thisAmp;
+		
+		thisAmp = peakAmps[i];
+		
+		if(thisAmp>0.0)
+		{
+			t_float thisFreq, deviation;
+			t_uShortInt roundedHarm;
+			
+			thisFreq = peakFreqs[i];
+			roundedHarm = roundf(thisFreq/fund);
+			deviation = fabs(thisFreq - (roundedHarm*fund));
+			inHarmDividend += deviation * thisAmp;
+			divisor += thisAmp;
+			
+			harmDividend += (halfHarmSpacing-deviation)/halfHarmSpacing;
+		}
+	}
+
+	earlyExit:
+	
+	t_freebytes(peakAmps, numPeaks*sizeof(t_float));
+	t_freebytes(peakFreqs, numPeaks*sizeof(t_float));
+
+	if(divisor<=0.0 || fund<=0.0)
+		inHarm = -1.0;
+	else
+		inHarm = (2*inHarmDividend)/(divisor*fund);
+	
+	if(numPeaks<=0)
+		harm = -1.0;
+	else
+		harm = harmDividend/numPeaks;
+	
+	outlet_float(x->x_inHarm, inHarm);	
+	outlet_float(x->x_harm, harm);
+}
+
+
+static void specHarmonicity_chain_magSpec(t_specHarmonicity *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+	t_uShortInt numPeaks;
+	t_float fund, harmSpacing, halfHarmSpacing, harm, inHarm, harmDividend, inHarmDividend, divisor, *flagsBuf, minPeakVal, maxPeakVal, thresh, *peakFreqs, *peakAmps;
+
+	// incoming magSpec list should be N/2+1 elements long, so windowHalf is one less than this
+	windowHalf = argc-1;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+	
+	// fill the x_fftwIn buffer with the incoming magSpec list
+	for(i=0; i<=x->x_windowHalf; i++)
+		x->x_fftwIn[i] = atom_getfloat(argv+i);	
+
+	// find all significant peaks
+	flagsBuf = (t_float *)t_getbytes((x->x_windowHalf+1)*sizeof(t_float));
+	minPeakVal = FLT_MAX;
+	maxPeakVal = -FLT_MAX;
+	numPeaks = 0;
+
+	tIDLib_peaksValleys(x->x_windowHalf+1, x->x_fftwIn, flagsBuf, &minPeakVal, &maxPeakVal);
+
+	thresh = maxPeakVal * (x->x_threshPct/100.0);
+	peakFreqs = (t_float *)t_getbytes(0);
+	peakAmps = (t_float *)t_getbytes(0);
+
+	for(i=0; i<=x->x_windowHalf; i++)
+	{
+		// 0.5 in the flagsBuf means a half peak, which we'll ignore
+		if(flagsBuf[i]>0.5)
+		{
+			t_float thisAmp;
+			
+			thisAmp = x->x_fftwIn[i];
+			
+			if(thisAmp>=thresh)
+			{	
+				peakFreqs = (t_float *)t_resizebytes(peakFreqs, numPeaks*sizeof(t_float), (numPeaks+1)*sizeof(t_float));
+				peakAmps = (t_float *)t_resizebytes(peakAmps, numPeaks*sizeof(t_float), (numPeaks+1)*sizeof(t_float));
+
+				peakAmps[numPeaks] = thisAmp;
+				peakFreqs[numPeaks] = tIDLib_bin2freq(i, x->x_window, x->x_sr);
+				numPeaks++;
+
+				if(numPeaks>=x->x_maxPeaks)
+					break;
+			}
+		}
+	}
+	
+	t_freebytes(flagsBuf, (x->x_windowHalf+1)*sizeof(t_float));
+
+	harm = inHarm = harmDividend = inHarmDividend = divisor = 0.0;
+
+	if(x->x_inputFund)
+		fund = x->x_fundFreq;
+	else
+	{
+		if(peakFreqs[0]==0.0)
+			fund = peakFreqs[1];
+		else
+			fund = peakFreqs[0];
+	}
+
+	if(fund<x->x_minFund || fund>x->x_maxFund)
+	{
+		harmDividend = -numPeaks; // to make harm value -1.0
+		goto earlyExit;
+	}
+
+	harmSpacing = fund;
+	halfHarmSpacing = harmSpacing*0.5;
+	
+	for(i=0; i<numPeaks; i++)
+	{
+		t_float thisAmp;
+		
+		thisAmp = peakAmps[i];
+		
+		if(thisAmp>0.0)
+		{
+			t_float thisFreq, deviation;
+			t_uShortInt roundedHarm;
+			
+			thisFreq = peakFreqs[i];
+			roundedHarm = roundf(thisFreq/fund);
+			deviation = fabs(thisFreq - (roundedHarm*fund));
+			inHarmDividend += deviation * thisAmp;
+			divisor += thisAmp;
+			
+			harmDividend += (halfHarmSpacing-deviation)/halfHarmSpacing;
+		}
+	}
+
+	earlyExit:
+	
+	t_freebytes(peakAmps, numPeaks*sizeof(t_float));
+	t_freebytes(peakFreqs, numPeaks*sizeof(t_float));
+
+	if(divisor<=0.0 || fund<=0.0)
+		inHarm = -1.0;
+	else
+		inHarm = (2*inHarmDividend)/(divisor*fund);
+	
+	if(numPeaks<=0)
+		harm = -1.0;
+	else
+		harm = harmDividend/numPeaks;
+	
+	outlet_float(x->x_inHarm, inHarm);	
+	outlet_float(x->x_harm, harm);
+}
+
+
 // analyze the whole damn array
 static void specHarmonicity_bang(t_specHarmonicity *x)
 {
@@ -317,6 +566,17 @@ static void specHarmonicity_samplerate(t_specHarmonicity *x, t_floatarg sr)
 		x->x_sr = MINSAMPLERATE;
 	else
 		x->x_sr = sr;
+}
+
+
+static void specHarmonicity_window(t_specHarmonicity *x, t_floatarg w)
+{
+	t_sampIdx endSamp;
+    
+    // have to pass in an address to a dummy t_sampIdx value since _resizeWindow() requires that
+    endSamp = 0;
+    
+    specHarmonicity_resizeWindow(x, x->x_window, w, 0, &endSamp);
 }
 
 
@@ -551,6 +811,22 @@ void specHarmonicity_setup(void)
 
 	class_addmethod(
 		specHarmonicity_class,
+		(t_method)specHarmonicity_chain_fftData,
+		gensym("chain_fftData"),
+		A_GIMME,
+		0
+	);
+	
+	class_addmethod(
+		specHarmonicity_class,
+		(t_method)specHarmonicity_chain_magSpec,
+		gensym("chain_magSpec"),
+		A_GIMME,
+		0
+	);
+	
+	class_addmethod(
+		specHarmonicity_class,
 		(t_method)specHarmonicity_set,
 		gensym("set"),
 		A_SYMBOL,
@@ -572,6 +848,14 @@ void specHarmonicity_setup(void)
 		0
 	);
 
+	class_addmethod(
+		specHarmonicity_class,
+        (t_method)specHarmonicity_window,
+		gensym("window"),
+		A_DEFFLOAT,
+		0
+	);
+	
 	class_addmethod(
 		specHarmonicity_class,
         (t_method)specHarmonicity_windowFunction,

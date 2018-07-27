@@ -190,6 +190,107 @@ static void specFlatness_analyze(t_specFlatness *x, t_floatarg start, t_floatarg
 }
 
 
+static void specFlatness_chain_fftData(t_specFlatness *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+	double windowHalfPlusOneRecip, dividend, divisor, flatness;
+
+	// incoming fftData list should be 2*(N/2+1) elements long, so windowHalf is:
+	windowHalf = argc-2;
+	windowHalf *= 0.5;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+		
+	// fill the x_fftwOut buffer with the incoming fftData list, for both real and imag elements
+	for(i=0; i<=x->x_windowHalf; i++)
+	{
+		x->x_fftwOut[i][0] = atom_getfloat(argv+i);
+		x->x_fftwOut[i][1] = atom_getfloat(argv+(x->x_windowHalf+1)+i);
+	}
+
+	tIDLib_power(x->x_windowHalf+1, x->x_fftwOut, x->x_fftwIn);
+
+	if(!x->x_powerSpectrum)
+		tIDLib_mag(x->x_windowHalf+1, x->x_fftwIn);
+
+	dividend=1.0; // to get the product of all terms for geometric mean
+	divisor=flatness=0.0;
+    windowHalfPlusOneRecip = 1.0/(double)(x->x_windowHalf+1);
+
+	// geometric mean
+	// take the nth roots first so as not to lose data to precision error.
+	for(i=0; i<=x->x_windowHalf; i++)
+		x->x_nthRoots[i] = pow(x->x_fftwIn[i], windowHalfPlusOneRecip);
+
+	// take the product of nth roots
+	for(i=0; i<=x->x_windowHalf; i++)
+		dividend *= x->x_nthRoots[i];
+
+	for(i=0; i<=x->x_windowHalf; i++)
+		divisor += x->x_fftwIn[i];
+
+	divisor *= windowHalfPlusOneRecip; // arithmetic mean
+
+	if(divisor<=0.0)
+		flatness = -1.0;
+	else	
+		flatness = dividend/divisor;
+
+	outlet_float(x->x_flatness, flatness);
+}
+
+
+static void specFlatness_chain_magSpec(t_specFlatness *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+	double windowHalfPlusOneRecip, dividend, divisor, flatness;
+
+	// incoming magSpec list should be N/2+1 elements long, so windowHalf is one less than this
+	windowHalf = argc-1;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+	
+	// fill the x_fftwIn buffer with the incoming magSpec list
+	for(i=0; i<=x->x_windowHalf; i++)
+		x->x_fftwIn[i] = atom_getfloat(argv+i);	
+
+	dividend=1.0; // to get the product of all terms for geometric mean
+	divisor=flatness=0.0;
+    windowHalfPlusOneRecip = 1.0/(double)(x->x_windowHalf+1);
+
+	// geometric mean
+	// take the nth roots first so as not to lose data to precision error.
+	for(i=0; i<=x->x_windowHalf; i++)
+		x->x_nthRoots[i] = pow(x->x_fftwIn[i], windowHalfPlusOneRecip);
+
+	// take the product of nth roots
+	for(i=0; i<=x->x_windowHalf; i++)
+		dividend *= x->x_nthRoots[i];
+
+	for(i=0; i<=x->x_windowHalf; i++)
+		divisor += x->x_fftwIn[i];
+
+	divisor *= windowHalfPlusOneRecip; // arithmetic mean
+
+	if(divisor<=0.0)
+		flatness = -1.0;
+	else	
+		flatness = dividend/divisor;
+
+	outlet_float(x->x_flatness, flatness);
+}
+
+
 // analyze the whole damn array
 static void specFlatness_bang(t_specFlatness *x)
 {
@@ -238,6 +339,17 @@ static void specFlatness_samplerate(t_specFlatness *x, t_floatarg sr)
 		x->x_sr = MINSAMPLERATE;
 	else
 		x->x_sr = sr;
+}
+
+
+static void specFlatness_window(t_specFlatness *x, t_floatarg w)
+{
+	t_sampIdx endSamp;
+    
+    // have to pass in an address to a dummy t_sampIdx value since _resizeWindow() requires that
+    endSamp = 0;
+    
+    specFlatness_resizeWindow(x, x->x_window, w, 0, &endSamp);
 }
 
 
@@ -410,6 +522,22 @@ void specFlatness_setup(void)
 
 	class_addmethod(
 		specFlatness_class,
+		(t_method)specFlatness_chain_fftData,
+		gensym("chain_fftData"),
+		A_GIMME,
+		0
+	);
+	
+	class_addmethod(
+		specFlatness_class,
+		(t_method)specFlatness_chain_magSpec,
+		gensym("chain_magSpec"),
+		A_GIMME,
+		0
+	);
+	
+	class_addmethod(
+		specFlatness_class,
 		(t_method)specFlatness_set,
 		gensym("set"),
 		A_SYMBOL,
@@ -431,6 +559,14 @@ void specFlatness_setup(void)
 		0
 	);
 
+	class_addmethod(
+		specFlatness_class,
+        (t_method)specFlatness_window,
+		gensym("window"),
+		A_DEFFLOAT,
+		0
+	);
+	
 	class_addmethod(
 		specFlatness_class,
         (t_method)specFlatness_windowFunction,

@@ -181,6 +181,109 @@ static void barkSpecCentroid_analyze(t_barkSpecCentroid *x, t_floatarg start, t_
 }
 
 
+static void barkSpecCentroid_chain_fftData(t_barkSpecCentroid *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+	t_float energySum, centroid;
+
+	// incoming fftData list should be 2*(N/2+1) elements long, so windowHalf is:
+	windowHalf = argc-2;
+	windowHalf *= 0.5;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+		
+	// fill the x_fftwOut buffer with the incoming fftData list, for both real and imag elements
+	for(i=0; i<=x->x_windowHalf; i++)
+	{
+		x->x_fftwOut[i][0] = atom_getfloat(argv+i);
+		x->x_fftwOut[i][1] = atom_getfloat(argv+(x->x_windowHalf+1)+i);
+	}
+
+	tIDLib_power(x->x_windowHalf+1, x->x_fftwOut, x->x_fftwIn);
+
+	if(!x->x_powerSpectrum)
+		tIDLib_mag(x->x_windowHalf+1, x->x_fftwIn);
+
+	if(x->x_specBandAvg)
+		tIDLib_specFilterBands(windowHalf+1, x->x_numFilters, x->x_fftwIn, x->x_filterbank, false);
+	else
+		tIDLib_filterbankMultiply(x->x_fftwIn, false, x->x_filterAvg, x->x_filterbank, x->x_numFilters);
+
+	energySum = 0;
+	for(i=0; i<x->x_numFilters; i++)
+		energySum += x->x_fftwIn[i];
+	
+	centroid = tIDLib_computeCentroid(x->x_numFilters, x->x_fftwIn, x->x_barkFreqList, energySum);
+
+	outlet_float(x->x_centroid, centroid);
+}
+
+
+static void barkSpecCentroid_chain_magSpec(t_barkSpecCentroid *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+	t_float energySum, centroid;
+
+	// incoming magSpec list should be N/2+1 elements long, so windowHalf is one less than this
+	windowHalf = argc-1;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+	
+	// fill the x_fftwIn buffer with the incoming magSpec list
+	for(i=0; i<=x->x_windowHalf; i++)
+		x->x_fftwIn[i] = atom_getfloat(argv+i);	
+	
+	if(x->x_specBandAvg)
+		tIDLib_specFilterBands(x->x_windowHalf+1, x->x_numFilters, x->x_fftwIn, x->x_filterbank, false);
+	else
+		tIDLib_filterbankMultiply(x->x_fftwIn, false, x->x_filterAvg, x->x_filterbank, x->x_numFilters);
+
+	energySum = 0;
+	for(i=0; i<x->x_numFilters; i++)
+		energySum += x->x_fftwIn[i];
+	
+	centroid = tIDLib_computeCentroid(x->x_numFilters, x->x_fftwIn, x->x_barkFreqList, energySum);
+
+	outlet_float(x->x_centroid, centroid);
+}
+
+
+static void barkSpecCentroid_chain_barkSpec(t_barkSpecCentroid *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_filterIdx i;
+	t_float energySum, centroid;
+	
+	// make sure that argc == x->x_numFilters in order to avoid an out of bounds memory read below. we won't resize all memory based on an incoming chain_ command with a different size. instead, just throw an error and exit
+	if(argc!=x->x_numFilters)
+	{
+		pd_error(x, "%s: length of chain_ message (%i) does not match current number of Bark filters (%i)", x->x_objSymbol->s_name, argc, x->x_numFilters);
+		return;
+	}
+	
+	// fill the x_fftwIn buffer with the incoming magSpec list
+	for(i=0; i<x->x_numFilters; i++)
+		x->x_fftwIn[i] = atom_getfloat(argv+i);
+
+	energySum = 0;
+	for(i=0; i<x->x_numFilters; i++)
+		energySum += x->x_fftwIn[i];
+	
+	centroid = tIDLib_computeCentroid(x->x_numFilters, x->x_fftwIn, x->x_barkFreqList, energySum);
+
+	outlet_float(x->x_centroid, centroid);
+}
+
+
 // analyze the whole damn array
 static void barkSpecCentroid_bang(t_barkSpecCentroid *x)
 {
@@ -290,6 +393,17 @@ static void barkSpecCentroid_samplerate(t_barkSpecCentroid *x, t_floatarg sr)
 
 	tIDLib_createFilterbank(x->x_filterFreqs, &x->x_filterbank, x->x_numFilters, x->x_numFilters, x->x_window, x->x_sr);
 
+}
+
+
+static void barkSpecCentroid_window(t_barkSpecCentroid *x, t_floatarg w)
+{
+	t_sampIdx endSamp;
+    
+    // have to pass in an address to a dummy t_sampIdx value since _resizeWindow() requires that
+    endSamp = 0;
+    
+    barkSpecCentroid_resizeWindow(x, x->x_window, w, 0, &endSamp);
 }
 
 
@@ -508,6 +622,30 @@ void barkSpecCentroid_setup(void)
 
 	class_addmethod(
 		barkSpecCentroid_class,
+		(t_method)barkSpecCentroid_chain_fftData,
+		gensym("chain_fftData"),
+		A_GIMME,
+		0
+	);
+	
+	class_addmethod(
+		barkSpecCentroid_class,
+		(t_method)barkSpecCentroid_chain_magSpec,
+		gensym("chain_magSpec"),
+		A_GIMME,
+		0
+	);
+
+	class_addmethod(
+		barkSpecCentroid_class,
+		(t_method)barkSpecCentroid_chain_barkSpec,
+		gensym("chain_barkSpec"),
+		A_GIMME,
+		0
+	);
+	
+	class_addmethod(
+		barkSpecCentroid_class,
 		(t_method)barkSpecCentroid_set,
 		gensym("set"),
 		A_SYMBOL,
@@ -529,6 +667,14 @@ void barkSpecCentroid_setup(void)
 		0
 	);
 
+	class_addmethod(
+		barkSpecCentroid_class,
+        (t_method)barkSpecCentroid_window,
+		gensym("window"),
+		A_DEFFLOAT,
+		0
+	);
+	
 	class_addmethod(
 		barkSpecCentroid_class,
         (t_method)barkSpecCentroid_windowFunction,

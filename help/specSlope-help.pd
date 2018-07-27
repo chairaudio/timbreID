@@ -35,14 +35,14 @@
 #X connect 5 0 4 1;
 #X restore 460 519 pd waveform;
 #X obj 51 244 hsl 800 25 0 128000 0 0 \$0-scrub-bar empty Scrub-bar
--2 -8 0 12 -191407 -1 -1 0 1;
+-2 -8 0 12 -191407 -1 -1 67100 1;
 #X obj 4 4 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-slope-graph 2 float 1;
-#A 0 0.0195302 -0.0195302;
+#A 0 0.0132369 -0.0132369;
 #X coords 0 0.08 1 -0.08 200 140 1 0 0;
 #X restore 584 48 graph;
 #X obj 134 386 r \$0-scrub-bar;
@@ -51,29 +51,31 @@
 samples long (samples 44100 - 46099);
 #X obj 460 497 r \$0-scrub-bar;
 #X text 633 671 Updated for timbreID version 0.7;
-#N canvas 593 86 709 523 other-settings 0;
+#N canvas 593 86 736 547 other-settings 0;
 #X obj 44 56 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 4;
 #X msg 44 76 window_function \$1;
-#X obj 100 118 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X obj 150 168 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X msg 100 136 normalize \$1;
-#X msg 140 188 set another-sample-array;
-#X msg 179 244 samplerate 48000;
-#X text 328 187 Read from a different array;
-#X msg 205 297 power_spectrum \$1;
-#X obj 205 279 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X msg 150 186 normalize \$1;
+#X msg 190 238 set another-sample-array;
+#X msg 229 294 samplerate 48000;
+#X text 378 237 Read from a different array;
+#X msg 255 347 power_spectrum \$1;
+#X obj 255 329 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X obj 44 445 outlet;
-#X text 206 136 Normalize spectrum (default: ON);
-#X text 313 243 Specify your sample's sampling rate. (default: 44100)
+#X obj 44 485 outlet;
+#X text 256 186 Normalize spectrum (default: ON);
+#X text 363 293 Specify your sample's sampling rate. (default: 44100)
 ;
-#X text 346 297 Use power spectrum. (default: magnitude);
-#X msg 259 346 print;
+#X text 396 347 Use power spectrum. (default: magnitude);
+#X msg 309 396 print;
 #X text 42 19 Change windowing function. Rectangular (0) \, Blackman
 (1) \, Cosine (2) \, Hamming (3) \, or Hann (4). (default: Blackman)
 ;
-#X text 309 348 Print current settings in the post window;
+#X text 359 398 Print current settings in the post window;
+#X msg 94 126 window 500;
+#X text 196 126 Change window size;
 #X connect 0 0 1 0;
 #X connect 1 0 9 0;
 #X connect 2 0 3 0;
@@ -83,6 +85,7 @@ samples long (samples 44100 - 46099);
 #X connect 7 0 9 0;
 #X connect 8 0 7 0;
 #X connect 13 0 9 0;
+#X connect 16 0 9 0;
 #X restore 196 530 pd other-settings;
 #X obj 51 453 s \$0-analyze;
 #X obj 51 523 r \$0-analyze;
@@ -93,7 +96,7 @@ samples long (samples 44100 - 46099);
 read from, f 33;
 #N canvas 354 379 895 386 graph-slope-measure-magSpec 0;
 #X obj 114 125 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 -0.0390604 256;
+-262144 -1 -1 -0.0264738 256;
 #X obj 114 55 inlet;
 #X msg 538 242 1;
 #X obj 403 227 / 2;
@@ -128,6 +131,35 @@ read from, f 33;
 #X text 633 691 July 2017;
 #X text 626 401 See the real-time version for more information on spectral
 slope in general., f 31;
+#N canvas 508 431 1136 577 test-chain 0;
+#X obj 109 254 list trim;
+#X obj 379 162 magSpec \$0-sample;
+#X obj 379 183 list prepend chain_magSpec;
+#X obj 379 204 list trim;
+#X obj 109 233 list prepend chain_fftData;
+#X obj 109 203 list append;
+#X obj 451 27 inlet;
+#X obj 87 136 tID_fft \$0-sample;
+#X obj 251 427 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
+-262144 -1 -1 -0.0264738 256;
+#X obj 256 382 specSlope \$0-sample;
+#X obj 454 320 loadbang;
+#X msg 454 341 window 256;
+#X msg 497 380 print;
+#X connect 0 0 9 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 9 0;
+#X connect 4 0 0 0;
+#X connect 5 0 4 0;
+#X connect 6 0 7 0;
+#X connect 7 0 5 0;
+#X connect 7 1 5 1;
+#X connect 9 0 8 0;
+#X connect 10 0 11 0;
+#X connect 11 0 9 0;
+#X connect 12 0 9 0;
+#X restore 252 470 pd test-chain;
 #X connect 0 0 16 0;
 #X connect 10 0 23 0;
 #X connect 11 0 16 0;
@@ -136,3 +168,4 @@ slope in general., f 31;
 #X connect 17 0 19 0;
 #X connect 19 0 21 0;
 #X connect 23 0 16 0;
+#X connect 23 0 26 0;

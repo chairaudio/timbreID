@@ -181,6 +181,87 @@ static void specBrightness_analyze(t_specBrightness *x, t_floatarg start, t_floa
 }
 
 
+static void specBrightness_chain_fftData(t_specBrightness *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+	t_float dividend, divisor, brightness;
+
+	// incoming fftData list should be 2*(N/2+1) elements long, so windowHalf is:
+	windowHalf = argc-2;
+	windowHalf *= 0.5;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+		
+	// fill the x_fftwOut buffer with the incoming fftData list, for both real and imag elements
+	for(i=0; i<=x->x_windowHalf; i++)
+	{
+		x->x_fftwOut[i][0] = atom_getfloat(argv+i);
+		x->x_fftwOut[i][1] = atom_getfloat(argv+(x->x_windowHalf+1)+i);
+	}
+
+	tIDLib_power(x->x_windowHalf+1, x->x_fftwOut, x->x_fftwIn);
+
+	if(!x->x_powerSpectrum)
+		tIDLib_mag(x->x_windowHalf+1, x->x_fftwIn);
+
+	dividend=divisor=brightness=0.0;
+
+	for(i=0; i<=x->x_windowHalf; i++)
+		divisor += x->x_fftwIn[i];
+
+	for(i=x->x_binBoundary; i<=x->x_windowHalf; i++)
+		dividend += x->x_fftwIn[i];
+
+	if(divisor>0.0)		
+		brightness = dividend/divisor;
+	else
+		brightness = -1.0;
+
+	outlet_float(x->x_brightness, brightness);
+}
+
+
+static void specBrightness_chain_magSpec(t_specBrightness *x, t_symbol *s, int argc, t_atom *argv)
+{
+	t_sampIdx i, windowHalf;
+	t_float dividend, divisor, brightness;
+
+	// incoming magSpec list should be N/2+1 elements long, so windowHalf is one less than this
+	windowHalf = argc-1;
+	
+	// make sure that windowHalf == x->x_windowHalf in order to avoid an out of bounds memory read in the tIDLib_ functions below. we won't resize all memory based on an incoming chain_ command with a different window size. instead, just throw an error and exit
+	if(windowHalf!=x->x_windowHalf)
+	{
+		pd_error(x, "%s: window size of chain_ message (%lu) does not match current window size (%lu)", x->x_objSymbol->s_name, windowHalf*2, x->x_window);
+		return;
+	}
+	
+	// fill the x_fftwIn buffer with the incoming magSpec list
+	for(i=0; i<=x->x_windowHalf; i++)
+		x->x_fftwIn[i] = atom_getfloat(argv+i);	
+	
+	dividend=divisor=brightness=0.0;
+
+	for(i=0; i<=x->x_windowHalf; i++)
+		divisor += x->x_fftwIn[i];
+
+	for(i=x->x_binBoundary; i<=x->x_windowHalf; i++)
+		dividend += x->x_fftwIn[i];
+
+	if(divisor>0.0)		
+		brightness = dividend/divisor;
+	else
+		brightness = -1.0;
+
+	outlet_float(x->x_brightness, brightness);
+}
+
+
 // analyze the whole damn array
 static void specBrightness_bang(t_specBrightness *x)
 {
@@ -255,6 +336,17 @@ static void specBrightness_samplerate(t_specBrightness *x, t_floatarg sr)
 		x->x_binFreqs[i] = tIDLib_bin2freq(i, x->x_window, x->x_sr);
 
     x->x_binBoundary = tIDLib_nearestBinIndex(x->x_freqBoundary, x->x_binFreqs, x->x_windowHalf+1);
+}
+
+
+static void specBrightness_window(t_specBrightness *x, t_floatarg w)
+{
+	t_sampIdx endSamp;
+    
+    // have to pass in an address to a dummy t_sampIdx value since _resizeWindow() requires that
+    endSamp = 0;
+    
+    specBrightness_resizeWindow(x, x->x_window, w, 0, &endSamp);
 }
 
 
@@ -453,6 +545,23 @@ void specBrightness_setup(void)
 		0
 	);
 
+
+	class_addmethod(
+		specBrightness_class,
+		(t_method)specBrightness_chain_fftData,
+		gensym("chain_fftData"),
+		A_GIMME,
+		0
+	);
+	
+	class_addmethod(
+		specBrightness_class,
+		(t_method)specBrightness_chain_magSpec,
+		gensym("chain_magSpec"),
+		A_GIMME,
+		0
+	);
+	
 	class_addmethod(
 		specBrightness_class,
 		(t_method)specBrightness_set,
@@ -476,6 +585,14 @@ void specBrightness_setup(void)
 		0
 	);
 
+	class_addmethod(
+		specBrightness_class,
+        (t_method)specBrightness_window,
+		gensym("window"),
+		A_DEFFLOAT,
+		0
+	);
+	
 	class_addmethod(
 		specBrightness_class,
         (t_method)specBrightness_windowFunction,

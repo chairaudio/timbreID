@@ -126,7 +126,7 @@ examples given per cluster.;
 #X restore 786 623 pd outlet-3;
 #X text 709 669 Second outlet reports the distance to the nearest match.
 , f 30;
-#N canvas 279 133 1141 737 arcane-parameters 0;
+#N canvas 279 133 1141 737 arcane-parameters 1;
 #X msg 35 78 dist_metric \$1;
 #X text 34 509 Specify a list of weights. Suppose you have a feature
 vector composed of spectral centroid and spectral flux \, and want
@@ -162,7 +162,7 @@ Change the number of nearest neighbors searched in the KNN algorithm
 (default is 1). If knn is set to a value slightly higher than the number
 of training examples you give per instrument \, the confidence measure
 reported from timbreID's 3rd outlet will be much more meaningful.;
-#N canvas 372 127 946 714 file-formats 0;
+#N canvas 372 127 946 714 file-formats 1;
 #X text 48 8 timbreID's default binary file format is .timid. This
 will write and read much faster than the text format \, so it's the
 best choice for large databases (i.e. 1000s of instances);
@@ -201,6 +201,9 @@ Arguments are file name \, relation name \, then triples composed of
 below is an example.;
 #X msg 49 397 ARFF ./data/arff-db.arff relation-name 0 9 feature1-name
 10 24 feature2-name;
+#X obj 389 677 s \$0-tID;
+#X text 388 602 FANN description;
+#X msg 389 636 FANN ./data/fann-training.txt;
 #X connect 6 0 5 0;
 #X connect 7 0 1 0;
 #X connect 8 0 3 0;
@@ -208,6 +211,7 @@ below is an example.;
 #X connect 10 0 4 0;
 #X connect 11 0 4 0;
 #X connect 18 0 2 0;
+#X connect 21 0 19 0;
 #X restore 35 132 pd file-formats;
 #N canvas 369 206 940 574 requesting-info 0;
 #X msg 32 260 feature_list \$1;
