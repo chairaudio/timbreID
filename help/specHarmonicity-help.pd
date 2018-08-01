@@ -46,7 +46,7 @@
 #X connect 5 0 3 1;
 #X restore 637 349 pd waveform;
 #X obj 40 53 hsl 800 25 0 125904 0 0 \$0-scrub-bar \$0-scrub-bar-set
-Scrub-bar -2 -8 0 12 -191407 -1 -1 20900 1;
+Scrub-bar -2 -8 0 12 -191407 -1 -1 0 1;
 #X obj 3 3 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 3 3 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
@@ -89,6 +89,8 @@ to the maximum peak amplitude. (default: 5%);
 the right inlet (by using the pitch output of sigmund~ \, for instance).
 When off \, the first significant spectral peak is assumed to be the
 fundamental. (default: OFF);
+#X text 176 106 Change internal window size setting;
+#X msg 74 106 window 2000;
 #X connect 0 0 1 0;
 #X connect 1 0 7 0;
 #X connect 2 0 7 0;
@@ -102,8 +104,8 @@ fundamental. (default: OFF);
 #X connect 16 0 7 0;
 #X connect 17 0 7 0;
 #X connect 18 0 7 0;
+#X connect 25 0 7 0;
 #X restore 137 429 pd other-settings;
-#X text 647 670 Updated for timbreID version 0.7;
 #X msg 84 189 analyze 44100 2000;
 #X text 93 149 Analyze a window starting at sample 44100 that is 2000
 samples long (samples 44100 - 46099;
@@ -115,7 +117,6 @@ read from., f 33;
 #X floatatom 40 576 5 0 0 0 - - -, f 5;
 #X obj 298 394 sigmund~ -t pitch;
 #X obj 345 466 mtof;
-#X text 647 690 July 2017;
 #X obj 298 341 pack f \$0;
 #X obj 117 265 t f f;
 #X obj 40 539 specHarmonicity \$0-sample;
@@ -130,52 +131,69 @@ harmonicity in general., f 33;
 used in algorithm when "input_fund" setting is ON.;
 #X msg 117 338 analyze \$1 4096;
 #X msg 298 363 list \$2-sample 4096 \$1 44100 0;
-#N canvas 508 431 1136 577 test-chain 0;
-#X obj 109 254 list trim;
-#X obj 379 162 magSpec \$0-sample;
-#X obj 379 183 list prepend chain_magSpec;
-#X obj 379 204 list trim;
-#X obj 109 233 list prepend chain_fftData;
-#X obj 109 203 list append;
-#X obj 451 27 inlet;
-#X obj 87 136 tID_fft \$0-sample;
-#X obj 256 382 specHarmonicity \$0-sample;
-#X floatatom 256 403 5 0 0 0 - - -, f 5;
-#X floatatom 406 415 5 0 0 0 - - -, f 5;
-#X msg 440 325 window 4096;
-#X obj 644 272 inlet;
-#X obj 434 303 loadbang;
-#X msg 601 359 input_fund 1;
-#X connect 0 0 8 0;
+#X text 665 668 Updated for timbreID version 0.7.6;
+#X text 665 688 August 2018;
+#N canvas 351 117 1043 508 chain_messages 0;
+#X msg 563 139 chain_fftData <data>;
+#X msg 643 229 chain_magSpec <data>;
+#X obj 427 463 outlet;
+#X obj 34 159 adc~;
+#X obj 34 213 tID_fft~;
+#X obj 34 251 list append;
+#X obj 34 310 list prepend chain_fftData;
+#X obj 34 328 list trim;
+#X obj 64 183 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 219 287 Prepend the "chain_fftData" message in front of the
+analysis data \, then trim off the list selector to make it a message
+to timbreID analysis objects., f 33;
+#X text 132 192 [tID_fft~] outputs (N/2)+1 real values from the left
+outlet \, and (N/2)+1 imaginary values from the right. The imaginary
+values are appended to the real ones to form one long list (N+2 values
+total) of complex frequency domain data., f 50;
+#X text 718 138 fftData <data> should consist of (window/2)+1 real
+values and (window/2)+1 imaginary values \, packaged together as one
+long list., f 31;
+#X text 791 222 magSpec <data> should consist of (window/2)+1 magnitudes
+, f 25;
+#X text 559 25 The object in this help file accepts the chain_ messages
+listed below \, which should be followed by the associated data as
+a single list. In practice \, these messages are prepended to analysis
+results via [list prepend] \, followed by a [list trim] to remove the
+list selector. This is illustrated in the example at left.;
+#X text 98 15 To minimize redundant calculations on the same window
+of audio \, most of timbreID's non-real-time analysis objects have
+various chain_ methods. For example \, because many types of analysis
+start with an FFT \, it is more efficient to do a single FFT at the
+start of an analysis chain \, and pass the results to other analysis
+objects that require FFT data. chain_ methods make it possible to bypass
+various steps of the analysis calculation if the data is already available.
+Here \, note that the FFT data originated with a real-time analysis
+object \, but non-real-time objects can be used for consequent chain_
+calculations.;
+#X connect 0 0 2 0;
 #X connect 1 0 2 0;
-#X connect 2 0 3 0;
-#X connect 3 0 8 0;
-#X connect 4 0 0 0;
-#X connect 5 0 4 0;
+#X connect 3 0 4 0;
+#X connect 4 0 5 0;
+#X connect 4 1 5 1;
+#X connect 5 0 6 0;
 #X connect 6 0 7 0;
-#X connect 7 0 5 0;
-#X connect 7 1 5 1;
-#X connect 8 0 9 0;
-#X connect 8 1 10 0;
-#X connect 11 0 8 0;
-#X connect 12 0 8 1;
-#X connect 13 0 11 0;
-#X connect 14 0 8 0;
-#X restore 310 506 pd test-chain;
-#X connect 0 0 22 0;
-#X connect 8 0 22 0;
-#X connect 10 0 22 0;
-#X connect 12 0 21 0;
-#X connect 13 0 4 0;
-#X connect 17 0 23 0;
-#X connect 18 0 22 1;
-#X connect 18 0 32 1;
-#X connect 20 0 31 0;
-#X connect 21 0 30 0;
-#X connect 21 1 20 0;
-#X connect 22 0 16 0;
-#X connect 22 1 24 0;
-#X connect 23 1 18 0;
-#X connect 30 0 22 0;
-#X connect 30 0 32 0;
-#X connect 31 0 17 0;
+#X connect 7 0 2 0;
+#X connect 8 0 4 0;
+#X restore 167 459 pd chain_messages;
+#X connect 0 0 20 0;
+#X connect 8 0 20 0;
+#X connect 9 0 20 0;
+#X connect 11 0 19 0;
+#X connect 12 0 4 0;
+#X connect 16 0 21 0;
+#X connect 17 0 20 1;
+#X connect 18 0 29 0;
+#X connect 19 0 28 0;
+#X connect 19 1 18 0;
+#X connect 20 0 15 0;
+#X connect 20 1 22 0;
+#X connect 21 1 17 0;
+#X connect 28 0 20 0;
+#X connect 29 0 16 0;
+#X connect 32 0 20 0;

@@ -3,7 +3,6 @@
 0;
 #X obj 4 5 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#X text 620 645 July 2017;
 #X floatatom 54 575 10 0 0 1 BPM-mode - -, f 10;
 #N canvas 697 125 734 581 synth-beat 0;
 #X obj 107 361 vline~;
@@ -375,10 +374,11 @@ for more information on these and other important settings.;
 ;
 #X obj 126 326 r \$0-tempo-msg;
 #X obj 54 381 tempo~ 1024 128;
-#X connect 4 0 26 0;
-#X connect 5 0 26 0;
-#X connect 25 0 26 0;
-#X connect 26 0 3 0;
-#X connect 26 1 10 0;
-#X connect 26 2 6 0;
-#X connect 26 3 9 0;
+#X text 620 645 August 2018;
+#X connect 3 0 25 0;
+#X connect 4 0 25 0;
+#X connect 24 0 25 0;
+#X connect 25 0 2 0;
+#X connect 25 1 9 0;
+#X connect 25 2 5 0;
+#X connect 25 3 8 0;

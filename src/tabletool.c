@@ -1937,16 +1937,16 @@ static void tabletool_overlapAdd(t_tabletool *x, t_symbol *s, int argc, t_atom *
 		// initialize to 1.0 for rectangular
 		for(i=0; i<n; i++)
 			wPtr[i] = 1.0;
-			
-		if(w==gensym("rectangular"))
+	
+		if(!strcmp(w->s_name, "rectangular"))
 			;
-		else if(w==gensym("blackman"))
+		else if(!strcmp(w->s_name, "blackman"))
 			tIDLib_blackmanWindow(wPtr, n);
-		else if(w==gensym("cosine"))
+		else if(!strcmp(w->s_name, "cosine"))
 			tIDLib_cosineWindow(wPtr, n);
-		else if(w==gensym("hamming"))
+		else if(!strcmp(w->s_name, "hamming"))
 			tIDLib_hammingWindow(wPtr, n);
-		else if(w==gensym("hann"))
+		else if(!strcmp(w->s_name, "hann"))
 			tIDLib_hannWindow(wPtr, n);
 		else
 		{

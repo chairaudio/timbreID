@@ -41,6 +41,7 @@ typedef struct _specFlux_tilde
     t_float *x_cosine;
     t_float *x_hamming;
     t_float *x_hann;
+	t_fluxMode x_mode;
     t_bool x_squaredDiff;
 	t_uInt x_separation;
 	t_atom *x_listOut;
@@ -157,6 +158,18 @@ static void specFlux_tilde_bang(t_specFlux_tilde *x)
 		t_float diff, val;
 
 		diff = x->x_fftwInForwardWindow[i] - x->x_fftwInBackWindow[i];
+
+		switch(x->x_mode)
+		{
+			case growth:
+				diff = (diff<0)?0:diff;
+				break;
+			case decay:
+				diff = (diff>0)?0:diff;
+				break;
+			default:
+				break;
+		}
 		
 		if(x->x_squaredDiff)
 			val = diff*diff;
@@ -183,6 +196,22 @@ static void specFlux_tilde_print(t_specFlux_tilde *x)
 	post("%s window function: %i", x->x_objSymbol->s_name, x->x_windowFunction);
 	post("%s separation: %i", x->x_objSymbol->s_name, x->x_separation);
 	post("%s squared difference: %i", x->x_objSymbol->s_name, x->x_squaredDiff);
+
+	switch(x->x_mode)
+	{
+		case flux:
+			post("%s mode: flux", x->x_objSymbol->s_name);
+			break;
+		case growth:
+			post("%s mode: growth", x->x_objSymbol->s_name);
+			break;
+		case decay:
+			post("%s mode: decay", x->x_objSymbol->s_name);
+			break;
+		default:
+			post("%s mode: flux", x->x_objSymbol->s_name);
+			break;
+	}
 }
 
 
@@ -351,6 +380,19 @@ static void specFlux_tilde_separation(t_specFlux_tilde *x, t_floatarg s)
 }
 
 
+static void specFlux_tilde_mode(t_specFlux_tilde *x, t_symbol *m)
+{
+	if(!strcmp(m->s_name, "flux"))
+		x->x_mode = flux;
+	else if(!strcmp(m->s_name, "growth"))
+		x->x_mode = growth;
+	else if(!strcmp(m->s_name, "decay"))
+		x->x_mode = decay;
+	else
+		x->x_mode = flux;
+}
+
+
 static void *specFlux_tilde_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_specFlux_tilde *x = (t_specFlux_tilde *)pd_new(specFlux_tilde_class);
@@ -420,7 +462,8 @@ static void *specFlux_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_powerSpectrum = false;
 	x->x_lastDspTime = clock_getlogicaltime();
 	x->x_squaredDiff = false; // absolute value by default
-
+	x->x_mode = flux;
+	
 	x->x_signalBuffer = (t_sample *)t_getbytes((x->x_window*2+x->x_n) * sizeof(t_sample));
 	x->x_fftwInForwardWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));
 	x->x_fftwInBackWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));
@@ -602,6 +645,14 @@ void specFlux_tilde_setup(void)
 		0
 	);
 
+	class_addmethod(
+		specFlux_tilde_class, 
+        (t_method)specFlux_tilde_mode, 
+		gensym("mode"),
+		A_DEFSYMBOL,
+		0
+	);
+	
 	class_addmethod(
 		specFlux_tilde_class, 
         (t_method)specFlux_tilde_normalize, 

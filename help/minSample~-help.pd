@@ -33,20 +33,19 @@ for classification \, see the timbreID helpfile:;
 #X text 658 473 July 2017;
 #X floatatom 57 449 10 0 0 0 - - -, f 10;
 #X floatatom 167 419 10 0 0 0 - - -, f 10;
-#X text 481 111 Audio buffering and windowing are taken care of by
-the external \, so there is no need for tabreceive~ or block~. You
-can set the window size with a creation argument \, or change it with
-the "window" message. Window size is not required to be a power of
-two.;
 #X obj 57 387 minSample~ 1024;
 #X text 481 54 [minSample~] reports the value and index of the smallest
 sample value in the most recent N-sample window of audio.;
 #X text 105 115 Bang to output minimum sample value and index;
-#X connect 0 0 18 0;
+#X text 481 111 Audio buffering is taken care of by the external \,
+so there is no need for [block~]. You can set the window size with
+a creation argument \, or change it with the "window" message. Window
+size is not required to be a power of two.;
+#X connect 0 0 17 0;
 #X connect 1 0 12 0;
-#X connect 4 0 18 0;
-#X connect 5 0 18 0;
-#X connect 7 0 18 0;
-#X connect 12 0 18 0;
-#X connect 18 0 15 0;
-#X connect 18 1 16 0;
+#X connect 4 0 17 0;
+#X connect 5 0 17 0;
+#X connect 7 0 17 0;
+#X connect 12 0 17 0;
+#X connect 17 0 15 0;
+#X connect 17 1 16 0;

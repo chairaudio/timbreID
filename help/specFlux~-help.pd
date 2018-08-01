@@ -7,7 +7,7 @@
 #X obj 140 90 *~;
 #X obj 169 90 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X floatatom 88 361 10 0 0 0 - - specFlux, f 10;
+#X floatatom 88 461 10 0 0 0 - - specFlux, f 10;
 #N canvas 584 81 517 376 attack-detection 0;
 #X obj 33 289 select 1;
 #X obj 33 330 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
@@ -82,7 +82,7 @@ things to behave properly;
 #X connect 18 0 9 0;
 #X connect 19 0 9 0;
 #X restore 240 263 pd other-settings;
-#X text 223 313 Creation arguments are window size and separation in
+#X text 223 413 Creation arguments are window size and separation in
 samples between analysis windows., f 48;
 #N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-bin-diffs 513 float 0;
@@ -91,10 +91,9 @@ samples between analysis windows., f 48;
 #X obj 140 59 osc~ 440;
 #X obj 208 200 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X obj 88 321 specFlux~ 1024 256;
+#X obj 88 421 specFlux~ 1024 256;
 #X obj 88 59 noise~;
 #X obj 208 220 metro 100;
-#X text 67 492 Updated for timbreID version 0.7;
 #X text 645 182 specFlux~ reports the full list of differences (i.e.
 \, (N/2)+1 bins) at the right outlet \, and the sum of the absolute
 values of numbers in that list at the left outlet. You get a lot more
@@ -116,7 +115,6 @@ for classification \, see the timbreID helpfile:;
 is used in an attack detector. bonk~ and timbreID's bark~ objects are
 much better designed for this purpose - the sub-patch here is only
 a proof of concept.;
-#X text 67 512 July 2017;
 #N canvas 0 81 450 300 do-plotting 0;
 #X obj 84 51 inlet;
 #X obj 84 150 list prepend 0;
@@ -133,7 +131,7 @@ a proof of concept.;
 #X connect 3 0 4 0;
 #X connect 4 0 6 0;
 #X connect 7 0 3 0;
-#X restore 227 366 pd do-plotting;
+#X restore 227 466 pd do-plotting;
 #X text 645 49 Typically \, spectral flux is the sum of squared difference
 between two successive magnitude spectra. specFlux~ gives you the option
 of either squaring or taking the absolute value of differences. The
@@ -142,6 +140,14 @@ range of values for flux depends on which of these methods you choose
 \, the flux of noise~ is much higher than that of a sinusoid. This
 is because the spectrum of a sinusoid at a fixed frequency hardly changes
 at all from moment to moment.;
+#X text 41 526 Updated for timbreID version 0.7.6;
+#X text 41 546 August 2018;
+#X msg 270 309 mode flux;
+#X msg 290 349 mode decay;
+#X msg 280 329 mode growth;
+#X text 385 308 Change modes to report flux \, spectral growth only
+\, or spectral decay only. This affects the output of both outlets
+, f 34;
 #X connect 0 0 15 0;
 #X connect 1 0 15 0;
 #X connect 2 0 1 1;
@@ -151,6 +157,9 @@ at all from moment to moment.;
 #X connect 13 0 3 0;
 #X connect 14 0 17 0;
 #X connect 15 0 5 0;
-#X connect 15 1 25 0;
+#X connect 15 1 23 0;
 #X connect 16 0 1 0;
 #X connect 17 0 15 0;
+#X connect 27 0 15 0;
+#X connect 28 0 15 0;
+#X connect 29 0 15 0;

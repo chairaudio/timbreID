@@ -66,11 +66,6 @@ for classification \, see the timbreID helpfile:;
 #X restore 64 471 pd graph-slope;
 #X obj 64 105 *~;
 #X obj 135 76 line~;
-#X text 591 289 Audio buffering and windowing are taken care of by
-the external \, so there is no need for tabreceive~ or block~. You
-can set the window size with a creation argument \, or change it with
-the "window" message. Window size is not required to be a power of
-two.;
 #X obj 176 211 metro 20;
 #X obj 64 45 osc~ 5000;
 #X text 591 222 With a real signal \, quiet moments between sound events
@@ -93,14 +88,18 @@ sound event is sustaining at a steady amplitude. At left \, try triggering
 the 1-second attack and watch the slope change. Once the attack is
 done \, slope settles at nearly zero. Then you can trigger the 1-second
 release.;
-#X connect 2 0 23 0;
-#X connect 4 0 23 0;
-#X connect 6 0 17 0;
-#X connect 9 0 23 0;
-#X connect 14 0 23 0;
+#X text 591 292 Audio buffering is taken care of by the external \,
+so there is no need for [block~]. You can set the window size with
+a creation argument \, or change it with the "window" message. Window
+size is not required to be a power of two.;
+#X connect 2 0 22 0;
+#X connect 4 0 22 0;
+#X connect 6 0 16 0;
+#X connect 9 0 22 0;
+#X connect 14 0 22 0;
 #X connect 15 0 14 1;
-#X connect 17 0 23 0;
-#X connect 18 0 14 0;
+#X connect 16 0 22 0;
+#X connect 17 0 14 0;
+#X connect 20 0 15 0;
 #X connect 21 0 15 0;
-#X connect 22 0 15 0;
-#X connect 23 0 13 0;
+#X connect 22 0 13 0;

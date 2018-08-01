@@ -14,16 +14,16 @@ You should have received a copy of the GNU General Public License along with thi
 #include "tIDLib.h"
 
 /* ---------------- conversion functions ---------------------- */
-t_binIdx tIDLib_freq2bin(t_float freq, t_float n, t_float sr)
+t_float tIDLib_freq2bin(t_float freq, t_float n, t_float sr)
 {
-	t_binIdx bin;
+	t_float bin;
 
-	bin = roundf(freq*n/sr);
+	bin = freq*n/sr;
 
 	return(bin);
 }
 
-t_float tIDLib_bin2freq(t_binIdx bin, t_float n, t_float sr)
+t_float tIDLib_bin2freq(t_float bin, t_float n, t_float sr)
 {
 	t_float freq;
 

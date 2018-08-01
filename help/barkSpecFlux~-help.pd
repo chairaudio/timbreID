@@ -54,10 +54,10 @@ Turn on the toggle below to check it out.;
 #X obj 66 88 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
 ;
 #X obj 37 57 adc~;
-#X text 253 424 Creation arguments are window size \, filterbank spacing
+#X text 254 504 Creation arguments are window size \, filterbank spacing
 in Barks \, and separation in samples between analysis windows., f
 44;
-#X obj 37 547 nbx 6 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
+#X obj 37 587 nbx 6 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
 -262144 -1 -1 0 256;
 #X text 674 252 In the [attack-detection] sub-patch \, the left outlet
 is used as an attack detector. bonk~ and timbreID's bark~ objects are
@@ -82,7 +82,7 @@ two analysis windows in samples.;
 , f 28;
 #X text 327 258 Change distance between analysis windows in samples
 , f 29;
-#X obj 37 449 barkSpecFlux~ 1024 0.5 512;
+#X obj 37 519 barkSpecFlux~ 1024 0.5 512;
 #N canvas 442 81 850 694 other-settings 0;
 #X obj 44 66 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 4;
@@ -137,14 +137,12 @@ things to behave properly;
 #X connect 21 0 6 0;
 #X connect 23 0 6 0;
 #X restore 301 361 pd other-settings;
-#X text 872 611 Updated for timbreID version 0.7;
 #X obj 189 209 metro 100;
 #X text 674 33 barkSpecFlux~ reports the full list of per-Bark-band
 energy differences at the right outlet \, and the sum of absolute values
 of numbers in that list at the left outlet. You get a lot more detailed
 information about how a Bark spectrum is changing with the right outlet
 if you have a reason to use it.;
-#X text 872 631 July 2017;
 #X text 674 120 Typically \, spectral flux is the sum of squared differences
 between two successive spectra. barkSpecFlux~ gives you the option
 of either squaring or taking the absolute value of differences. The
@@ -169,7 +167,15 @@ from window to window.;
 #X connect 5 0 6 0;
 #X connect 6 0 4 0;
 #X connect 7 0 1 0;
-#X restore 242 495 pd plot-diffs;
+#X restore 242 565 pd plot-diffs;
+#X text 889 611 Updated for timbreID version 0.7.6;
+#X text 889 631 August 2018;
+#X msg 264 420 mode flux;
+#X msg 284 460 mode decay;
+#X msg 274 440 mode growth;
+#X text 371 421 Change modes to report flux \, spectral growth only
+\, or spectral decay only. This affects the output of both outlets
+, f 34;
 #X connect 0 0 27 0;
 #X connect 2 0 27 0;
 #X connect 3 0 2 1;
@@ -177,7 +183,7 @@ from window to window.;
 #X connect 5 0 4 1;
 #X connect 11 0 4 0;
 #X connect 12 0 2 0;
-#X connect 13 0 30 0;
+#X connect 13 0 29 0;
 #X connect 14 0 27 0;
 #X connect 15 0 14 1;
 #X connect 16 0 14 0;
@@ -185,6 +191,9 @@ from window to window.;
 #X connect 23 0 27 0;
 #X connect 24 0 27 0;
 #X connect 27 0 18 0;
-#X connect 27 1 34 0;
+#X connect 27 1 32 0;
 #X connect 28 0 27 0;
-#X connect 30 0 27 0;
+#X connect 29 0 27 0;
+#X connect 35 0 27 0;
+#X connect 36 0 27 0;
+#X connect 37 0 27 0;

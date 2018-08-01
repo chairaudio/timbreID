@@ -47,6 +47,7 @@ typedef struct _barkSpecFlux
 	t_filter *x_filterbank;
 	t_bool x_specBandAvg;
 	t_bool x_filterAvg;
+	t_fluxMode x_mode;
     t_bool x_squaredDiff;
 	t_uInt x_separation;
 	t_atom *x_listOut;
@@ -254,6 +255,18 @@ static void barkSpecFlux_analyze(t_barkSpecFlux *x, t_floatarg start, t_floatarg
 			t_float diff, val;
 
 			diff = x->x_fftwInForwardWindow[i] - x->x_fftwInBackWindow[i];
+
+			switch(x->x_mode)
+			{
+				case growth:
+					diff = (diff<0)?0:diff;
+					break;
+				case decay:
+					diff = (diff>0)?0:diff;
+					break;
+				default:
+					break;
+			}
 		
 			if(x->x_squaredDiff)
 				val = diff*diff;
@@ -325,7 +338,19 @@ static void barkSpecFlux_chain_fftData(t_barkSpecFlux *x, t_symbol *s, int argc,
 		t_float diff, val;
 
 		diff = x->x_fftwInForwardWindow[i] - x->x_fftwInBackWindow[i];
-	
+
+		switch(x->x_mode)
+		{
+			case growth:
+				diff = (diff<0)?0:diff;
+				break;
+			case decay:
+				diff = (diff>0)?0:diff;
+				break;
+			default:
+				break;
+		}
+		
 		if(x->x_squaredDiff)
 			val = diff*diff;
 		else
@@ -383,7 +408,19 @@ static void barkSpecFlux_chain_magSpec(t_barkSpecFlux *x, t_symbol *s, int argc,
 		t_float diff, val;
 
 		diff = x->x_fftwInForwardWindow[i] - x->x_fftwInBackWindow[i];
-	
+
+		switch(x->x_mode)
+		{
+			case growth:
+				diff = (diff<0)?0:diff;
+				break;
+			case decay:
+				diff = (diff>0)?0:diff;
+				break;
+			default:
+				break;
+		}
+		
 		if(x->x_squaredDiff)
 			val = diff*diff;
 		else
@@ -424,7 +461,19 @@ static void barkSpecFlux_chain_barkSpec(t_barkSpecFlux *x, t_symbol *s, int argc
 		t_float diff, val;
 
 		diff = x->x_fftwInForwardWindow[i] - x->x_fftwInBackWindow[i];
-	
+
+		switch(x->x_mode)
+		{
+			case growth:
+				diff = (diff<0)?0:diff;
+				break;
+			case decay:
+				diff = (diff>0)?0:diff;
+				break;
+			default:
+				break;
+		}
+
 		if(x->x_squaredDiff)
 			val = diff*diff;
 		else
@@ -531,6 +580,22 @@ static void barkSpecFlux_print(t_barkSpecFlux *x)
 	post("%s window function: %i", x->x_objSymbol->s_name, x->x_windowFunction);
 	post("%s separation: %i", x->x_objSymbol->s_name, x->x_separation);
 	post("%s squared difference: %i", x->x_objSymbol->s_name, x->x_squaredDiff);
+
+	switch(x->x_mode)
+	{
+		case flux:
+			post("%s mode: flux", x->x_objSymbol->s_name);
+			break;
+		case growth:
+			post("%s mode: growth", x->x_objSymbol->s_name);
+			break;
+		case decay:
+			post("%s mode: decay", x->x_objSymbol->s_name);
+			break;
+		default:
+			post("%s mode: flux", x->x_objSymbol->s_name);
+			break;
+	}
 }
 
 
@@ -644,6 +709,19 @@ static void barkSpecFlux_squaredDiff(t_barkSpecFlux *x, t_floatarg sd)
 }
 
 
+static void barkSpecFlux_mode(t_barkSpecFlux *x, t_symbol *m)
+{
+	if(!strcmp(m->s_name, "flux"))
+		x->x_mode = flux;
+	else if(!strcmp(m->s_name, "growth"))
+		x->x_mode = growth;
+	else if(!strcmp(m->s_name, "decay"))
+		x->x_mode = decay;
+	else
+		x->x_mode = flux;
+}
+
+
 static void *barkSpecFlux_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_barkSpecFlux *x = (t_barkSpecFlux *)pd_new(barkSpecFlux_class);
@@ -744,10 +822,12 @@ static void *barkSpecFlux_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_window = WINDOWSIZEDEFAULT;
 	x->x_windowHalf = x->x_window*0.5;
 	x->x_windowFunction = blackman;
-	x->x_normalize = true;
+	x->x_normalize = false;
 	x->x_powerSpectrum = false;
 	x->x_specBandAvg = false;
 	x->x_filterAvg = false;
+	x->x_squaredDiff = false; // absolute value by default
+	x->x_mode = flux;
 	
 	x->x_fftwInForwardWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));
 	x->x_fftwInBackWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));
@@ -901,6 +981,14 @@ void barkSpecFlux_setup(void)
 		0
 	);
 
+	class_addmethod(
+		barkSpecFlux_class, 
+        (t_method)barkSpecFlux_mode, 
+		gensym("mode"),
+		A_DEFSYMBOL,
+		0
+	);
+	
 	class_addmethod(
 		barkSpecFlux_class, 
         (t_method)barkSpecFlux_squaredDiff, 

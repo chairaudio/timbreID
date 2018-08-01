@@ -93,6 +93,8 @@ void timbreIDLib_setup(void)
 	nearestPoint_setup();
 	peakSample_setup();
 	peakSample_tilde_setup();
+	phaseSpec_setup();
+	phaseSpec_tilde_setup();
 	sampleBuffer_tilde_setup();
 	specBrightness_setup();
 	specBrightness_tilde_setup();
@@ -108,8 +110,6 @@ void timbreIDLib_setup(void)
 	specIrregularity_tilde_setup();
 	specKurtosis_setup();
 	specKurtosis_tilde_setup();
-	specPhase_setup();
-	specPhase_tilde_setup();
 	specRolloff_setup();
 	specRolloff_tilde_setup();
 	specSkewness_setup();
@@ -127,6 +127,8 @@ void timbreIDLib_setup(void)
 	timbreID_setup();
 	waveSlope_setup();
 	waveSlope_tilde_setup();
+	waveDirChange_setup();
+	waveDirChange_tilde_setup();
 	zeroCrossing_setup();
 	zeroCrossing_tilde_setup();
 }

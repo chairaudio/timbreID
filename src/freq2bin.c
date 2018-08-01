@@ -36,7 +36,7 @@ static void freq2bin_calculate(t_freq2bin *x, t_float f)
 	
 	if(freq>=0.0 && freq<x->x_sr)
 	{
-		int bin;
+		t_float bin;
 	
 		bin = tIDLib_freq2bin(freq, x->x_n, x->x_sr);
 

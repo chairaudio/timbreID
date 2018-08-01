@@ -59,10 +59,10 @@ f 31;
 that other real-time timbreID analysis objects use. This could be useful
 for viewing the exact audio frame that is analyzed by analysis objects
 triggered via the same bang.;
-#X text 481 121 Audio buffering and windowing are taken care of by
-the external \, so there is no need for block~. You can set the window
-size with a creation argument \, or change it with the "window" message.
-Window size is not required to be a power of two.;
+#X text 481 121 Audio buffering is taken care of by the external \,
+so there is no need for [block~]. You can set the window size with
+a creation argument \, or change it with the "window" message. Window
+size is not required to be a power of two.;
 #X connect 0 0 17 0;
 #X connect 2 0 12 0;
 #X connect 5 0 17 0;

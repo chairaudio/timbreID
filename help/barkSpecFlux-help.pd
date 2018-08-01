@@ -1,58 +1,60 @@
 #N canvas 213 81 963 714 10;
-#X obj 58 532 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 1.48327 256;
+#X obj 58 592 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
+-262144 -1 -1 0 256;
 #X obj 157 259 hsl 400 15 0 128000 0 0 empty empty Scrub -2 -8 0 12
--191407 -1 -1 8200 1;
+-191407 -1 -1 0 1;
 #X obj 3 4 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 3 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
 0;
-#N canvas 449 81 915 704 other-settings 0;
+#N canvas 449 81 915 771 other-settings 0;
 #X obj 44 66 hradio 15 1 0 5 empty empty empty 0 -8 0 10 -262144 -1
 -1 0;
 #X msg 44 86 window_function \$1;
-#X msg 80 128 set another-sample-array;
-#X msg 119 164 samplerate 48000;
-#X text 268 127 Read from a different array;
-#X msg 145 217 power_spectrum \$1;
-#X obj 145 199 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X msg 110 158 set another-sample-array;
+#X msg 149 194 samplerate 48000;
+#X text 298 157 Read from a different array;
+#X msg 175 247 power_spectrum \$1;
+#X obj 175 229 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X obj 44 655 outlet;
-#X text 253 163 Specify your sample's sampling rate. (default: 44100)
+#X obj 44 725 outlet;
+#X text 283 193 Specify your sample's sampling rate. (default: 44100)
 ;
-#X text 286 217 Use power spectrum. (default: magnitude);
-#X msg 318 490 separation 128;
-#X obj 175 249 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X text 316 247 Use power spectrum. (default: magnitude);
+#X msg 348 520 separation 128;
+#X obj 205 279 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X msg 175 267 normalize \$1;
-#X text 276 267 Normalize spectrum. (default: ON);
-#X text 456 538 Squared difference vs. Absolute value of difference.
+#X msg 205 297 normalize \$1;
+#X text 486 568 Squared difference vs. Absolute value of difference.
 ;
-#X msg 343 538 squared_diff \$1;
-#X obj 343 518 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X msg 373 568 squared_diff \$1;
+#X obj 373 548 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X text 42 29 Change windowing function. Rectangular (0) \, Blackman
 (1) \, Cosine (2) \, Hamming (3) \, or Hann (4). (default: Blackman)
 ;
-#X text 308 304 Construct a new filterbank with a specific spacing.
+#X text 338 334 Construct a new filterbank with a specific spacing.
 ;
-#X msg 208 304 filterbank 1;
-#X msg 385 578 print;
-#X obj 247 364 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X msg 238 334 filterbank 1;
+#X msg 415 608 print;
+#X obj 277 394 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X msg 247 384 spec_band_avg \$1;
-#X obj 277 424 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X msg 277 414 spec_band_avg \$1;
+#X obj 307 454 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X msg 277 444 filter_avg \$1;
-#X text 435 580 Print current settings in the post window;
-#X text 304 412 If using the triangular Bark spaced filters \, you
+#X msg 307 474 filter_avg \$1;
+#X text 465 610 Print current settings in the post window;
+#X text 334 442 If using the triangular Bark spaced filters \, you
 can either sum or average the energy in each filter (default: sum)
 ;
-#X text 273 332 Rather than sum energy in the triangular Bark spaced
+#X text 303 362 Rather than sum energy in the triangular Bark spaced
 filters to get the amount of energy in each Bark band \, you can average
 energy in the unfiltered bins (default: OFF);
-#X text 445 484 Set separation in samples between analysis windows
+#X text 475 514 Set separation in samples between analysis windows
 (default: half of current window size);
+#X text 176 116 Change internal window size setting;
+#X msg 74 116 window 2000;
+#X text 306 297 Normalize spectrum. (default: OFF);
 #X connect 0 0 1 0;
 #X connect 1 0 7 0;
 #X connect 2 0 7 0;
@@ -62,14 +64,15 @@ energy in the unfiltered bins (default: OFF);
 #X connect 10 0 7 0;
 #X connect 11 0 12 0;
 #X connect 12 0 7 0;
-#X connect 15 0 7 0;
-#X connect 16 0 15 0;
+#X connect 14 0 7 0;
+#X connect 15 0 14 0;
+#X connect 18 0 7 0;
 #X connect 19 0 7 0;
-#X connect 20 0 7 0;
-#X connect 21 0 22 0;
-#X connect 22 0 7 0;
-#X connect 23 0 24 0;
-#X connect 24 0 7 0;
+#X connect 20 0 21 0;
+#X connect 21 0 7 0;
+#X connect 22 0 23 0;
+#X connect 23 0 7 0;
+#X connect 29 0 7 0;
 #X restore 206 353 pd other-settings;
 #N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-waveform 1024 float 0;
@@ -110,10 +113,9 @@ energy in the unfiltered bins (default: OFF);
 #X text 513 59 See the real-time version for more information on Bark
 spectrum flux in general.;
 #X msg 58 73 analyze 44100 2000;
-#X text 189 430 Creation arguments are the name of the sample array
+#X text 310 513 Creation arguments are the name of the sample array
 to read from \, filterbank spacing in Barks \, and separation in samples
-between analysis windows.;
-#X text 693 643 Updated for timbreID version 0.7;
+between analysis windows., f 27;
 #X text 76 102 Analyze a FORWARD window starting at sample 44100 that
 is 2000 samples long (samples 44100 - 46099). The BACK analysis window
 will start N samples earlier \, where N is set by the "separation"
@@ -122,8 +124,7 @@ these windows. The energy difference of each Bark band is reported
 from the right outlet as a list. Passing a starting sample that isn't
 at least N samples forward from the beginning of the array may produce
 incorrect flux values.;
-#X obj 58 493 barkSpecFlux \$0-sample 0.5 256;
-#X text 693 663 July 2017;
+#X obj 58 553 barkSpecFlux \$0-sample 0.5 256;
 #N canvas 607 488 441 264 plot-diffs 0;
 #X obj 51 113 list prepend 0;
 #X obj 51 62 t l l;
@@ -140,185 +141,100 @@ incorrect flux values.;
 #X connect 3 0 4 0;
 #X connect 4 0 5 0;
 #X connect 7 0 1 0;
-#X restore 298 547 pd plot-diffs;
-#N canvas 616 358 895 560 test-chain 0;
-#X obj 263 32 inlet;
-#X obj 598 329 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+#X restore 298 607 pd plot-diffs;
+#X text 720 643 Updated for timbreID version 0.7.6;
+#X text 720 663 August 2018;
+#N canvas 448 253 1043 663 chain_messages 0;
+#X msg 563 139 chain_fftData <data>;
+#X msg 643 319 chain_magSpec <data>;
+#X obj 427 613 outlet;
+#X obj 34 500 list prepend chain_fftData;
+#X obj 34 518 list trim;
+#X text 219 477 Prepend the "chain_fftData" message in front of the
+analysis data \, then trim off the list selector to make it a message
+to timbreID analysis objects., f 33;
+#X text 186 171 [tID_fft~] outputs (N/2)+1 real values from the left
+outlet \, and (N/2)+1 imaginary values from the right. The imaginary
+values are appended to the real ones to form one long list (N+2 values
+total) of complex frequency domain data., f 50;
+#X msg 723 389 chain_barkSpec <data>;
+#X text 559 25 The object in this help file accepts the chain_ messages
+listed below \, which should be followed by the associated data as
+a single list. In practice \, these messages are prepended to analysis
+results via [list prepend] \, followed by a [list trim] to remove the
+list selector. This is illustrated in the example at left.;
+#X text 98 15 To minimize redundant calculations on the same window
+of audio \, most of timbreID's non-real-time analysis objects have
+various chain_ methods. For example \, because many types of analysis
+start with an FFT \, it is more efficient to do a single FFT at the
+start of an analysis chain \, and pass the results to other analysis
+objects that require FFT data. chain_ methods make it possible to bypass
+various steps of the analysis calculation if the data is already available.
+Here \, note that the FFT data originated with a real-time analysis
+object \, but non-real-time objects can be used for consequent chain_
+calculations.;
+#X text 168 328 Spectral flux is a special case \, because measurements
+must be taken on two windows \, separated by some number of samples
+or milliseconds. Here \, the analysis button is delayed by 5ms to produce
+the FORWARD WINDOW data (i.e. \, the most recent data) \, while the
+direct bang from the analysis button generates the BACK WINDOW data.
+They are combined into a single list that is 4*(N/2+1) elements long
+\, containing the FORWARD WINDOW real/imaginary data \, followed by
+the BACK WINDOW real/imaginary data., f 49;
+#X obj 34 159 adc~;
+#X obj 34 243 tID_fft~;
+#X obj 34 281 list append;
+#X obj 114 173 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#X obj 598 349 f \$0;
-#X obj 664 431 print;
-#X floatatom 636 105 5 0 0 0 - - -, f 5;
-#X floatatom 602 221 15 0 0 0 - - -, f 15;
-#X floatatom 702 221 15 0 0 0 - - -, f 15;
-#X obj 359 422 list prepend 0;
-#X obj 113 480 nbx 7 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 1.48327 256;
-#X obj 257 382 barkSpecFlux \$0-sample 0.5 256;
-#X obj 359 443 s \$0-band-diffs-alt;
-#X obj 547 396 tabletool \$0-band-diffs-alt;
-#X msg 547 375 subtract \$1-band-diffs;
-#X obj 602 200 tabread \$0-band-diffs-alt;
-#X obj 602 150 tabread \$0-band-diffs;
-#N canvas 0 23 554 475 chain-fftData 0;
-#X obj 62 34 inlet;
-#X obj 185 415 outlet;
-#X obj 122 306 list trim;
-#X obj 122 285 list prepend chain_fftData;
-#X obj 109 203 list append;
-#X obj 87 136 tID_fft \$0-sample;
-#X obj 11 350 list length;
-#X floatatom 11 371 5 0 0 0 - - -, f 5;
-#X obj 109 224 list append;
-#X obj 239 203 list append;
-#X obj 217 136 tID_fft \$0-sample;
-#X obj 265 78 t a a;
-#X obj 382 112 pack s f f;
-#X obj 415 26 unpack s f f;
-#X obj 438 68 - 256;
-#X obj 48 170 list length;
-#X floatatom 48 191 5 0 0 0 - - -, f 5;
-#X obj 203 168 list length;
-#X floatatom 203 189 5 0 0 0 - - -, f 5;
-#X obj 281 241 list length;
-#X floatatom 281 262 5 0 0 0 - - -, f 5;
-#X obj 382 133 list trim;
-#X connect 0 0 11 0;
-#X connect 2 0 1 0;
-#X connect 3 0 2 0;
-#X connect 4 0 8 0;
-#X connect 5 0 4 0;
-#X connect 5 0 15 0;
-#X connect 5 1 4 1;
-#X connect 5 1 17 0;
-#X connect 6 0 7 0;
-#X connect 8 0 3 0;
-#X connect 8 0 6 0;
-#X connect 9 0 8 1;
-#X connect 9 0 19 0;
-#X connect 10 0 9 0;
-#X connect 10 1 9 1;
-#X connect 11 0 5 0;
-#X connect 11 1 13 0;
-#X connect 12 0 21 0;
-#X connect 13 0 12 0;
-#X connect 13 1 14 0;
-#X connect 13 2 12 2;
-#X connect 14 0 12 1;
-#X connect 15 0 16 0;
-#X connect 17 0 18 0;
-#X connect 19 0 20 0;
-#X connect 21 0 10 0;
-#X restore 104 189 pd chain-fftData;
-#N canvas 0 23 636 476 chain-magSpec 0;
-#X obj 85 36 inlet;
-#X obj 163 390 outlet;
-#X obj 185 310 list trim;
-#X obj 71 275 list length;
-#X floatatom 71 296 5 0 0 0 - - -, f 5;
-#X obj 172 228 list append;
-#X obj 445 116 pack s f f;
-#X obj 478 30 unpack s f f;
-#X obj 501 72 - 256;
-#X obj 111 174 list length;
-#X floatatom 111 195 5 0 0 0 - - -, f 5;
-#X obj 266 172 list length;
-#X floatatom 266 193 5 0 0 0 - - -, f 5;
-#X obj 445 137 list trim;
-#X obj 150 140 magSpec \$0-sample;
-#X obj 280 140 magSpec \$0-sample;
-#X obj 185 289 list prepend chain_magSpec;
-#X obj 241 73 t a a;
-#X obj 321 30 loadbang;
-#X msg 317 92 normalize 0;
-#X connect 0 0 17 0;
-#X connect 2 0 1 0;
-#X connect 3 0 4 0;
-#X connect 5 0 3 0;
-#X connect 5 0 16 0;
-#X connect 6 0 13 0;
-#X connect 7 0 6 0;
-#X connect 7 1 8 0;
-#X connect 7 2 6 2;
-#X connect 8 0 6 1;
-#X connect 9 0 10 0;
-#X connect 11 0 12 0;
-#X connect 13 0 15 0;
-#X connect 14 0 9 0;
-#X connect 14 0 5 0;
-#X connect 15 0 11 0;
-#X connect 15 0 5 1;
-#X connect 16 0 2 0;
-#X connect 17 0 14 0;
-#X connect 17 1 7 0;
-#X connect 18 0 19 0;
-#X connect 19 0 15 0;
-#X connect 19 0 14 0;
-#X restore 247 196 pd chain-magSpec;
-#N canvas 0 23 636 476 chain-barkSpec 0;
-#X obj 85 36 inlet;
-#X obj 179 404 outlet;
-#X obj 193 306 list trim;
-#X obj 79 271 list length;
-#X floatatom 79 292 5 0 0 0 - - -, f 5;
-#X obj 180 224 list append;
-#X obj 453 112 pack s f f;
-#X obj 486 26 unpack s f f;
-#X obj 509 68 - 256;
-#X obj 119 170 list length;
-#X floatatom 119 191 5 0 0 0 - - -, f 5;
-#X obj 274 168 list length;
-#X floatatom 274 189 5 0 0 0 - - -, f 5;
-#X obj 453 133 list trim;
-#X obj 249 69 t a a;
-#X obj 157 136 barkSpec \$0-sample;
-#X obj 288 136 barkSpec \$0-sample;
-#X obj 193 285 list prepend chain_barkSpec;
-#X connect 0 0 14 0;
-#X connect 2 0 1 0;
-#X connect 3 0 4 0;
-#X connect 5 0 3 0;
-#X connect 5 0 17 0;
-#X connect 6 0 13 0;
-#X connect 7 0 6 0;
-#X connect 7 1 8 0;
-#X connect 7 2 6 2;
-#X connect 8 0 6 1;
-#X connect 9 0 10 0;
-#X connect 11 0 12 0;
-#X connect 13 0 16 0;
-#X connect 14 0 15 0;
-#X connect 14 1 7 0;
-#X connect 15 0 9 0;
-#X connect 15 0 5 0;
-#X connect 16 0 11 0;
-#X connect 16 0 5 1;
-#X connect 17 0 2 0;
-#X restore 369 207 pd chain-barkSpec;
-#X connect 0 0 17 0;
+#X obj 34 332 list append;
+#X obj 154 243 tID_fft~;
+#X obj 154 281 list append;
+#X text 720 118 fftData <data> should consist of (window/2)+1 real
+values and (window/2)+1 imaginary values for the forward window \,
+followed by (window/2)+1 real values and (window/2)+1 imaginary values
+for the back window \, all packaged together as one long list., f
+31;
+#X text 793 272 magSpec <data> should consist of (window/2)+1 magnitudes
+for the forward window \, followed by (window/2)+1 magnitudes for the
+back window., f 25;
+#X text 761 422 at the default Bark filterbank spacing of 0.5 \, barkSpec
+<data> should consist of 50 Bark spectrum energy values for the forward
+window \, followed by 50 Bark spectrum energy values for the back window.
+The length of this list will change depending on filterbank spacing.
+, f 30;
+#X obj 64 203 delay 5;
+#X connect 0 0 2 0;
 #X connect 1 0 2 0;
-#X connect 2 0 12 0;
-#X connect 4 0 13 0;
-#X connect 4 0 14 0;
-#X connect 7 0 10 0;
-#X connect 9 0 8 0;
-#X connect 9 1 7 0;
-#X connect 11 1 3 0;
-#X connect 12 0 11 0;
-#X connect 13 0 5 0;
-#X connect 14 0 6 0;
-#X connect 15 0 9 0;
-#X connect 16 0 9 0;
-#X connect 17 0 9 0;
-#X restore 391 342 pd test-chain;
-#N canvas 0 50 450 278 (subpatch) 0;
-#X array \$0-band-diffs-alt 50 float 0;
-#X coords 0 0.1 49 -0.1 200 140 1 0 0;
-#X restore 652 447 graph;
+#X connect 3 0 4 0;
+#X connect 4 0 2 0;
+#X connect 7 0 2 0;
+#X connect 11 0 12 0;
+#X connect 11 0 16 0;
+#X connect 12 0 13 0;
+#X connect 12 1 13 1;
+#X connect 13 0 15 0;
+#X connect 14 0 16 0;
+#X connect 14 0 21 0;
+#X connect 15 0 3 0;
+#X connect 16 0 17 0;
+#X connect 16 1 17 1;
+#X connect 17 0 15 1;
+#X connect 21 0 12 0;
+#X restore 236 383 pd chain_messages;
+#X msg 264 420 mode flux;
+#X msg 284 460 mode decay;
+#X msg 274 440 mode growth;
+#X text 371 421 Change modes to report flux \, spectral growth only
+\, or spectral decay only. This affects the output of both outlets
+, f 34;
 #X connect 1 0 7 0;
-#X connect 4 0 16 0;
+#X connect 4 0 15 0;
 #X connect 7 0 9 0;
-#X connect 9 0 16 0;
-#X connect 9 0 19 0;
-#X connect 12 0 16 0;
-#X connect 16 0 0 0;
-#X connect 16 1 18 0;
+#X connect 9 0 15 0;
+#X connect 12 0 15 0;
+#X connect 15 0 0 0;
+#X connect 15 1 16 0;
+#X connect 19 0 15 0;
+#X connect 20 0 15 0;
+#X connect 21 0 15 0;
+#X connect 22 0 15 0;

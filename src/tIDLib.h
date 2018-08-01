@@ -9,7 +9,7 @@ timbreID is free software: you can redistribute it and/or modify it under the te
 timbreID is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-version 0.7.6, July 27, 2018
+version 0.7.6, August 1, 2018
 
 */
 
@@ -23,7 +23,7 @@ version 0.7.6, July 27, 2018
 #include "m_pd.h"
 #include "fftw3.h"
 
-#define TIDVERSION "0.7.6july27a"
+#define TIDVERSION "0.7.6Aug1a"
 
 // choose either FFTW_MEASURE or FFTW_ESTIMATE here.
 #define FFTWPLANNERFLAG FFTW_ESTIMATE
@@ -109,6 +109,13 @@ typedef enum
 	mel2freqFormula1
 } t_mel2freqFormula;
 
+typedef enum
+{
+	flux = 0,
+	growth,
+	decay
+} t_fluxMode;
+
 typedef struct filter
 {
 	t_float *filter;
@@ -158,8 +165,8 @@ typedef struct attributeData
 
 
 /* ---------------- conversion functions ---------------------- */
-t_binIdx tIDLib_freq2bin(t_float freq, t_float n, t_float sr);
-t_float tIDLib_bin2freq(t_binIdx bin, t_float n, t_float sr);
+t_float tIDLib_freq2bin(t_float freq, t_float n, t_float sr);
+t_float tIDLib_bin2freq(t_float bin, t_float n, t_float sr);
 t_float tIDLib_freq2bark(t_float freq);
 t_float tIDLib_bark2freq(t_float bark);
 t_float tIDLib_freq2mel(t_float freq);
@@ -284,6 +291,8 @@ void minSample_tilde_setup(void);
 void nearestPoint_setup(void);
 void peakSample_setup(void);
 void peakSample_tilde_setup(void);
+void phaseSpec_setup(void);
+void phaseSpec_tilde_setup(void);
 void sampleBuffer_tilde_setup(void);
 void specBrightness_setup(void);
 void specBrightness_tilde_setup(void);
@@ -299,8 +308,6 @@ void specIrregularity_setup(void);
 void specIrregularity_tilde_setup(void);
 void specKurtosis_setup(void);
 void specKurtosis_tilde_setup(void);
-void specPhase_setup(void);
-void specPhase_tilde_setup(void);
 void specRolloff_setup(void);
 void specRolloff_tilde_setup(void);
 void specSkewness_setup(void);
@@ -318,6 +325,8 @@ void tabletool_setup(void);
 void timbreID_setup(void);
 void waveSlope_setup(void);
 void waveSlope_tilde_setup(void);
+void waveDirChange_setup(void);
+void waveDirChange_tilde_setup(void);
 void zeroCrossing_setup(void);
 void zeroCrossing_tilde_setup(void);
 /* ---------------- END external setup function declarations ---------------------- */

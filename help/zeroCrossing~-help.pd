@@ -1,4 +1,4 @@
-#N canvas 280 81 904 483 10;
+#N canvas 185 144 904 483 10;
 #X obj 119 162 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X floatatom 70 414 10 0 0 0 - - -, f 10;
@@ -23,11 +23,6 @@ things to behave properly;
 #X text 425 255 This feature can be sent to the timbreID external in
 order to identify timbres in real time. For more on using audio features
 for classification \, see the timbreID helpfile:;
-#X text 425 175 Audio buffering and windowing are taken care of by
-the external \, so there is no need for tabreceive~ or block~. You
-can set the window size with a creation argument \, or change it with
-the "window" message. Window size is not required to be a power of
-two.;
 #X text 220 361 Creation argument is window size in samples;
 #X msg 135 233 window 2000;
 #X obj 70 43 noise~;
@@ -48,14 +43,18 @@ crude timbre feature. Select either noise~ or osc~ and bang zeroCrossing~
 to see the different ranges of values. Note that with a real signal
 \, low level noise will produce lots of zero crossings \, so it's best
 to use a basic amplitude threshold before measuring crossings.;
-#X connect 0 0 20 0;
-#X connect 3 0 20 0;
-#X connect 6 0 20 0;
-#X connect 12 0 20 0;
-#X connect 13 0 14 0;
-#X connect 14 0 3 0;
-#X connect 15 0 14 1;
-#X connect 16 0 3 1;
-#X connect 17 0 16 1;
-#X connect 18 0 16 0;
-#X connect 20 0 1 0;
+#X text 425 175 Audio buffering is taken care of by the external \,
+so there is no need for [block~]. You can set the window size with
+a creation argument \, or change it with the "window" message. Window
+size is not required to be a power of two.;
+#X connect 0 0 19 0;
+#X connect 3 0 19 0;
+#X connect 6 0 19 0;
+#X connect 11 0 19 0;
+#X connect 12 0 13 0;
+#X connect 13 0 3 0;
+#X connect 14 0 13 1;
+#X connect 15 0 3 1;
+#X connect 16 0 15 1;
+#X connect 17 0 15 0;
+#X connect 19 0 1 0;

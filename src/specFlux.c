@@ -40,6 +40,7 @@ typedef struct _specFlux
 	t_word *x_vec;
 	t_symbol *x_arrayName;
 	t_sampIdx x_arrayPoints;
+	t_fluxMode x_mode;
     t_bool x_squaredDiff;
 	t_uInt x_separation;
 	t_atom *x_listOut;
@@ -246,6 +247,18 @@ static void specFlux_analyze(t_specFlux *x, t_floatarg start, t_floatarg n)
 
 			diff = x->x_fftwInForwardWindow[i] - x->x_fftwInBackWindow[i];
 		
+			switch(x->x_mode)
+			{
+				case growth:
+					diff = (diff<0)?0:diff;
+					break;
+				case decay:
+					diff = (diff>0)?0:diff;
+					break;
+				default:
+					break;
+			}
+			
 			if(x->x_squaredDiff)
 				val = diff*diff;
 			else
@@ -311,7 +324,19 @@ static void specFlux_chain_fftData(t_specFlux *x, t_symbol *s, int argc, t_atom 
 		t_float diff, val;
 
 		diff = x->x_fftwInForwardWindow[i] - x->x_fftwInBackWindow[i];
-	
+
+		switch(x->x_mode)
+		{
+			case growth:
+				diff = (diff<0)?0:diff;
+				break;
+			case decay:
+				diff = (diff>0)?0:diff;
+				break;
+			default:
+				break;
+		}
+
 		if(x->x_squaredDiff)
 			val = diff*diff;
 		else
@@ -358,7 +383,19 @@ static void specFlux_chain_magSpec(t_specFlux *x, t_symbol *s, int argc, t_atom 
 		t_float diff, val;
 
 		diff = x->x_fftwInForwardWindow[i] - x->x_fftwInBackWindow[i];
-	
+
+		switch(x->x_mode)
+		{
+			case growth:
+				diff = (diff<0)?0:diff;
+				break;
+			case decay:
+				diff = (diff>0)?0:diff;
+				break;
+			default:
+				break;
+		}
+		
 		if(x->x_squaredDiff)
 			val = diff*diff;
 		else
@@ -414,6 +451,22 @@ static void specFlux_print(t_specFlux *x)
 	post("%s window function: %i", x->x_objSymbol->s_name, x->x_windowFunction);
 	post("%s separation: %i", x->x_objSymbol->s_name, x->x_separation);
 	post("%s squared difference: %i", x->x_objSymbol->s_name, x->x_squaredDiff);
+
+	switch(x->x_mode)
+	{
+		case flux:
+			post("%s mode: flux", x->x_objSymbol->s_name);
+			break;
+		case growth:
+			post("%s mode: growth", x->x_objSymbol->s_name);
+			break;
+		case decay:
+			post("%s mode: decay", x->x_objSymbol->s_name);
+			break;
+		default:
+			post("%s mode: flux", x->x_objSymbol->s_name);
+			break;
+	}
 }
 
 
@@ -524,6 +577,19 @@ static void specFlux_squaredDiff(t_specFlux *x, t_floatarg sd)
 }
 
 
+static void specFlux_mode(t_specFlux *x, t_symbol *m)
+{
+	if(!strcmp(m->s_name, "flux"))
+		x->x_mode = flux;
+	else if(!strcmp(m->s_name, "growth"))
+		x->x_mode = growth;
+	else if(!strcmp(m->s_name, "decay"))
+		x->x_mode = decay;
+	else
+		x->x_mode = flux;
+}
+
+
 static void *specFlux_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_specFlux *x = (t_specFlux *)pd_new(specFlux_class);
@@ -600,6 +666,7 @@ static void *specFlux_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_normalize = false;
 	x->x_powerSpectrum = false;
 	x->x_squaredDiff = false;
+	x->x_mode = flux;
 	
 	x->x_fftwInForwardWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));
 	x->x_fftwInBackWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));
@@ -772,6 +839,14 @@ void specFlux_setup(void)
         (t_method)specFlux_squaredDiff, 
 		gensym("squared_diff"),
 		A_DEFFLOAT,
+		0
+	);
+
+	class_addmethod(
+		specFlux_class, 
+        (t_method)specFlux_mode, 
+		gensym("mode"),
+		A_DEFSYMBOL,
 		0
 	);
 }
