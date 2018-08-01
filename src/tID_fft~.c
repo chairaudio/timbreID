@@ -32,6 +32,7 @@ typedef struct _tID_fft_tilde
     t_float *x_fftwIn;
     fftwf_complex *x_fftwOut;
 	fftwf_plan x_fftwPlan;
+	t_bool x_normalize;
     t_float *x_blackman;
     t_float *x_cosine;
     t_float *x_hamming;
@@ -49,7 +50,7 @@ typedef struct _tID_fft_tilde
 static void tID_fft_tilde_bang(t_tID_fft_tilde *x)
 {
     t_sampIdx i, j, window, windowHalf, bangSample;
-    t_float *windowFuncPtr;
+    t_float *windowFuncPtr, realMax, imagMax;
 	double currentTime;
 
     window = x->x_window;
@@ -93,10 +94,41 @@ static void tID_fft_tilde_bang(t_tID_fft_tilde *x)
 
 	fftwf_execute(x->x_fftwPlan);
 
+	realMax = 0.0;
+	imagMax = 0.0;
+
+	if(x->x_normalize)
+	{			
+		for(i=0; i<=x->x_windowHalf; i++)
+		{
+			t_float thisReal, thisImag;
+			
+			thisReal = fabsf(x->x_fftwOut[i][0]);
+			thisImag = fabsf(x->x_fftwOut[i][1]);
+			
+			if(thisReal>realMax)
+				realMax = thisReal;
+
+			if(thisImag>imagMax)
+				imagMax = thisImag;
+		}
+	
+		realMax = 1.0/realMax;
+		imagMax = 1.0/imagMax;		
+	}
+	
 	for(i=0; i<=windowHalf; i++)
 	{
-		SETFLOAT(x->x_listOutReal+i, x->x_fftwOut[i][0]);
-		SETFLOAT(x->x_listOutImag+i, x->x_fftwOut[i][1]);
+		if(x->x_normalize)
+		{
+			SETFLOAT(x->x_listOutReal+i, x->x_fftwOut[i][0]*realMax);
+			SETFLOAT(x->x_listOutImag+i, x->x_fftwOut[i][1]*imagMax);			
+		}
+		else
+		{
+			SETFLOAT(x->x_listOutReal+i, x->x_fftwOut[i][0]);
+			SETFLOAT(x->x_listOutImag+i, x->x_fftwOut[i][1]);
+		}
 	}
 	
  	outlet_list(x->x_imagOut, 0, windowHalf+1, x->x_listOutImag);
@@ -111,6 +143,7 @@ static void tID_fft_tilde_print(t_tID_fft_tilde *x)
 	post("%s overlap: %i", x->x_objSymbol->s_name, x->x_overlap);
 	post("%s window: %i", x->x_objSymbol->s_name, x->x_window);
 	post("%s window function: %i", x->x_objSymbol->s_name, x->x_windowFunction);
+	post("%s normalize: %i", x->x_objSymbol->s_name, x->x_normalize);
 }
 
 
@@ -209,6 +242,19 @@ static void tID_fft_tilde_windowFunction(t_tID_fft_tilde *x, t_floatarg f)
 }
 
 
+static void tID_fft_tilde_normalize(t_tID_fft_tilde *x, t_floatarg norm)
+{
+    norm = (norm<0)?0:norm;
+    norm = (norm>1)?1:norm;
+	x->x_normalize = norm;
+
+	if(x->x_normalize)
+		post("%s normalization ON.", x->x_objSymbol->s_name);
+	else
+		post("%s normalization OFF.", x->x_objSymbol->s_name);
+}
+
+
 static void *tID_fft_tilde_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_tID_fft_tilde *x = (t_tID_fft_tilde *)pd_new(tID_fft_tilde_class);
@@ -246,6 +292,7 @@ static void *tID_fft_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_n = BLOCKSIZEDEFAULT;
 	x->x_overlap = 1;
 	x->x_windowFunction = blackman;
+	x->x_normalize = true;
 	x->x_lastDspTime = clock_getlogicaltime();
 
 	x->x_signalBuffer = (t_sample *)t_getbytes((x->x_window+x->x_n) * sizeof(t_sample));
@@ -413,6 +460,14 @@ void tID_fft_tilde_setup(void)
 		tID_fft_tilde_class,
         (t_method)tID_fft_tilde_windowFunction,
 		gensym("window_function"),
+		A_DEFFLOAT,
+		0
+	);
+
+	class_addmethod(
+		tID_fft_tilde_class,
+        (t_method)tID_fft_tilde_normalize,
+		gensym("normalize"),
 		A_DEFFLOAT,
 		0
 	);

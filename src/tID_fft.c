@@ -28,6 +28,7 @@ typedef struct _tID_fft
 	t_float *x_fftwIn;
     fftwf_complex *x_fftwOut;
 	fftwf_plan x_fftwPlan;
+	t_bool x_normalize;
 	t_float *x_blackman;
 	t_float *x_cosine;
 	t_float *x_hamming;
@@ -101,7 +102,7 @@ static void tID_fft_analyze(t_tID_fft *x, t_floatarg start, t_floatarg n)
 	else
 	{
 		t_sampIdx i, j, window, startSamp, endSamp;
-		t_float *windowFuncPtr;
+		t_float *windowFuncPtr, realMax, imagMax;
 
 		startSamp = (start<0)?0:start;
 
@@ -156,10 +157,41 @@ static void tID_fft_analyze(t_tID_fft *x, t_floatarg start, t_floatarg n)
 
 		fftwf_execute(x->x_fftwPlan);
 
+		realMax = 0.0;
+		imagMax = 0.0;
+
+		if(x->x_normalize)
+		{			
+			for(i=0; i<=x->x_windowHalf; i++)
+			{
+				t_float thisReal, thisImag;
+
+				thisReal = fabsf(x->x_fftwOut[i][0]);
+				thisImag = fabsf(x->x_fftwOut[i][1]);
+				
+				if(thisReal>realMax)
+					realMax = thisReal;
+
+				if(thisImag>imagMax)
+					imagMax = thisImag;
+			}
+		
+			realMax = 1.0/realMax;
+			imagMax = 1.0/imagMax;		
+		}
+			
 		for(i=0; i<=x->x_windowHalf; i++)
 		{
-			SETFLOAT(x->x_listOutReal+i, x->x_fftwOut[i][0]);
-			SETFLOAT(x->x_listOutImag+i, x->x_fftwOut[i][1]);
+			if(x->x_normalize)
+			{
+				SETFLOAT(x->x_listOutReal+i, x->x_fftwOut[i][0]*realMax);
+				SETFLOAT(x->x_listOutImag+i, x->x_fftwOut[i][1]*imagMax);			
+			}
+			else
+			{
+				SETFLOAT(x->x_listOutReal+i, x->x_fftwOut[i][0]);
+				SETFLOAT(x->x_listOutImag+i, x->x_fftwOut[i][1]);
+			}
 		}
 	
 		outlet_list(x->x_imagOut, 0, x->x_windowHalf+1, x->x_listOutImag);
@@ -206,6 +238,7 @@ static void tID_fft_print(t_tID_fft *x)
 	post("%s samplerate: %i", x->x_objSymbol->s_name, (t_sampIdx)(x->x_sr));
 	post("%s window: %i", x->x_objSymbol->s_name, x->x_window);
 	post("%s window function: %i", x->x_objSymbol->s_name, x->x_windowFunction);
+	post("%s normalize: %i", x->x_objSymbol->s_name, x->x_normalize);
 }
 
 
@@ -258,6 +291,19 @@ static void tID_fft_windowFunction(t_tID_fft *x, t_floatarg f)
 }
 
 
+static void tID_fft_normalize(t_tID_fft *x, t_floatarg norm)
+{
+    norm = (norm<0)?0:norm;
+    norm = (norm>1)?1:norm;
+	x->x_normalize = norm;
+
+	if(x->x_normalize)
+		post("%s normalization ON.", x->x_objSymbol->s_name);
+	else
+		post("%s normalization OFF.", x->x_objSymbol->s_name);
+}
+
+
 static void *tID_fft_new(t_symbol *s, int argc, t_atom *argv)
 {
     t_tID_fft *x = (t_tID_fft *)pd_new(tID_fft_class);
@@ -304,6 +350,7 @@ static void *tID_fft_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_window = WINDOWSIZEDEFAULT;
 	x->x_windowHalf = x->x_window*0.5;
 	x->x_windowFunction = blackman;
+	x->x_normalize = true;
 	
 	x->x_fftwIn = (t_sample *)t_getbytes(x->x_window*sizeof(t_sample));
 	x->x_listOutReal = (t_atom *)t_getbytes((x->x_windowHalf+1)*sizeof(t_atom));
@@ -418,6 +465,14 @@ void tID_fft_setup(void)
 		tID_fft_class,
         (t_method)tID_fft_windowFunction,
 		gensym("window_function"),
+		A_DEFFLOAT,
+		0
+	);
+
+	class_addmethod(
+		tID_fft_class,
+        (t_method)tID_fft_normalize,
+		gensym("normalize"),
 		A_DEFFLOAT,
 		0
 	);
