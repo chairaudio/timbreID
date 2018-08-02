@@ -186,7 +186,7 @@ t_float tIDLib_fitLineSlope(t_sampIdx n, t_float *input)
 
 t_float tIDLib_hps(t_float *data, t_uInt n, t_float loIdx, t_float hiIdx, t_uShortInt numHarm, t_float *yValues, t_float *maxYValue, t_bool debug)
 {
-	t_sampIdx i, j, numIndices, maxIdx;
+	t_sampIdx i, j, maxIdx;
 	t_float maxVal;
 
 	// if the highest harmonic of the hiIdx is beyond the end of the array data, we'll reduce the requested number of harmonics and post a warning
@@ -203,8 +203,6 @@ t_float tIDLib_hps(t_float *data, t_uInt n, t_float loIdx, t_float hiIdx, t_uSho
 			return(-1);
 		}	
 	}
-
-	numIndices = hiIdx - loIdx + 1;
 	
 	// init yValues arrays to zero
 	for(i=0; i<n; i++)

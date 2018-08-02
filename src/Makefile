@@ -2,8 +2,8 @@ SOURCES = attackTime.c attackTime~.c bark.c bark2freq.c barkSpec.c barkSpecBrigh
 
 # ****SUPPLY THE LOCATION OF PD SOURCE****
 # pd_src = /home/yourname/somedirectory/pd-0.48-1
-pd_src = /Users/williambrent/Dropbox/PUREDATA/pd-0.48-1
-# pd_src = "C:\Program Files (x86)\Pd"
+# pd_src = /Users/yourname/somedirectory/pd-0.48-1
+pd_src = "C:\Program Files (x86)\Pd"
 
 CFLAGS = -DPD -I$(pd_src)/src -I/usr/local/include -Wall -W -g
 

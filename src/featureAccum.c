@@ -281,33 +281,91 @@ static void featureAccum_mode(t_featureAccum *x, t_symbol *m)
 }
 
 
-static void *featureAccum_new(t_float x_numFrames, t_float length, t_float spew, t_symbol *mode)
+static void *featureAccum_new(t_symbol *s, int argc, t_atom *argv)
 {
 	t_featureAccum *x = (t_featureAccum *)pd_new(featureAccum_class);
-
+	t_symbol *mode;
+	
 	x->x_featureList = outlet_new(&x->x_obj, gensym("list"));
 
 	x->x_objSymbol = gensym("featureAccum");
 
-	x->x_featureLength = length;
-	x->x_numFrames = x_numFrames;
+
+	switch(argc)
+	{		
+		case 0:	
+			x->x_numFrames = 5;
+			x->x_featureLength = 50;
+			x->x_spew = false;
+			x->x_mode = concat;
+			break;
+		case 1:	
+			x->x_numFrames = atom_getfloat(argv);
+			x->x_featureLength = 50;
+			x->x_spew = 0;
+			x->x_mode = concat;
+			break;
+		case 2:	
+			x->x_numFrames = atom_getfloat(argv);
+			x->x_featureLength = atom_getfloat(argv+1);
+			x->x_spew = false;
+			x->x_mode = concat;
+			break;
+		case 3:	
+			x->x_numFrames = atom_getfloat(argv);
+			x->x_featureLength = atom_getfloat(argv+1);
+			x->x_spew = atom_getfloat(argv+2);
+			x->x_spew = (x->x_spew>1)?1:x->x_spew;
+			x->x_spew = (x->x_spew<0)?0:x->x_spew;
+			x->x_mode = concat;
+			break;
+		case 4:	
+			x->x_numFrames = atom_getfloat(argv);
+			x->x_featureLength = atom_getfloat(argv+1);
+			x->x_spew = atom_getfloat(argv+2);
+			x->x_spew = (x->x_spew>1)?1:x->x_spew;
+			x->x_spew = (x->x_spew<0)?0:x->x_spew;
+			
+			mode = atom_getsymbol(argv+3);
+
+			if(!strcmp(mode->s_name, "concat"))
+				x->x_mode = concat;
+			else if(!strcmp(mode->s_name, "sum"))
+				x->x_mode = sum;
+			else if(!strcmp(mode->s_name, "mean"))
+				x->x_mode = mean;
+			else if(!strcmp(mode->s_name, "sma"))
+				x->x_mode = sma;
+			else
+				x->x_mode = concat;
+			
+			break;		
+		default:
+			x->x_numFrames = atom_getfloat(argv);
+			x->x_featureLength = atom_getfloat(argv+1);
+			x->x_spew = atom_getfloat(argv+2);
+			x->x_spew = (x->x_spew>1)?1:x->x_spew;
+			x->x_spew = (x->x_spew<0)?0:x->x_spew;
+			
+			mode = atom_getsymbol(argv+3);
+
+			if(!strcmp(mode->s_name, "concat"))
+				x->x_mode = concat;
+			else if(!strcmp(mode->s_name, "sum"))
+				x->x_mode = sum;
+			else if(!strcmp(mode->s_name, "mean"))
+				x->x_mode = mean;
+			else if(!strcmp(mode->s_name, "sma"))
+				x->x_mode = sma;
+			else
+				x->x_mode = concat;
+			
+			break;
+	}
+	
 	x->x_concatCurrentFrame = 0;
 	x->x_meanFrameCount = 0;
-	spew = (spew>1)?1:spew;
-	spew = (spew<0)?0:spew;
-	x->x_spew = spew;
-
-	if(!strcmp(mode->s_name, "concat"))
-		x->x_mode = concat;
-	else if(!strcmp(mode->s_name, "sum"))
-		x->x_mode = sum;
-	else if(!strcmp(mode->s_name, "mean"))
-		x->x_mode = mean;
-	else if(!strcmp(mode->s_name, "sma"))
-		x->x_mode = sma;
-	else
-		x->x_mode = concat;	
-
+	
  	featureAccum_allocMem(x);
  	featureAccum_initMem(x);
 
@@ -322,19 +380,14 @@ void featureAccum_setup(void) {
 		(t_method)featureAccum_free,
 		sizeof(t_featureAccum),
 		CLASS_DEFAULT,
-		A_DEFFLOAT,
-		A_DEFFLOAT,
-		A_DEFFLOAT,
-		A_DEFSYMBOL,
+		A_GIMME,
 		0
 	);
 
 	class_addcreator(
 		(t_newmethod)featureAccum_new,
 		gensym("timbreIDLib/featureAccum"),
-		A_DEFFLOAT,
-		A_DEFFLOAT,
-		A_DEFFLOAT,
+		A_GIMME,
 		0
 	);
 	

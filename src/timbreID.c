@@ -2398,7 +2398,7 @@ static void timbreID_OCTAVE(t_timbreID *x, t_symbol *file_symbol, t_symbol *var_
 static void timbreID_FANN(t_timbreID *x, t_symbol *s)
 {
 	FILE *filePtr;
-	t_instanceIdx i, j, *clusterPtr;
+	t_instanceIdx i, j;
     char *fileName, fileNameBuf[MAXPDSTRING];
 
 	fileName = s->s_name;
@@ -2422,8 +2422,6 @@ static void timbreID_FANN(t_timbreID *x, t_symbol *s)
 
     for(i=0; i<x->x_numInstances; i++)
     {
-		clusterPtr = x->x_clusters[i].members;
-
 		for(j=0; j<x->x_minFeatureLength; j++)
 			fprintf(filePtr, "%f ", x->x_instances[i].data[j]);
 
