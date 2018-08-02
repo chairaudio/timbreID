@@ -86,7 +86,7 @@ things to behave properly;
 samples between analysis windows., f 48;
 #N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-bin-diffs 513 float 0;
-#X coords 0 0.1 512 -0.1 200 140 1 0 0;
+#X coords 0 10 512 -10 200 140 1 0 0;
 #X restore 393 63 graph;
 #X obj 140 59 osc~ 440;
 #X obj 208 200 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0

@@ -1,4 +1,4 @@
-#N canvas 196 99 1150 681 10;
+#N canvas 165 136 1150 681 10;
 #X obj 165 155 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X obj 849 514 timbreID;
@@ -44,11 +44,11 @@ Turn on the toggle below to check it out.;
 0;
 #N canvas 0 50 450 278 (subpatch) 0;
 #X array \$0-band-diffs 50 float 0;
-#X coords 0 0.1 49 -0.1 200 140 1;
+#X coords 0 50 49 -50 200 140 1 0 0;
 #X restore 381 46 graph;
 #X obj 139 57 osc~ 440;
 #X obj 87 57 noise~;
-#X obj 189 188 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X obj 189 188 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
 1;
 #X obj 37 88 *~;
 #X obj 66 88 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
