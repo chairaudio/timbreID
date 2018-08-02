@@ -1,1 +1,0 @@
-bfcc.c: was freeing x->x_windowHalf+1. corrected to be x->x_numFilters

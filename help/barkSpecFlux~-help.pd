@@ -96,7 +96,6 @@ two analysis windows in samples.;
 #X obj 44 635 outlet;
 #X text 292 253 Construct a new filterbank with a specific spacing.
 ;
-#X text 206 146 Normalize spectrum (default: ON);
 #X text 284 206 Use power spectrum. (default: magnitude);
 #X msg 391 557 print;
 #X obj 243 326 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
@@ -122,20 +121,21 @@ things to behave properly;
 #X msg 351 512 window 2000;
 #X text 439 511 Change window size;
 #X msg 192 253 filterbank 1;
+#X text 206 146 Normalize spectrum (default: OFF);
 #X connect 0 0 1 0;
 #X connect 1 0 6 0;
 #X connect 2 0 3 0;
 #X connect 3 0 6 0;
 #X connect 4 0 6 0;
 #X connect 5 0 4 0;
-#X connect 10 0 6 0;
-#X connect 11 0 12 0;
-#X connect 12 0 6 0;
-#X connect 13 0 14 0;
-#X connect 14 0 6 0;
-#X connect 19 0 6 0;
-#X connect 21 0 6 0;
-#X connect 23 0 6 0;
+#X connect 9 0 6 0;
+#X connect 10 0 11 0;
+#X connect 11 0 6 0;
+#X connect 12 0 13 0;
+#X connect 13 0 6 0;
+#X connect 18 0 6 0;
+#X connect 20 0 6 0;
+#X connect 22 0 6 0;
 #X restore 301 361 pd other-settings;
 #X obj 189 209 metro 100;
 #X text 674 33 barkSpecFlux~ reports the full list of per-Bark-band

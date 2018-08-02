@@ -1,11 +1,11 @@
-#N canvas 213 81 978 604 10;
+#N canvas 196 163 978 604 10;
 #X obj 59 74 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X text 80 74 Bang to analyze the entire array.;
 #X obj 59 522 nbx 5 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 448 256;
+-262144 -1 -1 8 256;
 #X obj 158 249 hsl 400 15 0 128000 0 0 empty empty Scrub -2 -8 0 12
--191407 -1 -1 17100 1;
+-191407 -1 -1 11900 1;
 #X obj 4 4 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
 #X obj 4 4 cnv 10 10 400 empty empty empty 20 12 0 14 -233017 -66577
@@ -58,8 +58,6 @@ read from., f 33;
 samples long (samples 44100 - 46099), f 48;
 #X msg 98 123 analyze 44100 2000;
 #X obj 59 483 waveDirChange \$0-sample;
-#X msg 434 348 scale 4;
-#X obj 434 369 tabletool \$0-waveform;
 #X text 720 538 Updated for timbreID version 0.7.6;
 #X text 720 558 August 2018;
 #X obj 704 85 waveDirChange~;
@@ -73,8 +71,7 @@ before measuring to filter out this information out if it's not needed.
 #X connect 0 0 13 0;
 #X connect 3 0 9 0;
 #X connect 6 0 13 0;
-#X connect 9 0 21 0;
+#X connect 9 0 19 0;
 #X connect 12 0 13 0;
 #X connect 13 0 2 0;
-#X connect 14 0 15 0;
-#X connect 21 0 13 0;
+#X connect 19 0 13 0;

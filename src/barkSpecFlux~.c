@@ -555,7 +555,7 @@ static void *barkSpecFlux_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_n = BLOCKSIZEDEFAULT;
 	x->x_overlap = 1;
 	x->x_windowFunction = blackman;
-	x->x_normalize = true;
+	x->x_normalize = false;
 	x->x_powerSpectrum = false;
 	x->x_lastDspTime = clock_getlogicaltime();
 	x->x_sizeFilterFreqs = 0;

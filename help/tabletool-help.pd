@@ -195,7 +195,7 @@ and the sum equals 1;
 #X connect 28 0 29 0;
 #X connect 29 0 23 0;
 #X restore 55 323 pd manipulations-1;
-#N canvas 108 81 1119 640 manipulations-2 0;
+#N canvas 112 292 981 473 manipulations-2 1;
 #N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-manip 64 float 1;
 #A 0 -0.414301 0.414289 0.457147 -0.12858 -0.0952462 -0.495255 -0.614306
@@ -207,34 +207,34 @@ and the sum equals 1;
 -0.485731 0.48572 -0.457159 0.285715 -0.300013 -0.504779 0.385717 -0.114294
 -0.257155 -0.20001 0.228571 0.357145 -0.214297 0.185713 0.342859 -0.228583
 -0.400015 -0.0571501 0.0714243 -0.285727 -0.571447 0.48572;
-#X coords 0 1 63 -1 100 70 1 0 0;
-#X restore 475 339 graph;
-#X msg 126 371 reverse;
-#X msg 76 291 sort;
-#X msg 54 263 scramble;
-#X text 124 262 Shuffle table elements in a random order.;
-#X text 192 370 Reverse the order of all elements.;
-#X text 121 286 Sort values from low to high and reorder. For high
-to low ordering \, use "sort" \, then "reverse".;
-#X msg 96 331 sort_range 7 15;
-#X msg 179 450 swap 0 31;
-#X text 257 449 Swap a pair of values at certain indices.;
-#X text 248 405 Replace all occurrences of the first value with the
+#X coords 0 1 63 -1 200 140 1 0 0;
+#X restore 591 51 graph;
+#X msg 127 171 reverse;
+#X msg 77 91 sort;
+#X msg 55 53 scramble;
+#X text 125 52 Shuffle table elements in a random order.;
+#X text 193 170 Reverse the order of all elements.;
+#X text 122 86 Sort values from low to high and reorder. For high to
+low ordering \, use "sort" \, then "reverse".;
+#X msg 97 131 sort_range 7 15;
+#X msg 180 250 swap 0 31;
+#X text 258 249 Swap a pair of values at certain indices.;
+#X text 249 205 Replace all occurrences of the first value with the
 second, f 31;
-#X msg 149 410 replace 0 1;
-#X obj 54 593 tabletool \$0-manip;
-#X msg 239 520 smooth;
-#X msg 209 490 invert;
-#X text 266 489 Flip all values. Low becomes high and vice versa.;
-#X text 295 520 Smooth out data by averaging with neighboring values.
+#X msg 150 210 replace 0 1;
+#X obj 55 393 tabletool \$0-manip;
+#X msg 240 320 smooth;
+#X msg 210 290 invert;
+#X text 267 289 Flip all values. Low becomes high and vice versa.;
+#X text 296 320 Smooth out data by averaging with neighboring values.
 , f 29;
-#X obj 644 553 tabletool \$0-manip;
-#X msg 644 485 abs;
-#X msg 674 515 pow 2;
-#X text 215 325 Sort only a specific range between indices \$1 and
+#X obj 645 353 tabletool \$0-manip;
+#X msg 645 285 abs;
+#X msg 675 315 pow 2;
+#X text 216 125 Sort only a specific range between indices \$1 and
 \$2, f 28;
-#X text 688 485 Take the absolute value of the table data;
-#X text 728 515 Raise table data to a given power;
+#X text 689 285 Take the absolute value of the table data;
+#X text 729 315 Raise table data to a given power;
 #X connect 1 0 12 0;
 #X connect 2 0 12 0;
 #X connect 3 0 12 0;
@@ -339,7 +339,7 @@ value (\$2), f 39;
 #N canvas 308 126 1046 503 conversion 0;
 #N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-conversion 64 float 0;
-#X coords 0 107.22 63 21.0007 200 140 1 0 0;
+#X coords 0 106.673 63 24.4174 200 140 1 0 0;
 #X restore 738 57 graph;
 #X msg 43 39 mtof;
 #X text 120 38 Convert all values from MIDI to frequency in Hz;

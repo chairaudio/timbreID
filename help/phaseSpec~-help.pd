@@ -71,11 +71,12 @@ two.;
 #X obj 57 49 bin2freq 64 44100;
 #X floatatom 57 70 10 0 0 1 Hz - -, f 10;
 #X obj 57 92 osc~ 2232.56;
+#X obj 57 387 phaseSpec~ 64;
 #X text 481 34 The phase spectrum is calculated by taking the arctangent
 of each complex number resulting from a Fourier transform. While the
 distance of a complex number from zero (magnitude) represents the amount
 of energy in a given frequency bin \, the angle (argument) of that
-same number contains the phase information for the bin. [phaseSpec~]
+same number represents the phase information for the bin. [phaseSpec~]
 does nothing until it receives a bang \, then it spits out the spectrum
 phases for the most recent analysis window as a list. The length of
 the phase list will be one half of the specified window size plus one
@@ -84,14 +85,13 @@ changing the frequency of the oscillator at left by bin number. Note
 the unique phase spectrum that occurs at the Nyquist bin. Also note
 that the choice of window (Blackman \, Hann \, etc) has a big impact
 on phase information.;
-#X obj 57 387 phaseSpec~ 64;
-#X connect 0 0 25 0;
+#X connect 0 0 24 0;
 #X connect 2 0 19 0;
-#X connect 5 0 25 0;
-#X connect 6 0 25 0;
-#X connect 19 0 25 0;
+#X connect 5 0 24 0;
+#X connect 6 0 24 0;
+#X connect 19 0 24 0;
 #X connect 20 0 21 0;
 #X connect 21 0 22 0;
 #X connect 22 0 23 0;
-#X connect 23 0 25 0;
-#X connect 25 0 12 0;
+#X connect 23 0 24 0;
+#X connect 24 0 12 0;
