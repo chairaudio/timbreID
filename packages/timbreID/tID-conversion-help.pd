@@ -17,22 +17,22 @@
 #X floatatom 583 320 10 0 0 0 - - -, f 10;
 #X obj 583 185 freq2mel;
 #X obj 583 275 mel2freq;
-#X text 723 444 Updated for timbreID version 0.7;
 #X text 36 34 timbreID conversion objects use the same functions in
 the timbreID library that Bark- and mel-based objects use.;
 #X text 400 92 Bark frequency is calculated as 6.0*asinh(freq/600.0)
 \, and frequency as 600 * sinh(bark/6.0), f 55;
-#X text 81 369 Frequency is calculated as bin*R/N \, and bin number
-is calculated as roundf(freq*N/R), f 43;
 #X text 581 354 Mel frequency is calculated as 1127*log(1+(freq/700))
 \, and frequency as 700 * (exp(mel/1127) - 1), f 55;
 #X obj 83 185 bin2freq 1024 44100;
 #X obj 83 275 freq2bin 1024 44100;
-#X text 723 464 July 2017;
-#X connect 0 0 22 0;
-#X connect 3 0 21 1;
-#X connect 3 0 22 1;
-#X connect 5 0 21 0;
+#X text 723 444 Updated for timbreID version 0.7.6;
+#X text 723 464 August 2018;
+#X text 81 369 Frequency is calculated as bin*R/N \, and bin number
+is calculated as freq*N/R (not rounded), f 43;
+#X connect 0 0 20 0;
+#X connect 3 0 19 1;
+#X connect 3 0 20 1;
+#X connect 5 0 19 0;
 #X connect 6 0 10 0;
 #X connect 7 0 8 0;
 #X connect 8 0 6 0;
@@ -41,5 +41,5 @@ is calculated as roundf(freq*N/R), f 43;
 #X connect 12 0 14 0;
 #X connect 14 0 11 0;
 #X connect 15 0 13 0;
-#X connect 21 0 0 0;
-#X connect 22 0 4 0;
+#X connect 19 0 0 0;
+#X connect 20 0 4 0;

@@ -22,11 +22,6 @@ things to behave properly;
 #X text 425 255 This feature can be sent to the timbreID external in
 order to identify timbres in real time. For more on using audio features
 for classification \, see the timbreID helpfile:;
-#X text 425 165 Audio buffering and windowing are taken care of by
-the external \, so there is no need for tabreceive~ or block~. You
-can set the window size with a creation argument \, or change it with
-the "window" message. Window size is not required to be a power of
-two.;
 #X text 240 361 Creation argument is window size in samples;
 #X msg 175 233 window 2000;
 #X floatatom 220 414 10 0 0 0 - - -, f 10;
@@ -54,17 +49,21 @@ reports the value and location of the highest difference. This is useful
 for finding sudden discontinuities in a waveform. Here \, it's used
 as a crude percussive onset detector by looking for delta values above
 a threshold in dB.;
-#X connect 0 0 23 0;
-#X connect 1 0 17 0;
-#X connect 5 0 23 0;
-#X connect 11 0 23 0;
-#X connect 14 0 23 0;
-#X connect 15 0 22 0;
-#X connect 16 0 18 0;
-#X connect 17 0 16 0;
+#X text 425 165 Audio buffering is taken care of by the external \,
+so there is no need for [block~]. You can set the window size with
+a creation argument \, or change it with the "window" message. Window
+size is not required to be a power of two.;
+#X connect 0 0 22 0;
+#X connect 1 0 16 0;
+#X connect 5 0 22 0;
+#X connect 10 0 22 0;
+#X connect 13 0 22 0;
+#X connect 14 0 21 0;
+#X connect 15 0 17 0;
+#X connect 16 0 15 0;
+#X connect 17 0 18 0;
 #X connect 18 0 19 0;
 #X connect 19 0 20 0;
-#X connect 20 0 21 0;
-#X connect 22 0 23 0;
-#X connect 23 0 1 0;
-#X connect 23 1 12 0;
+#X connect 21 0 22 0;
+#X connect 22 0 1 0;
+#X connect 22 1 11 0;

@@ -1,4 +1,4 @@
-#N canvas 381 145 947 591 10;
+#N canvas 300 196 947 591 10;
 #X obj 108 132 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #N canvas 0 50 450 300 (subpatch) 0;
@@ -64,7 +64,6 @@ things to behave properly;
 #X restore 217 300 pd other-settings;
 #X obj 57 387 barkSpec~ 1024 0.5;
 #X obj 57 72 adc~;
-#X text 55 504 Updated for timbreID version 0.7;
 #X msg 173 243 window 2000;
 #X text 275 237 Change analysis window size, f 16;
 #X text 205 374 Creation arguments are window size in samples and filterbank
@@ -90,7 +89,6 @@ to be between 0 and 1 by default.;
 order to identify timbres in real time. For more on using audio features
 for classification \, see the timbreID helpfile:;
 #X obj 137 190 metro 100;
-#X text 55 524 July 2017;
 #N canvas 580 401 450 300 plotting 0;
 #X obj 55 193 list prepend 0;
 #X obj 210 158 list length;
@@ -108,10 +106,12 @@ for classification \, see the timbreID helpfile:;
 #X connect 6 0 5 0;
 #X connect 7 0 3 0;
 #X restore 57 437 pd plotting;
+#X text 55 504 Updated for timbreID version 0.7;
+#X text 55 524 July 2017;
 #X connect 0 0 6 0;
-#X connect 2 0 18 0;
+#X connect 2 0 17 0;
 #X connect 5 0 6 0;
-#X connect 6 0 20 0;
+#X connect 6 0 18 0;
 #X connect 7 0 6 0;
-#X connect 9 0 6 0;
-#X connect 18 0 6 0;
+#X connect 8 0 6 0;
+#X connect 17 0 6 0;

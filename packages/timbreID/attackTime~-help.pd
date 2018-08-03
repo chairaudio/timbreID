@@ -44,15 +44,10 @@ size (default: 2000ms);
 #X connect 16 0 0 0;
 #X restore 182 289 pd other-settings;
 #X text 787 596 Updated for timbreID version 0.7;
-#X obj 763 548 timbreID;
-#X text 596 490 This feature can be sent to the timbreID external in
+#X obj 763 538 timbreID;
+#X text 596 480 This feature can be sent to the timbreID external in
 order to identify timbres in real time. For more on using audio features
 for classification \, see the timbreID helpfile:;
-#X text 596 410 Audio buffering and windowing are taken care of by
-the external \, so there is no need for tabreceive~ or block~. You
-can set the window size with a creation argument \, or change it with
-the "window" message. Window size is not required to be a power of
-two.;
 #X text 787 616 July 2017;
 #N canvas 0 50 450 300 (subpatch) 0;
 #X array \$0-attackSegment 150 float 0;
@@ -202,20 +197,24 @@ finds enough consecutive samples below the magnitude threshold) \,
 it returns an attack time of -1 to signal failure. This method is only
 appropriate for measuring sound events that are separated by near silence.
 ;
-#X connect 3 0 19 0;
-#X connect 11 0 13 0;
-#X connect 12 0 13 1;
+#X text 596 410 Audio buffering is taken care of by the external \,
+so there is no need for [block~]. You can set the window size with
+a creation argument \, or change it with the "window" message. Window
+size is not required to be a power of two.;
+#X connect 3 0 18 0;
+#X connect 10 0 12 0;
+#X connect 11 0 12 1;
+#X connect 16 0 17 0;
+#X connect 16 1 17 1;
+#X connect 16 1 18 0;
 #X connect 17 0 18 0;
-#X connect 17 1 18 1;
-#X connect 17 1 19 0;
-#X connect 18 0 19 0;
-#X connect 19 0 0 0;
-#X connect 19 1 11 0;
-#X connect 19 2 12 0;
-#X connect 20 0 17 0;
-#X connect 21 0 24 0;
-#X connect 22 0 24 0;
-#X connect 23 0 24 0;
-#X connect 24 0 20 0;
-#X connect 25 0 24 0;
-#X connect 27 0 24 0;
+#X connect 18 0 0 0;
+#X connect 18 1 10 0;
+#X connect 18 2 11 0;
+#X connect 19 0 16 0;
+#X connect 20 0 23 0;
+#X connect 21 0 23 0;
+#X connect 22 0 23 0;
+#X connect 23 0 19 0;
+#X connect 24 0 23 0;
+#X connect 26 0 23 0;
