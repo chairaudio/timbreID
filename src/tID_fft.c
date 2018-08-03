@@ -350,7 +350,7 @@ static void *tID_fft_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_window = WINDOWSIZEDEFAULT;
 	x->x_windowHalf = x->x_window*0.5;
 	x->x_windowFunction = blackman;
-	x->x_normalize = true;
+	x->x_normalize = false;
 	
 	x->x_fftwIn = (t_sample *)t_getbytes(x->x_window*sizeof(t_sample));
 	x->x_listOutReal = (t_atom *)t_getbytes((x->x_windowHalf+1)*sizeof(t_atom));

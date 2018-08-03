@@ -292,7 +292,7 @@ static void *tID_fft_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_n = BLOCKSIZEDEFAULT;
 	x->x_overlap = 1;
 	x->x_windowFunction = blackman;
-	x->x_normalize = true;
+	x->x_normalize = false;
 	x->x_lastDspTime = clock_getlogicaltime();
 
 	x->x_signalBuffer = (t_sample *)t_getbytes((x->x_window+x->x_n) * sizeof(t_sample));
