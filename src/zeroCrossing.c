@@ -53,7 +53,7 @@ static void zeroCrossing_analyze(t_zeroCrossing *x, t_floatarg start, t_floatarg
 		else
 			endSamp = startSamp + x->x_window-1;
 
-		if(endSamp > x->x_arrayPoints)
+		if(endSamp >= x->x_arrayPoints)
 			endSamp = x->x_arrayPoints-1;
 
 		window = endSamp-startSamp+1;

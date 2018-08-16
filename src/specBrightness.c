@@ -59,7 +59,7 @@ static void specBrightness_resizeWindow(t_specBrightness *x, t_sampIdx oldWindow
 		post("%s WARNING: window size must be %i or greater. Using default size of %i instead.", x->x_objSymbol->s_name, MINWINDOWSIZE, WINDOWSIZEDEFAULT);
 		
 		*endSamp = startSamp + window-1;
-		if(*endSamp > x->x_arrayPoints)
+		if(*endSamp >= x->x_arrayPoints)
 			*endSamp = x->x_arrayPoints-1;
 	}
 
@@ -112,7 +112,7 @@ static void specBrightness_analyze(t_specBrightness *x, t_floatarg start, t_floa
 		else
 			endSamp = startSamp + x->x_window-1;
 
-		if(endSamp > x->x_arrayPoints)
+		if(endSamp >= x->x_arrayPoints)
 			endSamp = x->x_arrayPoints-1;
 
 		window = endSamp-startSamp+1;

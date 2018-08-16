@@ -60,7 +60,7 @@ static void cepstrumPitch_resizeWindow(t_cepstrumPitch *x, t_sampIdx oldWindow, 
 		post("%s WARNING: window size must be %i or greater. Using default size of %i instead.", x->x_objSymbol->s_name, MINWINDOWSIZE, WINDOWSIZEDEFAULT);
 		
 		*endSamp = startSamp + window-1;
-		if(*endSamp > x->x_arrayPoints)
+		if(*endSamp >= x->x_arrayPoints)
 			*endSamp = x->x_arrayPoints-1;
 	}
 
@@ -104,15 +104,6 @@ static void cepstrumPitch_analyze(t_cepstrumPitch *x, t_floatarg start, t_floata
     	pd_error(x, "%s: bad template for %s", x->x_arrayName->s_name, x->x_objSymbol->s_name);
 	else
 	{
-		loFreqBinFloat = roundf(x->x_sr/x->x_loFreq);
-		hiFreqBinFloat = roundf(x->x_sr/x->x_hiFreq);
-
-		hiFreqBin = (hiFreqBinFloat<0)?0:hiFreqBinFloat;
-		hiFreqBin = (hiFreqBin>x->x_windowHalf)?x->x_windowHalf:hiFreqBin;
-
-		loFreqBin = (loFreqBinFloat<0)?0:loFreqBinFloat;
-		loFreqBin = (loFreqBin>x->x_windowHalf)?x->x_windowHalf:loFreqBin;
-		
 		startSamp = (start<0)?0:start;
 
 		if(n)
@@ -120,9 +111,9 @@ static void cepstrumPitch_analyze(t_cepstrumPitch *x, t_floatarg start, t_floata
 		else
 			endSamp = startSamp + x->x_window-1;
 
-		if(endSamp > x->x_arrayPoints)
+		if(endSamp >= x->x_arrayPoints)
 			endSamp = x->x_arrayPoints-1;
-
+		
 		window = endSamp-startSamp+1;
 		nRecip = 1.0/window;
 
@@ -135,6 +126,16 @@ static void cepstrumPitch_analyze(t_cepstrumPitch *x, t_floatarg start, t_floata
 		if(x->x_window != window)
 			cepstrumPitch_resizeWindow(x, x->x_window, window, startSamp, &endSamp);
 
+		loFreqBinFloat = roundf(x->x_sr/x->x_loFreq);
+		hiFreqBinFloat = roundf(x->x_sr/x->x_hiFreq);
+
+		// these must be after the potential window resize, which would change x_windowHalf and therefore valid bounds for hiFreqBin and loFreqBin
+		hiFreqBin = (hiFreqBinFloat<0)?0:hiFreqBinFloat;
+		hiFreqBin = (hiFreqBin>x->x_windowHalf)?x->x_windowHalf:hiFreqBin;
+
+		loFreqBin = (loFreqBinFloat<0)?0:loFreqBinFloat;
+		loFreqBin = (loFreqBin>x->x_windowHalf)?x->x_windowHalf:loFreqBin;
+		
 		// construct analysis window
 		for(i=0, j=startSamp; j<=endSamp; i++, j++)
 			x->x_fftwIn[i] = x->x_vec[j].w_float;
@@ -286,6 +287,7 @@ static void cepstrumPitch_print(t_cepstrumPitch *x)
 	post("%s power spectrum: %i", x->x_objSymbol->s_name, x->x_powerSpectrum);
 	post("%s power cepstrum: %i", x->x_objSymbol->s_name, x->x_powerCepstrum);
 	post("%s spectrum offset: %i", x->x_objSymbol->s_name, x->x_spectrumOffset);
+	post("%s pitch range: %0.2f to %0.2f", x->x_objSymbol->s_name, ftom(x->x_loFreq), ftom(x->x_hiFreq));
 	post("%s window function: %i", x->x_objSymbol->s_name, x->x_windowFunction);
 }
 

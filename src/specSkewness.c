@@ -56,7 +56,7 @@ static void specSkewness_resizeWindow(t_specSkewness *x, t_sampIdx oldWindow, t_
 		post("%s WARNING: window size must be %i or greater. Using default size of %i instead.", x->x_objSymbol->s_name, MINWINDOWSIZE, WINDOWSIZEDEFAULT);
 		
 		*endSamp = startSamp + window-1;
-		if(*endSamp > x->x_arrayPoints)
+		if(*endSamp >= x->x_arrayPoints)
 			*endSamp = x->x_arrayPoints-1;
 	}
 
@@ -109,7 +109,7 @@ static void specSkewness_analyze(t_specSkewness *x, t_floatarg start, t_floatarg
 		else
 			endSamp = startSamp + x->x_window-1;
 
-		if(endSamp > x->x_arrayPoints)
+		if(endSamp >= x->x_arrayPoints)
 			endSamp = x->x_arrayPoints-1;
 
 		window = endSamp-startSamp+1;

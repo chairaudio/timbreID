@@ -96,12 +96,9 @@ cepstrum is computed (default: ON);
 #X obj 655 116 r \$0-scrub-bar;
 #X text 245 436 Move through the soundfile with the slider above,
 f 28;
-#X msg 94 379 analyze 44100 2000;
 #X text 665 612 July 2017;
 #X floatatom 50 568 5 0 0 0 - - -, f 5;
 #X obj 50 546 cepstrumPitch \$0-sample 43 64;
-#X text 92 345 Analyze a window starting at sample 44100 that is 2000
-samples long (samples 44100 - 46099).;
 #X obj 598 438 cepstrumPitch~;
 #X text 596 389 See the real-time version for more information on cepstrum
 pitch tracking in general., f 33;
@@ -109,10 +106,13 @@ pitch tracking in general., f 33;
 to read from \, and the lower and upper bounds of the expected pitch
 range to track in MIDI units., f 42;
 #X text 48 613 Output value is pitch in MIDI units;
-#X connect 0 0 17 0;
-#X connect 4 0 17 0;
-#X connect 9 0 17 0;
+#X msg 94 379 analyze 24100 2000;
+#X text 92 345 Analyze a window starting at sample 44100 that is 2000
+samples long (samples 24100 - 26099).;
+#X connect 0 0 16 0;
+#X connect 4 0 16 0;
+#X connect 9 0 16 0;
 #X connect 11 0 4 0;
 #X connect 12 0 5 0;
-#X connect 14 0 17 0;
-#X connect 17 0 16 0;
+#X connect 16 0 15 0;
+#X connect 21 0 16 0;

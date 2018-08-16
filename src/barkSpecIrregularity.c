@@ -71,7 +71,7 @@ static void barkSpecIrregularity_resizeWindow(t_barkSpecIrregularity *x, t_sampI
 		post("%s WARNING: window size must be %i or greater. Using default size of %i instead.", x->x_objSymbol->s_name, MINWINDOWSIZE, WINDOWSIZEDEFAULT);
 	
 		*endSamp = startSamp + window-1;
-		if(*endSamp > x->x_arrayPoints)
+		if(*endSamp >= x->x_arrayPoints)
 			*endSamp = x->x_arrayPoints-1;
 	}
 
@@ -123,7 +123,7 @@ static void barkSpecIrregularity_analyze(t_barkSpecIrregularity *x, t_floatarg s
 		else
 			endSamp = startSamp + x->x_window-1;
 
-		if(endSamp > x->x_arrayPoints)
+		if(endSamp >= x->x_arrayPoints)
 			endSamp = x->x_arrayPoints-1;
 
 		window = endSamp-startSamp+1;

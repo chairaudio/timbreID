@@ -63,7 +63,7 @@ static void barkSpecSlope_resizeWindow(t_barkSpecSlope *x, t_sampIdx oldWindow, 
 		post("%s WARNING: window size must be %i or greater. Using default size of %i instead.", x->x_objSymbol->s_name, MINWINDOWSIZE, WINDOWSIZEDEFAULT);
 	
 		*endSamp = startSamp + window-1;
-		if(*endSamp > x->x_arrayPoints)
+		if(*endSamp >= x->x_arrayPoints)
 			*endSamp = x->x_arrayPoints-1;
 	}
 
@@ -115,7 +115,7 @@ static void barkSpecSlope_analyze(t_barkSpecSlope *x, t_floatarg start, t_floata
 		else
 			endSamp = startSamp + x->x_window-1;
 
-		if(endSamp > x->x_arrayPoints)
+		if(endSamp >= x->x_arrayPoints)
 			endSamp = x->x_arrayPoints-1;
 
 		window = endSamp-startSamp+1;

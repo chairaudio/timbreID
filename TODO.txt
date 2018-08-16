@@ -1,1 +1,20 @@
 plenty of things
+
+For potentially all NRT objects, in analyze() method, there's a bug where
+
+		if(endSamp > x->x_arrayPoints)
+			endSamp = x->x_arrayPoints-1;
+	
+should be
+
+		if(endSamp > x->x_arrayPoints)
+			endSamp = x->x_arrayPoints-1;
+
+MUST DO THE SAME IN THE _resize() function of each NRT object
+
+Need to make a branch to fix this. Ned to also do a careful check to see exactly how to recreate the problem. Right now, it's just by fast mousing around with the analyze start point. Not sure precisely what the problem is, but it doesn't happen with the in-bounds slider control in the help file for cepstrumPitch. Does it happen with other NRT objects?
+
+Could also take care of zero padding out the end of the window while taking care of this. MAYBE NOT: because there is no zero padding since the window size changes. non power of 2 is fine.
+
+
+Seems to only be in cepstrumPitch.c

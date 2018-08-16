@@ -53,7 +53,7 @@ static void waveDirChange_analyze(t_waveDirChange *x, t_floatarg start, t_floata
 		else
 			endSamp = startSamp + x->x_window-1;
 
-		if(endSamp > x->x_arrayPoints)
+		if(endSamp >= x->x_arrayPoints)
 			endSamp = x->x_arrayPoints-1;
 
 		window = endSamp-startSamp+1;

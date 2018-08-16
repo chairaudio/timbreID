@@ -70,7 +70,7 @@ static void barkSpecFlux_resizeWindow(t_barkSpecFlux *x, t_sampIdx oldWindow, t_
 		post("%s WARNING: window size must be %i or greater. Using default size of %i instead.", x->x_objSymbol->s_name, MINWINDOWSIZE, WINDOWSIZEDEFAULT);
 		
 		*endSamp = startSamp + window-1;
-		if(*endSamp > x->x_arrayPoints)
+		if(*endSamp >= x->x_arrayPoints)
 			*endSamp = x->x_arrayPoints-1;
 	}
 
@@ -140,7 +140,7 @@ static void barkSpecFlux_analyze(t_barkSpecFlux *x, t_floatarg start, t_floatarg
 		else
 			endSamp = startSamp + x->x_window-1;
 
-		if(endSamp > x->x_arrayPoints-1)
+		if(endSamp >= x->x_arrayPoints-1)
 			endSamp = x->x_arrayPoints-1;
 
 		window = endSamp-startSamp+1;

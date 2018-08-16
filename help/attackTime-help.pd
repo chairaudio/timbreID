@@ -1,6 +1,6 @@
 #N canvas 129 81 927 680 10;
 #X obj 59 612 nbx 5 32 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 32
--262144 -1 -1 0 256;
+-262144 -1 -1 0.226757 256;
 #X msg 155 291 analyze \$1 1024;
 #X obj 4 4 cnv 10 400 10 empty empty empty 20 12 0 14 -233017 -66577
 0;
@@ -80,8 +80,8 @@ time in general.;
 #X floatatom 117 530 10 0 0 0 - - -, f 10;
 #X floatatom 207 530 10 0 0 0 - - -, f 10;
 #N canvas 0 50 450 300 (subpatch) 0;
-#X array \$0-attackSegment 55 float 0;
-#X coords 0 1 54 -1 200 140 1 0 0;
+#X array \$0-attackSegment 11 float 0;
+#X coords 0 1 10 -1 200 140 1 0 0;
 #X restore 413 247 graph;
 #N canvas 278 271 563 395 plot-attack-segment 0;
 #X obj 115 35 inlet;
