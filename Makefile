@@ -1,6 +1,7 @@
 # Makefile for timbreIDLib
 
-PDDIR = /Applications/Pd-0.48-2.app/Contents/Resources
+# specify a location for Pd source if desired
+# PDDIR = /home/yourname/somedirectory/pd-0.48-2
 
 ldlibs = -lfftw3f
   
