@@ -700,69 +700,69 @@ void tIDLib_createFilterbank(t_float *filterFreqs, t_filter **filterbank, t_filt
 		(*filterbank)[i].size = 0;
 
 	{
-		t_binIdx i;
+		t_binIdx bfi;
 		// first, find the actual freq for each bin based on current window size
-		for(i=0; i<windowHalfPlus1; i++)
-			binFreqs[i] = tIDLib_bin2freq(i, window, sr);
+		for(bfi=0; bfi<windowHalfPlus1; bfi++)
+			binFreqs[bfi] = tIDLib_bin2freq(bfi, window, sr);
 	}
 	
 	if(newNumFilters >= windowHalfPlus1)
 	{
 		post("timbreID WARNING: current filterbank is invalid. For window size N, filterbank size must be less than N/2+1. Change filter spacing or window size accordingly.");
 		
-		t_binIdx i;
+		t_binIdx fbi;
 		
 		// fill the first filter indices with bins 0 - N/2
-		for(i=0; i<windowHalfPlus1; i++)
+		for(fbi=0; fbi<windowHalfPlus1; fbi++)
 		{
 			t_binIdx j;
 	
-			(*filterbank)[i].size = 1;
-			(*filterbank)[i].indices[0] = i;
-			(*filterbank)[i].indices[1] = i;
-			(*filterbank)[i].filterFreqs[0] = binFreqs[i];
-			(*filterbank)[i].filterFreqs[1] = binFreqs[i];
+			(*filterbank)[fbi].size = 1;
+			(*filterbank)[fbi].indices[0] = fbi;
+			(*filterbank)[fbi].indices[1] = fbi;
+			(*filterbank)[fbi].filterFreqs[0] = binFreqs[fbi];
+			(*filterbank)[fbi].filterFreqs[1] = binFreqs[fbi];
 			
-			(*filterbank)[i].filter = (t_float *)t_getbytes((*filterbank)[i].size*sizeof(t_float));
+			(*filterbank)[fbi].filter = (t_float *)t_getbytes((*filterbank)[fbi].size*sizeof(t_float));
 
 			// initialize this filter
-			for(j=0; j<(*filterbank)[i].size; j++)
-				(*filterbank)[i].filter[j] = 0.0;
+			for(j=0; j<(*filterbank)[fbi].size; j++)
+				(*filterbank)[fbi].filter[j] = 0.0;
 		}
 
 		// fill out additional filter indices with the Nyquist bin, just so we avoid crashes
-		for(; i<newNumFilters; i++)
+		for(; fbi<newNumFilters; fbi++)
 		{
 			t_binIdx j;
 
-			(*filterbank)[i].size = 1;
-			(*filterbank)[i].indices[0] = windowHalf;
-			(*filterbank)[i].indices[1] = windowHalf;
-			(*filterbank)[i].filterFreqs[0] = binFreqs[windowHalf];
-			(*filterbank)[i].filterFreqs[1] = binFreqs[windowHalf];
+			(*filterbank)[fbi].size = 1;
+			(*filterbank)[fbi].indices[0] = windowHalf;
+			(*filterbank)[fbi].indices[1] = windowHalf;
+			(*filterbank)[fbi].filterFreqs[0] = binFreqs[windowHalf];
+			(*filterbank)[fbi].filterFreqs[1] = binFreqs[windowHalf];
 						
-			(*filterbank)[i].filter = (t_float *)t_getbytes((*filterbank)[i].size*sizeof(t_float));
+			(*filterbank)[fbi].filter = (t_float *)t_getbytes((*filterbank)[fbi].size*sizeof(t_float));
 
 			// initialize this filter
-			for(j=0; j<(*filterbank)[i].size; j++)
-				(*filterbank)[i].filter[j] = 0.0;
+			for(j=0; j<(*filterbank)[fbi].size; j++)
+				(*filterbank)[fbi].filter[j] = 0.0;
 		}
 	}
 	else
 	{
-		t_filterIdx i;
+		t_filterIdx ffi;
 		
 		// finally, build the filterbank
-		for(i=1; i<=newNumFilters; i++)
+		for(ffi=1; ffi<=newNumFilters; ffi++)
 		{
 			t_binIdx j, startIdx, peakIdx, finishIdx, filterWidth, upN, downN;
 			t_float *upRamp, *downRamp;
 			
 			startIdx = peakIdx = finishIdx = 0;
 
-			startIdx = tIDLib_nearestBinIndex(filterFreqs[i-1], binFreqs, windowHalfPlus1);
-			peakIdx = tIDLib_nearestBinIndex(filterFreqs[i], binFreqs, windowHalfPlus1);
-			finishIdx = tIDLib_nearestBinIndex(filterFreqs[i+1], binFreqs, windowHalfPlus1);
+			startIdx = tIDLib_nearestBinIndex(filterFreqs[ffi-1], binFreqs, windowHalfPlus1);
+			peakIdx = tIDLib_nearestBinIndex(filterFreqs[ffi], binFreqs, windowHalfPlus1);
+			finishIdx = tIDLib_nearestBinIndex(filterFreqs[ffi+1], binFreqs, windowHalfPlus1);
 		
 			// TODO: should check that startIdx<finishIdx, and swap if not. and peakIdx should be between those bounds
 			
@@ -770,26 +770,26 @@ void tIDLib_createFilterbank(t_float *filterFreqs, t_filter **filterbank, t_filt
 			filterWidth = finishIdx-startIdx + 1;
 			filterWidth = (filterWidth<1)?1:filterWidth;
 				
-			(*filterbank)[i-1].size = filterWidth; // store the sizes for freeing memory later
-			(*filterbank)[i-1].filter = (t_float *)t_getbytes(filterWidth*sizeof(t_float));
+			(*filterbank)[ffi-1].size = filterWidth; // store the sizes for freeing memory later
+			(*filterbank)[ffi-1].filter = (t_float *)t_getbytes(filterWidth*sizeof(t_float));
 
 			// initialize this filter
 			for(j=0; j<filterWidth; j++)
-				(*filterbank)[i-1].filter[j] = 0.0;
+				(*filterbank)[ffi-1].filter[j] = 0.0;
 
 			// some special cases for very narrow filter widths
 			switch(filterWidth)
 			{
-				t_binIdx j, k;
+				t_binIdx fj, k;
 
 				case 1:
-					(*filterbank)[i-1].filter[0] = 1.0;
+					(*filterbank)[ffi-1].filter[0] = 1.0;
 					break;
 				
 				// no great way to do a triangle with a filter width of 2, so might as well average
 				case 2:
-					(*filterbank)[i-1].filter[0] = 0.5;
-					(*filterbank)[i-1].filter[1] = 0.5;
+					(*filterbank)[ffi-1].filter[0] = 0.5;
+					(*filterbank)[ffi-1].filter[1] = 0.5;
 					break;
 
 				// with 3 and greater, we can use our ramps
@@ -803,21 +803,21 @@ void tIDLib_createFilterbank(t_float *filterFreqs, t_filter **filterbank, t_filt
 					tIDLib_linspace(downRamp, 1.0, 0.0, downN);
 					
 					// copy into (*filterbank)[i-1].filter
-					for(j=0; j<upN; j++)
-						(*filterbank)[i-1].filter[j] = upRamp[j];
+					for(fj=0; fj<upN; fj++)
+						(*filterbank)[ffi-1].filter[fj] = upRamp[fj];
 
 					// start at k=1 because k=0 will be the peak (i.e., 1.0)
-					for(k=1; k<downN; j++, k++)
-						(*filterbank)[i-1].filter[j] = downRamp[k];
+					for(k=1; k<downN; fj++, k++)
+						(*filterbank)[ffi-1].filter[fj] = downRamp[k];
 
 					// clip the triangle within 0 and 1, just in case
-					for(j=0; j<filterWidth; j++)
+					for(fj=0; fj<filterWidth; fj++)
 					{
-						if((*filterbank)[i-1].filter[j] < 0.0)
-							(*filterbank)[i-1].filter[j] = 0.0;
+						if((*filterbank)[ffi-1].filter[fj] < 0.0)
+							(*filterbank)[ffi-1].filter[fj] = 0.0;
 
-						if((*filterbank)[i-1].filter[j] > 1.0)
-							(*filterbank)[i-1].filter[j] = 1.0;
+						if((*filterbank)[ffi-1].filter[fj] > 1.0)
+							(*filterbank)[ffi-1].filter[fj] = 1.0;
 					}
 						
 					t_freebytes(upRamp, upN*sizeof(t_float));
@@ -825,10 +825,10 @@ void tIDLib_createFilterbank(t_float *filterFreqs, t_filter **filterbank, t_filt
 					break;
 			};
 
-			(*filterbank)[i-1].indices[0] = startIdx;
-			(*filterbank)[i-1].indices[1] = finishIdx;
-			(*filterbank)[i-1].filterFreqs[0] = binFreqs[startIdx];
-			(*filterbank)[i-1].filterFreqs[1] = binFreqs[finishIdx];
+			(*filterbank)[ffi-1].indices[0] = startIdx;
+			(*filterbank)[ffi-1].indices[1] = finishIdx;
+			(*filterbank)[ffi-1].filterFreqs[0] = binFreqs[startIdx];
+			(*filterbank)[ffi-1].filterFreqs[1] = binFreqs[finishIdx];
 		}
 	}
 	
@@ -860,23 +860,23 @@ void tIDLib_specFilterBands(t_binIdx n, t_filterIdx numFilters, t_float *spectru
 	// Check that the spectrum window size N is larger than the number of filters, otherwise we'll be writing to invalid memory indices
 	if(n>=numFilters)
 	{
-		t_filterIdx i;
+		t_filterIdx si;
 
-		for(i=0; i<numFilters; i++)
+		for(si=0; si<numFilters; si++)
 			if(normalize)
-				spectrum[i] = smoothedSpec[i]/totalEnergy;
+				spectrum[si] = smoothedSpec[si]/totalEnergy;
 			else
-				spectrum[i] = smoothedSpec[i];
+				spectrum[si] = smoothedSpec[si];
 	}
 	else
 	{
-		t_filterIdx i;
+		t_filterIdx si;
 
-		for(i=0; i<n; i++)
+		for(si=0; si<n; si++)
 			if(normalize)
-				spectrum[i] = smoothedSpec[i]/totalEnergy;
+				spectrum[si] = smoothedSpec[si]/totalEnergy;
 			else
-				spectrum[i] = smoothedSpec[i];
+				spectrum[si] = smoothedSpec[si];
 	}
 }
 
@@ -920,9 +920,9 @@ void tIDLib_filterbankMultiply(t_float *spectrum, t_bool normalize, t_bool filte
 		sumSum=1.0;
 	
 	{
-		t_binIdx i;
-		for(i=0; i<numFilters; i++)
-			spectrum[i] = filterPower[i]*sumSum;
+		t_binIdx si;
+		for(si=0; si<numFilters; si++)
+			spectrum[si] = filterPower[si]*sumSum;
 	}
 	
 	// free local memory
