@@ -258,10 +258,10 @@ static void barkSpecFlux_analyze(t_barkSpecFlux *x, t_floatarg start, t_floatarg
 
 			switch(x->x_mode)
 			{
-				case growth:
+				case mGrowth:
 					diff = (diff<0)?0:diff;
 					break;
-				case decay:
+				case mDecay:
 					diff = (diff>0)?0:diff;
 					break;
 				default:
@@ -341,10 +341,10 @@ static void barkSpecFlux_chain_fftData(t_barkSpecFlux *x, t_symbol *s, int argc,
 
 		switch(x->x_mode)
 		{
-			case growth:
+			case mGrowth:
 				diff = (diff<0)?0:diff;
 				break;
-			case decay:
+			case mDecay:
 				diff = (diff>0)?0:diff;
 				break;
 			default:
@@ -411,10 +411,10 @@ static void barkSpecFlux_chain_magSpec(t_barkSpecFlux *x, t_symbol *s, int argc,
 
 		switch(x->x_mode)
 		{
-			case growth:
+			case mGrowth:
 				diff = (diff<0)?0:diff;
 				break;
-			case decay:
+			case mDecay:
 				diff = (diff>0)?0:diff;
 				break;
 			default:
@@ -464,10 +464,10 @@ static void barkSpecFlux_chain_barkSpec(t_barkSpecFlux *x, t_symbol *s, int argc
 
 		switch(x->x_mode)
 		{
-			case growth:
+			case mGrowth:
 				diff = (diff<0)?0:diff;
 				break;
-			case decay:
+			case mDecay:
 				diff = (diff>0)?0:diff;
 				break;
 			default:
@@ -583,13 +583,13 @@ static void barkSpecFlux_print(t_barkSpecFlux *x)
 
 	switch(x->x_mode)
 	{
-		case flux:
+		case mFlux:
 			post("%s mode: flux", x->x_objSymbol->s_name);
 			break;
-		case growth:
+		case mGrowth:
 			post("%s mode: growth", x->x_objSymbol->s_name);
 			break;
-		case decay:
+		case mDecay:
 			post("%s mode: decay", x->x_objSymbol->s_name);
 			break;
 		default:
@@ -712,13 +712,13 @@ static void barkSpecFlux_squaredDiff(t_barkSpecFlux *x, t_floatarg sd)
 static void barkSpecFlux_mode(t_barkSpecFlux *x, t_symbol *m)
 {
 	if(!strcmp(m->s_name, "flux"))
-		x->x_mode = flux;
+		x->x_mode = mFlux;
 	else if(!strcmp(m->s_name, "growth"))
-		x->x_mode = growth;
+		x->x_mode = mGrowth;
 	else if(!strcmp(m->s_name, "decay"))
-		x->x_mode = decay;
+		x->x_mode = mDecay;
 	else
-		x->x_mode = flux;
+		x->x_mode = mFlux;
 }
 
 
@@ -827,7 +827,7 @@ static void *barkSpecFlux_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_specBandAvg = false;
 	x->x_filterAvg = false;
 	x->x_squaredDiff = false; // absolute value by default
-	x->x_mode = flux;
+	x->x_mode = mFlux;
 	
 	x->x_fftwInForwardWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));
 	x->x_fftwInBackWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));

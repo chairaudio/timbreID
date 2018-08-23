@@ -111,9 +111,9 @@ typedef enum
 
 typedef enum
 {
-	flux = 0,
-	growth,
-	decay
+	mFlux = 0,
+	mGrowth,
+	mDecay
 } t_fluxMode;
 
 typedef struct filter

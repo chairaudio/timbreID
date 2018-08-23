@@ -249,10 +249,10 @@ static void specFlux_analyze(t_specFlux *x, t_floatarg start, t_floatarg n)
 		
 			switch(x->x_mode)
 			{
-				case growth:
+				case mGrowth:
 					diff = (diff<0)?0:diff;
 					break;
-				case decay:
+				case mDecay:
 					diff = (diff>0)?0:diff;
 					break;
 				default:
@@ -327,10 +327,10 @@ static void specFlux_chain_fftData(t_specFlux *x, t_symbol *s, int argc, t_atom 
 
 		switch(x->x_mode)
 		{
-			case growth:
+			case mGrowth:
 				diff = (diff<0)?0:diff;
 				break;
-			case decay:
+			case mDecay:
 				diff = (diff>0)?0:diff;
 				break;
 			default:
@@ -386,10 +386,10 @@ static void specFlux_chain_magSpec(t_specFlux *x, t_symbol *s, int argc, t_atom 
 
 		switch(x->x_mode)
 		{
-			case growth:
+			case mGrowth:
 				diff = (diff<0)?0:diff;
 				break;
-			case decay:
+			case mDecay:
 				diff = (diff>0)?0:diff;
 				break;
 			default:
@@ -454,13 +454,13 @@ static void specFlux_print(t_specFlux *x)
 
 	switch(x->x_mode)
 	{
-		case flux:
+		case mFlux:
 			post("%s mode: flux", x->x_objSymbol->s_name);
 			break;
-		case growth:
+		case mGrowth:
 			post("%s mode: growth", x->x_objSymbol->s_name);
 			break;
-		case decay:
+		case mDecay:
 			post("%s mode: decay", x->x_objSymbol->s_name);
 			break;
 		default:
@@ -580,13 +580,13 @@ static void specFlux_squaredDiff(t_specFlux *x, t_floatarg sd)
 static void specFlux_mode(t_specFlux *x, t_symbol *m)
 {
 	if(!strcmp(m->s_name, "flux"))
-		x->x_mode = flux;
+		x->x_mode = mFlux;
 	else if(!strcmp(m->s_name, "growth"))
-		x->x_mode = growth;
+		x->x_mode = mGrowth;
 	else if(!strcmp(m->s_name, "decay"))
-		x->x_mode = decay;
+		x->x_mode = mDecay;
 	else
-		x->x_mode = flux;
+		x->x_mode = mFlux;
 }
 
 
@@ -666,7 +666,7 @@ static void *specFlux_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_normalize = false;
 	x->x_powerSpectrum = false;
 	x->x_squaredDiff = false;
-	x->x_mode = flux;
+	x->x_mode = mFlux;
 	
 	x->x_fftwInForwardWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));
 	x->x_fftwInBackWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));

@@ -161,10 +161,10 @@ static void specFlux_tilde_bang(t_specFlux_tilde *x)
 
 		switch(x->x_mode)
 		{
-			case growth:
+			case mGrowth:
 				diff = (diff<0)?0:diff;
 				break;
-			case decay:
+			case mDecay:
 				diff = (diff>0)?0:diff;
 				break;
 			default:
@@ -199,13 +199,13 @@ static void specFlux_tilde_print(t_specFlux_tilde *x)
 
 	switch(x->x_mode)
 	{
-		case flux:
+		case mFlux:
 			post("%s mode: flux", x->x_objSymbol->s_name);
 			break;
-		case growth:
+		case mGrowth:
 			post("%s mode: growth", x->x_objSymbol->s_name);
 			break;
-		case decay:
+		case mDecay:
 			post("%s mode: decay", x->x_objSymbol->s_name);
 			break;
 		default:
@@ -383,13 +383,13 @@ static void specFlux_tilde_separation(t_specFlux_tilde *x, t_floatarg s)
 static void specFlux_tilde_mode(t_specFlux_tilde *x, t_symbol *m)
 {
 	if(!strcmp(m->s_name, "flux"))
-		x->x_mode = flux;
+		x->x_mode = mFlux;
 	else if(!strcmp(m->s_name, "growth"))
-		x->x_mode = growth;
+		x->x_mode = mGrowth;
 	else if(!strcmp(m->s_name, "decay"))
-		x->x_mode = decay;
+		x->x_mode = mDecay;
 	else
-		x->x_mode = flux;
+		x->x_mode = mFlux;
 }
 
 
@@ -462,7 +462,7 @@ static void *specFlux_tilde_new(t_symbol *s, int argc, t_atom *argv)
 	x->x_powerSpectrum = false;
 	x->x_lastDspTime = clock_getlogicaltime();
 	x->x_squaredDiff = false; // absolute value by default
-	x->x_mode = flux;
+	x->x_mode = mFlux;
 	
 	x->x_signalBuffer = (t_sample *)t_getbytes((x->x_window*2+x->x_n) * sizeof(t_sample));
 	x->x_fftwInForwardWindow = (t_float *)t_getbytes(x->x_window * sizeof(t_float));
