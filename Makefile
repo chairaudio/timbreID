@@ -3,13 +3,13 @@
 # specify a location for Pd source if desired
 # PDDIR = /home/yourname/somedirectory/pd-0.48-2
 
-FFTWDIR = C:/MinGW/lib/fftw-3.3.5-dll32
-
-ldlibs = -L$(FFTWDIR) -lfftw3f-3
- 
 lib.name = timbreIDLib
 
-cflags = -Iinclude -I$(FFTWDIR)
+# specify the location and name of the FFTW library
+ldlibs = -L/usr/local/lib -lfftw3f
+ 
+# specify the location of FFTW header file
+cflags = -Iinclude -I/usr/local/include
 
 lib.setup.sources = src/$(lib.name).c
 
@@ -21,5 +21,5 @@ datafiles = help/attackTime-help.pd help/attackTime~-help.pd help/bark-help.pd h
 make-lib-executable=yes
 
 # provide the path to pd-lib-builder
-PDLIBBUILDER_DIR=C:/Users/w/Documents/GitHub/pd-lib-builder/
+PDLIBBUILDER_DIR=/home/yourname/somedirectory/pd-lib-builder/
 include $(PDLIBBUILDER_DIR)/Makefile.pdlibbuilder
